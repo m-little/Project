@@ -11,7 +11,14 @@ USE project;
 -- mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
 -- ^ this doesn't give you any feedback though...
 
-
+DROP TABLE recipe_ingredient;
+DROP TABLE ingredient;
+DROP TABLE unit;
+DROP TABLE comment;
+DROP TABLE recipe;
+DROP TABLE category;
+DROP TABLE user;
+DROP TABLE passkeys;
 
 CREATE TABLE passkeys
 (
