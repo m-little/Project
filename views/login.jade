@@ -1,0 +1,25 @@
+doctype 5
+html.all
+
+	include header
+
+	div.all
+		#success
+			if logged_in == 1
+				div.notify1_good
+					| You have successfully logged in #{username} as a #{user_group}
+			else if logged_in == 0
+				div.notify1_bad
+					| Your username or password was not found.
+
+		h1.head1
+			| Login
+
+		form(action='/login',method='post')
+			input(type='text',name='username',required='required',autofocus)
+			input(type='password',name='password',required='required')
+			button(type='Submit')
+				| Submit
+
+
+	include footer

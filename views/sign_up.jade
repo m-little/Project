@@ -1,0 +1,100 @@
+doctype 5
+html.all
+
+	include header
+
+	div.all
+		table(style="width:1200px; margin:auto; border:0px solid black;")
+			tr
+				td(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; ")
+					| &#9733 Great Choice Signing Up &#9733
+			tr
+				td(style="height:30px;")
+			tr
+				td
+					form(action="/user/new", method="post")
+						table(style="width:100%;")
+							tr
+								td(style="background-color:#292929; color:white; padding:4px; padding-left:10px; border-radius:2em;")
+									| User Information
+							tr
+								td(style="height:10px;")
+							tr
+								td
+									table(style="font-size:16px; padding-left:20px; padding-top:10px; width:80%; margin:auto;")
+										tr
+											td
+												table
+													tr
+														td(style="text-align:right;")
+															| Preffered Username:
+														td
+															input(type="text", name="username", maxlength="40", required="required", autofocus).input_text
+													tr
+														td(style="height:20px;")
+													tr
+														td(style="text-align:right;")
+															| First Name:
+														td
+															input(type="text", name="first_name", maxlength="40", required="required").input_text
+													tr
+														td(style="text-align:right;")
+															| Last Name:
+														td
+															input(type="text", name="last_name", maxlength="40", required="required").input_text
+											td
+												table
+													tr
+														td
+													tr
+														td(style="height:20px;")
+													tr
+														td(style="text-align:right;")
+															| Email:
+														td
+															input(type="email", name="email", maxlength="50", style="width:200px;").input_text
+							tr
+								td(style="height:10px;")
+							tr
+								td(style="background-color:#22291e; color:white; padding:4px; padding-left:10px; border-radius:2em;")
+									| Security
+							tr
+								td(style="height:10px;")
+							tr
+								td
+									table(style="font-size:16px; padding-left:20px; padding-top:10px; width:80%; margin:auto;")
+										tr
+											td(style="text-align:right;")
+												| Your Password:
+											td
+												input(type="password", name="password", maxlength="16").input_text
+										tr
+											td(style="text-align:right;")
+												| Confirm Your Password:
+											td
+												input(type="password", name="password_confirm", maxlength="16").input_text
+							tr
+								td(style="height:10px;")
+							tr
+								td(style="background-color:#173611; color:white; padding:4px; padding-left:10px; border-radius:2em;")
+									| Captcha Perhaps?
+							tr
+								td(style="height:10px;")
+							tr
+								td
+									div(style="border:1px solid black; width:50%; height:30px; margin:auto; text-align:center; padding:20px;")
+										| Captcha Placeholder
+							tr
+								td(style="height:10px;")
+							tr
+								td(style="background-color:#0f5200; color:white; padding:4px; padding-left:10px; border-radius:2em;")
+									| Ready?
+							tr
+								td
+									table(style="font-size:16px; padding-top:10px; width:60px; margin:auto;")
+										tr
+											td
+												button(type="submit").submit1
+													| Continue
+
+	include footer
