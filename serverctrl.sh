@@ -1,6 +1,6 @@
 #!/bin/bash
 
-main_javascript_file=/usr/local/node/docs/project/app.js
+main_javascript_file=/usr/local/node/docs/Project/app.js
 
 usage="$(basename $0) option
 where:
