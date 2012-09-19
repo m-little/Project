@@ -41,5 +41,5 @@ exports.login = function(req, res)
 
 exports.sign_up = function(req, res)
 {
-	res.render('sign_up', { title: website_title });
+	res.render('sign_up', { title: website_title, miss: req.query.miss });
 };

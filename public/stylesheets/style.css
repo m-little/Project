@@ -206,3 +206,26 @@ button.submit1:active
 	padding-top:3px;
 	padding-bottom:5px;
 }
+
+button.submit2
+{
+	font-size:22px;
+	color:white;
+	margin:auto;
+	background-color:black;
+	cursor:pointer;
+	height:42px;
+	padding:2px;
+	padding-left:8px;
+	padding-right:8px;
+	border-radius:.8em;
+}
+button.submit2:hover
+{
+	background-color:#1c1c1c;
+}
+button.submit2:active
+{
+	padding-top:0px;
+	padding-bottom:4px;
+}
