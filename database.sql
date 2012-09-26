@@ -42,16 +42,20 @@ CONSTRAINT fk_user_passkeys FOREIGN KEY(user_id) REFERENCES passkeys(user_id)
 
 CREATE TABLE category
 (
-category_id INT(11) NOT NULL AUTO_INCREMENT,
+category_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 category_name VARCHAR(40) NOT NULL,
+use_count INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_category PRIMARY KEY(category_id)
 );
 
 CREATE TABLE recipe
 (
-recipe_id INT(11) NOT NULL AUTO_INCREMENT,
+recipe_id SERIAL,
 owner_id VARCHAR(40) NOT NULL,
-category_id INT(11) NOT NULL,
+category_id SMALLINT UNSIGNED NOT NULL,
+recipe_name VARCHAR(40) NOT NULL,
+rank_count INT UNSIGNED NOT NULL DEFAULT 0,
+rank_sum INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_recipe PRIMARY KEY(recipe_id),
 CONSTRAINT fk_recipe_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(category_id)
@@ -59,9 +63,9 @@ CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(categ
 
 CREATE TABLE comment
 (
-comment_id INT(11) NOT NULL AUTO_INCREMENT,
+comment_id SERIAL,
 owner_id VARCHAR(40) NOT NULL,
-recipe_id INT(11) NOT NULL,
+recipe_id BIGINT UNSIGNED NOT NULL,
 content VARCHAR(500) NOT NULL,
 CONSTRAINT pk_comment PRIMARY KEY(comment_id),
 CONSTRAINT fk_comment_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
@@ -70,25 +74,28 @@ CONSTRAINT fk_comment_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
 
 CREATE TABLE unit
 (
-unit_id INT(11) NOT NULL AUTO_INCREMENT,
+unit_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 unit_name VARCHAR(20) NOT NULL,
+abrev VARCHAR(10),
+use_count INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_unit PRIMARY KEY(unit_id)
 );
 
 CREATE TABLE ingredient
 (
-ingr_id INT(11) NOT NULL AUTO_INCREMENT,
+ingr_id SERIAL,
 ingr_name VARCHAR(20) NOT NULL,
+use_count INT(11),
 CONSTRAINT pk_ingredient PRIMARY KEY(ingr_id)
 );
 
 CREATE TABLE recipe_ingredient
 (
-recipe_ingr_id INT(11) NOT NULL AUTO_INCREMENT,
-recipe_id INT(11) NOT NULL,
-ingr_id INT(11) NOT NULL,
-unit_id INT(11) NOT NULL,
-unit_amount INT(10) NOT NULL,
+recipe_ingr_id SERIAL,
+recipe_id BIGINT UNSIGNED NOT NULL,
+ingr_id BIGINT UNSIGNED NOT NULL,
+unit_id SMALLINT UNSIGNED NOT NULL,
+unit_amount DOUBLE(7,4) NOT NULL,
 CONSTRAINT fk_rec_ingr_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id),
 CONSTRAINT fk_rec_ingr_ingr FOREIGN KEY(ingr_id) REFERENCES ingredient(ingr_id),
 CONSTRAINT fk_rec_ingr_unit FOREIGN KEY(unit_id) REFERENCES unit(unit_id),
@@ -104,3 +111,40 @@ INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Julia', 'admin', 'Julia', 'Collins', 'jlcollins4@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Curtis', 'admin', 'Curtis', 'Sydnor', 'casydnor1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
+
+INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs"
+INSERT INTO unit (unit_name, abrev) VALUES('Teaspoon', 'tsp');
+INSERT INTO unit (unit_name, abrev) VALUES('Tablespoon', 'tbsp');
+INSERT INTO unit (unit_name, abrev) VALUES('Dessertspoon', 'dstspn');
+INSERT INTO unit (unit_name) VALUES('Cup');
+INSERT INTO unit (unit_name) VALUES('Drop');
+INSERT INTO unit (unit_name, abrev) VALUES('Pinch', 'pn');
+INSERT INTO unit (unit_name) VALUES('Dash');
+INSERT INTO unit (unit_name) VALUES('Smidgen');
+INSERT INTO unit (unit_name) VALUES('Handfull');
+INSERT INTO unit (unit_name, abrev) VALUES('Gill', 'gi');
+INSERT INTO unit (unit_name, abrev) VALUES('Ounce', 'oz');
+INSERT INTO unit (unit_name, abrev) VALUES('Fluid Ounces', 'fl oz');
+INSERT INTO unit (unit_name, abrev) VALUES('Pound', 'lb');
+INSERT INTO unit (unit_name, abrev) VALUES('Pint', 'pt');
+INSERT INTO unit (unit_name, abrev) VALUES('Quart', 'qt');
+INSERT INTO unit (unit_name, abrev) VALUES('Gallon', 'gal');
+INSERT INTO unit (unit_name) VALUES('Jigger');
+INSERT INTO unit (unit_name, abrev) VALUES('Peck', 'pk');
+INSERT INTO unit (unit_name, abrev) VALUES('Bushel', 'bu');
+INSERT INTO unit (unit_name) VALUES('Firkin');
+INSERT INTO unit (unit_name) VALUES('Hogshead');
+INSERT INTO unit (unit_name, abrev) VALUES('Mililiter', 'ml');
+INSERT INTO unit (unit_name, abrev) VALUES('Cubic Centimeter', 'cc');
+INSERT INTO unit (unit_name) VALUES('Cubic Foot');
+INSERT INTO unit (unit_name) VALUES('Cubic Inch');
+INSERT INTO unit (unit_name, abrev) VALUES('Liter', 'l');
+INSERT INTO unit (unit_name) VALUES('Fifth');
+INSERT INTO unit (unit_name) VALUES('Shot');
+INSERT INTO unit (unit_name, abrev) VALUES('Gram', 'g');
+INSERT INTO unit (unit_name, abrev) VALUES('Kilogram', 'kg');
+INSERT INTO unit (unit_name, abrev) VALUES('Inch', 'in');
+INSERT INTO unit (unit_name, abrev) VALUES('Truckload', 'tl');
+INSERT INTO unit (unit_name, abrev) VALUES('Partial Truckload', 'ltl');
+INSERT INTO unit (unit_name) VALUES('Crate');
+INSERT INTO unit (unit_name) VALUES('Bucket');
