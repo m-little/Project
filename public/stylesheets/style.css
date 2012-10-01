@@ -9,7 +9,8 @@ html.all
 
 div.header
 {
-	position:absolute; left:0px; right:0px; top:0px; 
+	position:fixed; left:0px; right:0px; top:0px; 
+	/*min-width:800px;*/
 	height:42px; 
 	color:#bababa;
 	font-size:16px;
@@ -47,10 +48,12 @@ div.all
 
 div.footer
 {
-	position:relative; left:50%; bottom:0px;
-	margin-left:-125px;
-	width:250px;
-	height:32px;
+	position:fixed; bottom:0px;
+	/*min-width:800px;*/
+	padding-top:4px;
+	background-image:url('../images/bar1.png'); background-repeat:repeat-x; background-size:100% 100%;
+	width:100%;
+	height:22px;
 	font-size:14px;
 	color:#a0a0a0;
 	text-align:center;
@@ -58,7 +61,7 @@ div.footer
 }
 div.footer:hover
 {
-	color:#5e5e5e;
+	color:#b8b8b8;
 }
 
 div.notify1_good

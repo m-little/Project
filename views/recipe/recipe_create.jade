@@ -4,6 +4,16 @@ html.all
 	include ../header
 
 	div.all
-		| Create Recipe!
+		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; ")
+			| Create Recipe
+		div(style="float:left; width:500px; padding:4px;")
+			| Recipe Name:
+			input.input_text(style="margin-left:10px; width:300px;", name="recipe_name", required="required", autofucus)
+		div(style="float:left; width:500px; padding:4px;")
+			| Category:
+			select(size="1", style="width:200px; height:30px; font-size:16px; margin-left:10px; padding-left:10px;")
+				- for( var i = 0; i < categories.length; i++)
+					option
+						= categories[i]
 
 	include ../footer

@@ -11,6 +11,8 @@ USE project;
 -- mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
 -- ^ this doesn't give you any feedback though...
 
+DROP TRIGGER IF EXISTS tri_category_counter;
+
 DROP TABLE IF EXISTS recipe_ingredient;
 DROP TABLE IF EXISTS ingredient;
 DROP TABLE IF EXISTS unit;
@@ -21,8 +23,6 @@ DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS picture;
 DROP TABLE IF EXISTS passkeys;
-
-DROP TRIGGER IF EXISTS tri_category_counter;
 
 CREATE TABLE passkeys
 (
@@ -113,7 +113,7 @@ CREATE TABLE ingredient
 ingr_id SERIAL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 ingr_name VARCHAR(20) NOT NULL,
-use_count INT(11),
+use_count INT(11) UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_ingredient PRIMARY KEY(ingr_id),
 CONSTRAINT fk_ingredient_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
 );
@@ -131,6 +131,18 @@ CONSTRAINT fk_rec_ingr_unit FOREIGN KEY(unit_id) REFERENCES unit(unit_id),
 CONSTRAINT pk_rec_ingr PRIMARY KEY(recipe_ingr_id)
 );
 
+-- Triggers
+
+delimiter |
+
+CREATE TRIGGER tri_category_counter AFTER INSERT ON recipe
+	FOR EACH ROW BEGIN
+		UPDATE category SET use_count = use_count + 1 WHERE category_id = NEW.category_id;
+	END;
+|
+
+delimiter ;
+
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Sam', 'e233560939c66735c503f136f32a431cb203db78', 'aaf4c61ddcc5e8a2dabede0f3b482cd9aea9434d');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Mike', '4d00564fd19d74efff6ba1f392f757f33fca273b', '4196ce6a9377e11ecc9f01517e8a118c4b596646');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Julia', '9bb9949ea212c05242d0110858987af879c84041', '5fc0d6f9d1b18a1a28738a9834ef6bf12c2716f9');
@@ -142,6 +154,20 @@ INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Julia', 'admin', 'Julia', 'Collins', 'jlcollins4@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Curtis', 'admin', 'Curtis', 'Sydnor', 'casydnor1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
+
+INSERT INTO category (category_name) VALUES('');
+INSERT INTO category (category_name, use_count) VALUES('Appetizer', 2);
+INSERT INTO category (category_name) VALUES('Dessert');
+INSERT INTO category (category_name) VALUES('Sauce');
+INSERT INTO category (category_name, use_count) VALUES('Dip', 1);
+INSERT INTO category (category_name) VALUES('Cake');
+INSERT INTO category (category_name) VALUES('Beef');
+INSERT INTO category (category_name) VALUES('Chicken');
+INSERT INTO category (category_name) VALUES('Fish');
+INSERT INTO category (category_name) VALUES('Ham');
+INSERT INTO category (category_name) VALUES('Turkey');
+INSERT INTO category (category_name) VALUES('Breakfast');
+INSERT INTO category (category_name) VALUES('Sandwich');
 
 INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs"
 INSERT INTO unit (unit_name, abrev) VALUES('Teaspoon', 'tsp');
