@@ -2,6 +2,7 @@
 
 main_javascript_file=/usr/local/node/docs/project/app.js
 
+
 usage="$(basename $0) option
 where:
     option = start | restart | stop"
@@ -24,9 +25,13 @@ if [[ $1 =~ ^("start"|"START")$ ]]; then # Start the node process
 		exit 2
 	fi
 
-	echo "Starting Node Process"
-	echo "node $main_javascript_file &" 
-	/usr/local/node/bin/node $main_javascript_file &
+	echo "Updating Database"
+	mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
+	if [ $? -eq 0 ]; then
+		echo "Starting Node Process"
+		echo "node $main_javascript_file &" 
+		/usr/local/node/bin/node $main_javascript_file &
+	fi
 
 elif [[ $1 =~ ^("restart"|"RESTART"|"bounce"|"BOUNCE")$ ]]; then # Restart the node process
 
@@ -41,9 +46,13 @@ elif [[ $1 =~ ^("restart"|"RESTART"|"bounce"|"BOUNCE")$ ]]; then # Restart the n
 	echo "kill -9 $node_pid"
 	kill -9 $node_pid
 
-	echo "Starting Node Process"
-	echo "node $main_javascript_file &" 
-	/usr/local/node/bin/node $main_javascript_file &
+	echo "Updating Database"
+	mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
+	if [ $? -eq 0 ]; then
+		echo "Starting Node Process"
+		echo "node $main_javascript_file &" 
+		/usr/local/node/bin/node $main_javascript_file &
+	fi
 
 elif [[ $1 =~ ^("kill"|"KILL"|"stop"|"STOP")$ ]]; then # Kill the node process
 
