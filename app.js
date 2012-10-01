@@ -45,8 +45,8 @@ app.configure(function(){
 // });
 
 app.get('*', function(req, res, next) {
-  if (req.session.user == undefined)
-    req.session.user = 'guest';
+  if (req.session.logged_in == undefined)
+    req.session.logged_in = 0;
   global.session = req.session;
   next();
   });

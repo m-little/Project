@@ -8,8 +8,8 @@ exports.index = function(req, res)
 {
 	if (req.query.logout == '1')
 	{
-		global.session.user = 'guest';
-		req.session.user = 'guest';
+		global.session.logged_in = 0;
+		req.session.logged_in = 0;
 		global.session.destroy();
 	}
 

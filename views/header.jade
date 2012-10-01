@@ -10,10 +10,10 @@ div.header
 		tr
 			td //- This is just to allow spacing options
 			#userinfo
-				if global.session.user != 'guest'
+				if global.session.logged_in != 0
 					td(style="width:200px;")
 						div.header_info_r
-							| Hello #{global.session.user}!
+							| Hello #{global.session.user.id}!
 					td(style="width:10px;")
 						div.userinfo_settings(style="width:50px;")
 							| &#9881

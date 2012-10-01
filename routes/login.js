@@ -1,5 +1,6 @@
 var _mysql = require('mysql');
 var crypto = require('crypto');
+var obj_user = require('../objects/user');
 
 exports.check_credentials = function check_credentials(user, pass, callback)
 {
@@ -33,8 +34,8 @@ exports.check_credentials = function check_credentials(user, pass, callback)
 					if (new_pass == row.pass)
 					{
 						logged_in = true;
-						global.session.user = user;
-						global.session.user_group = row.user_group;
+						global.session.user = new obj_user.User(user, row.user_group);
+						global.session.logged_in = 1;
 					}
 
 					callback(logged_in, user, row.user_group);
