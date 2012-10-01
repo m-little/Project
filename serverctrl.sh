@@ -3,14 +3,26 @@
 main_javascript_file=/usr/local/node/docs/project/app.js
 
 
-usage="$(basename $0) option
+usage="$(basename $0) option [update]
 where:
-    option = start | restart | stop"
+    option = start | restart | stop
+    update = update (optional) - updates database"
 
-if [ ! $# -eq 1 ]; then
+if [ $# -lt 1 ]; then
 	echo -e "\e[0;31mError: $(basename $0) requires 1 argument!\e[0m"
 	echo "$usage"
 	exit 1
+fi
+
+if [ $# -gt 2 ]; then
+	echo -e "\e[0;31mError: $(basename $0) requires 1 argument!\e[0m"
+	echo "$usage"
+	exit 1
+fi
+
+update=0
+if [[ $2 =~ ^("update"|"UPDATE"|"u"|"U")$ ]]; then # Start the node process
+	update=1
 fi
 
 if [[ $1 =~ ^("start"|"START")$ ]]; then # Start the node process
@@ -25,8 +37,10 @@ if [[ $1 =~ ^("start"|"START")$ ]]; then # Start the node process
 		exit 2
 	fi
 
-	echo "Updating Database"
-	mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
+	if [ $update -eq 1 ]; then
+		echo "Updating Database"
+		mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
+	fi
 	if [ $? -eq 0 ]; then
 		echo "Starting Node Process"
 		echo "node $main_javascript_file &" 
@@ -46,8 +60,10 @@ elif [[ $1 =~ ^("restart"|"RESTART"|"bounce"|"BOUNCE")$ ]]; then # Restart the n
 	echo "kill -9 $node_pid"
 	kill -9 $node_pid
 
-	echo "Updating Database"
-	mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
+	if [ $update -eq 1 ]; then
+		echo "Updating Database"
+		mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
+	fi
 	if [ $? -eq 0 ]; then
 		echo "Starting Node Process"
 		echo "node $main_javascript_file &" 
