@@ -3,8 +3,8 @@ html.all
 	font-family:Arial,Helvetica,sans-serif;
 	background-color:white;
 	position:relative;
+	min-width:800px;
 	height:100%;
-	min-width:500px;
 }
 
 div.header
@@ -27,19 +27,30 @@ div.title_middle
 	cursor:default;
 }
 
+body.body
+{
+	height:auto;
+	min-height:100%;
+	position:relative;
+	margin:0px;
+}
+
 div.all
 {
-	position:absolute; left:0px; right:0px; top:42px; bottom:32px;
+	position:relative; left:0px; right:0px; top:42px; bottom:32px;
 	font-size:18px; color:black;
-	padding:20px; 
+	padding:20px;
+	padding-bottom:70px;
+	min-height:600px;
+	height:auto;
 }
 
 div.footer
 {
-	position:absolute; left:50%; bottom:0px;
+	position:relative; left:50%; bottom:0px;
 	margin-left:-125px;
 	width:250px;
-	height:32px; 
+	height:32px;
 	font-size:14px;
 	color:#a0a0a0;
 	text-align:center;

@@ -1,8 +1,5 @@
 var login = require('./login.js');
 
-// in app.js too
-var website_title = 'Website Name';
-
 // Handling GET and POST data...
 // req.query.blah = the GET variable named blah
 // req.body.blah = the POST variable named blah
@@ -33,10 +30,10 @@ exports.login = function(req, res)
 
 	if (req.body.username != undefined || req.body.password != undefined)
 	{
-		login.check_credentials(req.body.username, req.body.password, result)
+		login.check_credentials(req.body.username, req.body.password, result);
 	}
 	else //user hasn't tried to login yet. logged_in should = -1 still
-		result(success)
+		result(success);
 };
 
 exports.sign_up = function(req, res)

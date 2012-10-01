@@ -1,14 +1,13 @@
 // Global Vars
 mysql_vals = {host: 'localhost', port: 3306, user: 'student', password: 'student', database: 'project'};
-
-// in index.js too
-var website_title = 'Website Name';
+website_title = 'Website Name';
 
 var express = require('express')
   , routes = require('./routes')
   , http = require('http')
   , path = require('path')
-  , user = require('./routes/user');
+  , user = require('./routes/user')
+  , recipe = require('./routes/recipe');
 
 var app = express();
 
@@ -63,6 +62,8 @@ app.post('/login', routes.login);
 
 app.get('/sign_up', routes.sign_up);
 app.post('/user/:new', user.create);
+
+app.get('/recipe/:create', recipe.display_create);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

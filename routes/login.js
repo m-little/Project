@@ -3,7 +3,7 @@ var crypto = require('crypto');
 
 exports.check_credentials = function check_credentials(user, pass, callback)
 {
-	var logged_in = false
+	var logged_in = false;
 
 	var mysql = _mysql.createClient({host: mysql_vals.host,	port: mysql_vals.port, user: mysql_vals.user, password: mysql_vals.password});
 
@@ -32,7 +32,7 @@ exports.check_credentials = function check_credentials(user, pass, callback)
 
 					if (new_pass == row.pass)
 					{
-						logged_in = true
+						logged_in = true;
 						global.session.user = user;
 						global.session.user_group = row.user_group;
 					}
