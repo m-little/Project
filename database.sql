@@ -69,6 +69,7 @@ owner_id VARCHAR(40) NOT NULL,
 category_id SMALLINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 recipe_name VARCHAR(40) NOT NULL,
+directions VARCHAR(5000) NOT NULL,
 rank_count INT UNSIGNED NOT NULL DEFAULT 0,
 rank_sum INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_recipe PRIMARY KEY(recipe_id),
@@ -112,8 +113,8 @@ CREATE TABLE ingredient
 (
 ingr_id SERIAL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
-ingr_name VARCHAR(20) NOT NULL,
-use_count INT(11),
+ingr_name VARCHAR(40) NOT NULL,
+use_count INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_ingredient PRIMARY KEY(ingr_id),
 CONSTRAINT fk_ingredient_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
 );
@@ -143,39 +144,113 @@ INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Julia', 'admin', 'Julia', 'Collins', 'jlcollins4@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Curtis', 'admin', 'Curtis', 'Sydnor', 'casydnor1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 
-INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs"
-INSERT INTO unit (unit_name, abrev) VALUES('Teaspoon', 'tsp');
-INSERT INTO unit (unit_name, abrev) VALUES('Tablespoon', 'tbsp');
-INSERT INTO unit (unit_name, abrev) VALUES('Dessertspoon', 'dstspn');
-INSERT INTO unit (unit_name) VALUES('Cup');
-INSERT INTO unit (unit_name) VALUES('Drop');
-INSERT INTO unit (unit_name, abrev) VALUES('Pinch', 'pn');
-INSERT INTO unit (unit_name) VALUES('Dash');
-INSERT INTO unit (unit_name) VALUES('Smidgen');
-INSERT INTO unit (unit_name) VALUES('Handfull');
-INSERT INTO unit (unit_name, abrev) VALUES('Gill', 'gi');
-INSERT INTO unit (unit_name, abrev) VALUES('Ounce', 'oz');
-INSERT INTO unit (unit_name, abrev) VALUES('Fluid Ounces', 'fl oz');
-INSERT INTO unit (unit_name, abrev) VALUES('Pound', 'lb');
-INSERT INTO unit (unit_name, abrev) VALUES('Pint', 'pt');
-INSERT INTO unit (unit_name, abrev) VALUES('Quart', 'qt');
-INSERT INTO unit (unit_name, abrev) VALUES('Gallon', 'gal');
-INSERT INTO unit (unit_name) VALUES('Jigger');
-INSERT INTO unit (unit_name, abrev) VALUES('Peck', 'pk');
-INSERT INTO unit (unit_name, abrev) VALUES('Bushel', 'bu');
-INSERT INTO unit (unit_name) VALUES('Firkin');
-INSERT INTO unit (unit_name) VALUES('Hogshead');
-INSERT INTO unit (unit_name, abrev) VALUES('Mililiter', 'ml');
-INSERT INTO unit (unit_name, abrev) VALUES('Cubic Centimeter', 'cc');
-INSERT INTO unit (unit_name) VALUES('Cubic Foot');
-INSERT INTO unit (unit_name) VALUES('Cubic Inch');
-INSERT INTO unit (unit_name, abrev) VALUES('Liter', 'l');
-INSERT INTO unit (unit_name) VALUES('Fifth');
-INSERT INTO unit (unit_name) VALUES('Shot');
-INSERT INTO unit (unit_name, abrev) VALUES('Gram', 'g');
-INSERT INTO unit (unit_name, abrev) VALUES('Kilogram', 'kg');
-INSERT INTO unit (unit_name, abrev) VALUES('Inch', 'in');
-INSERT INTO unit (unit_name, abrev) VALUES('Truckload', 'tl');
-INSERT INTO unit (unit_name, abrev) VALUES('Partial Truckload', 'ltl');
-INSERT INTO unit (unit_name) VALUES('Crate');
-INSERT INTO unit (unit_name) VALUES('Bucket');
+INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs" 1
+INSERT INTO unit (unit_name, abrev) VALUES('Teaspoon', 'tsp');  -- 2
+INSERT INTO unit (unit_name, abrev) VALUES('Tablespoon', 'tbsp'); -- 3
+INSERT INTO unit (unit_name, abrev) VALUES('Dessertspoon', 'dstspn');  -- 4
+INSERT INTO unit (unit_name) VALUES('Cup'); -- 5
+INSERT INTO unit (unit_name) VALUES('Drop');  -- 6
+INSERT INTO unit (unit_name, abrev) VALUES('Pinch', 'pn');  -- 7
+INSERT INTO unit (unit_name) VALUES('Dash');  -- 8
+INSERT INTO unit (unit_name) VALUES('Smidgen');  -- 9
+INSERT INTO unit (unit_name) VALUES('Handfull');  -- 10
+INSERT INTO unit (unit_name, abrev) VALUES('Gill', 'gi');  -- 11
+INSERT INTO unit (unit_name, abrev) VALUES('Ounce', 'oz');  -- 12
+INSERT INTO unit (unit_name, abrev) VALUES('Fluid Ounces', 'fl oz');  -- 13
+INSERT INTO unit (unit_name, abrev) VALUES('Pound', 'lb');  -- 14
+INSERT INTO unit (unit_name, abrev) VALUES('Pint', 'pt');  -- 15
+INSERT INTO unit (unit_name, abrev) VALUES('Quart', 'qt');  -- 16
+INSERT INTO unit (unit_name, abrev) VALUES('Gallon', 'gal');  -- 17
+INSERT INTO unit (unit_name) VALUES('Jigger');  -- 18
+INSERT INTO unit (unit_name, abrev) VALUES('Peck', 'pk');  -- 19
+INSERT INTO unit (unit_name, abrev) VALUES('Bushel', 'bu'); -- 20
+INSERT INTO unit (unit_name) VALUES('Firkin');  -- 21
+INSERT INTO unit (unit_name) VALUES('Hogshead');  -- 22
+INSERT INTO unit (unit_name, abrev) VALUES('Mililiter', 'ml');  -- 23
+INSERT INTO unit (unit_name, abrev) VALUES('Cubic Centimeter', 'cc');  -- 24
+INSERT INTO unit (unit_name) VALUES('Cubic Foot');  -- 25
+INSERT INTO unit (unit_name) VALUES('Cubic Inch');  -- 26
+INSERT INTO unit (unit_name, abrev) VALUES('Liter', 'l');  --  27
+INSERT INTO unit (unit_name) VALUES('Fifth');  -- 28
+INSERT INTO unit (unit_name) VALUES('Shot');  -- 29
+INSERT INTO unit (unit_name, abrev) VALUES('Gram', 'g');  -- 30
+INSERT INTO unit (unit_name, abrev) VALUES('Kilogram', 'kg');  -- 31
+INSERT INTO unit (unit_name, abrev) VALUES('Inch', 'in');  --  32
+INSERT INTO unit (unit_name, abrev) VALUES('Truckload', 'tl');  -- 33
+INSERT INTO unit (unit_name, abrev) VALUES('Partial Truckload', 'ltl');  -- 34
+INSERT INTO unit (unit_name) VALUES('Crate');  -- 35
+INSERT INTO unit (unit_name) VALUES('Bucket');  -- 36
+
+INSERT INTO category (category_name) VALUES('Side Dishes'); -- 1
+INSERT INTO category (category_name) VALUES('Fall Desserts'); -- 2
+INSERT INTO category (category_name) VALUES('Cake'); -- 3
+INSERT INTO category (category_name) VALUES('Pie'); -- 4
+INSERT INTO category (category_name) VALUES('Beef'); -- 5
+INSERT INTO category (category_name) VALUES('Chicken'); -- 6
+INSERT INTO category (category_name) VALUES('Pork'); -- 7
+INSERT INTO category (category_name) VALUES('Breakfast'); -- 8
+INSERT INTO category (category_name) VALUES('Desserts'); -- 9
+
+INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Curtis', '1', 'Potato Salad', 'directions');  -- 1
+INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Sam', '2', 'Grandmas Pumpkin Pie', 'directions');  -- 2
+INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Julia', '9', 'Raspberry Cheesecake Bars', 'directions'); -- 3
+
+INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
+INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
+INSERT INTO ingredient (ingr_name) VALUES('Mayonnaise');  -- 3
+INSERT INTO ingredient (ingr_name) VALUES('Chopped Green Onions');  -- 4
+INSERT INTO ingredient (ingr_name) VALUES('Chopped Fresh Dill');  -- 5
+INSERT INTO ingredient (ingr_name) VALUES('Dijon Mustard');  -- 6
+INSERT INTO ingredient (ingr_name) VALUES('Lemon Juice');  -- 7
+INSERT INTO ingredient (ingr_name) VALUES('Pepper');  -- 8
+INSERT INTO ingredient (ingr_name) VALUES('Unbaked Pie Shells');  -- 9
+INSERT INTO ingredient (ingr_name) VALUES('Sugar');  -- 10
+INSERT INTO ingredient (ingr_name) VALUES('Salt');  -- 11
+INSERT INTO ingredient (ingr_name) VALUES('Cinnamon');  -- 12
+INSERT INTO ingredient (ingr_name) VALUES('Ginger');  -- 13
+INSERT INTO ingredient (ingr_name) VALUES('Nutmeg');  -- 14
+INSERT INTO ingredient (ingr_name) VALUES('Eggs');  -- 15
+INSERT INTO ingredient (ingr_name) VALUES('Solid Pack Pumpkin');  -- 16
+INSERT INTO ingredient (ingr_name) VALUES('Evaporated Milk');  -- 17
+INSERT INTO ingredient (ingr_name) VALUES('All Purpose Flour');  -- 18
+INSERT INTO ingredient (ingr_name) VALUES('Brown Sugar');  -- 19
+INSERT INTO ingredient (ingr_name) VALUES('Finely Chopped Sliced Almonds');  -- 20
+INSERT INTO ingredient (ingr_name) VALUES('Butter Flavored Shortening');  -- 21
+INSERT INTO ingredient (ingr_name) VALUES('Softened Cream Cheese');  -- 22
+INSERT INTO ingredient (ingr_name) VALUES('Granulated Sugar');  -- 23
+INSERT INTO ingredient (ingr_name) VALUES('Almond Extract');  -- 24
+INSERT INTO ingredient (ingr_name) VALUES('Seedless Raspberry Preserves');  -- 25
+INSERT INTO ingredient (ingr_name) VALUES('Flaked Coconut');  -- 26
+INSERT INTO ingredient (ingr_name) VALUES('Sliced Almonds');  -- 27
+
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 1, 1, 3); -- Potato Salad, 3 pounds potatoes scrubbed and quartered
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 2, 5, .5); -- Potato Salad, Italian Style Dressing 3/4 cup
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 3, 5, .75); -- Potato Salad, 3/4 cup mayonnaise
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 4, 5, .25); -- Potato Salad, 1/4 chopped green onions
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 5, 2, 2); -- Potato Salad, 2 teaspoons chopped fresh dill
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 6, 2, 1); -- Potato Salad, 1 teaspoon digjon mustard (optional)
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 7, 2, 1); -- Potato Salad, 1 teaspoon lemon juice
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 8, 2, .125); -- Potato Salad, 1/8 teaspoon pepper
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(2, 9, 1, 2); -- Grandmas Pumpkin Pie, 2 (9inch) unbaked pie shells
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(2, 10, 5, 1.5); -- Grandmas Pumpkin Pie, 1 1/2 cups sugar
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(2, 11, 2, 1); -- Grandmas Pumpkin Pie, 1 teaspoon salt
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(2, 12, 2, 1); -- Grandmas Pumpkin Pie, 1 teaspoon cinnamon
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(2, 13, 2, .5); -- Grandmas Pumpkin Pie, 1/2 teaspoon ginger
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(2, 14, 2, .5); -- Grandmas Pumpkin Pie, 1/2 teaspoon nutmeg
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(2, 15, 1, 4); -- Grandmas Pumpkin Pie, 4 eggs
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(2, 16, 1, 3.5); -- Grandmas Pumpkin Pie, 3 1/2 solid pack pumpkin
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(2, 17, 5, 1.5); -- Grandmas Pumpkin Pie, 1 1/2 cups evaporated milk
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 18, 5, 1.25); -- Respberry Cheesecake Bars, 1 1/4 cup all purpose flour
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 19, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup packed brown sugar
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 20, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup finly chopped sliced almonds
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 21, 5, 1.5); -- Respberry Cheesecake Bars, Butter Flavored Shortening
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 22, 12, 16); -- Respberry Cheesecake Bars, 2 8-ounce packagesCream Cheese, Softended
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 23, 5, .66); -- Respberry Cheesecake Bars, 2/3 cup Granulated Sugar
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 15, 1, 2); -- Respberry Cheesecake Bars, 2 eggs
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 24, 2, .75); -- Respberry Cheesecake Bars, 3/4 teaspoon almond extract
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 25, 5, 1); -- Respberry Cheesecake Bars, 1 cup seedless raspberry preserves or other  preserves or jam
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 26, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup flaked coconut
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 27, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup sliced almonds
+
+
+
