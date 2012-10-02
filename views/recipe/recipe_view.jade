@@ -1,0 +1,47 @@
+doctype 5
+html.all
+
+	include ../header
+
+	div.all
+		div(style="width:128px; height:128px; border:1px solid black;")
+
+		div(style="font-size:32px; width:auto; height:40px; position:relative; left:140px; top:-56px; margin-bottom:-28px;")
+			| #{recipe.name}
+		div(style="font-size:16px; width:auto; height:40px; position:relative; left:140px; top:-32px; margin-bottom:-28px;")
+			- if (recipe.owner == global.session.user.id)
+				| Owned by You
+			- else
+				| Owned by #{recipe.owner}
+		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray;")
+			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
+				| Ingredients
+			table(style="margin-left:10px;")
+				- for (var i = 0; i < (recipe.ingredients).length; i++)
+					tr
+						td(style="height:20px; padding-left:10px; padding-left:10px; padding-right:2px; margin:3px; text-align:right;")
+							- if (recipe.ingredients[i].amount == .5)
+								| 1/2
+							- else if (recipe.ingredients[i].amount == .75)
+								| 3/4
+							- else if (recipe.ingredients[i].amount == .25)
+								| 1/4
+							- else if (recipe.ingredients[i].amount == .125)
+								| 1/8
+							- else if (recipe.ingredients[i].amount == 1/3)
+								| 1/3
+							- else if (recipe.ingredients[i].amount == .6667)
+								| 2/3
+							- else
+								| #{recipe.ingredients[i].amount} 
+						td(style="padding-right:4px;")
+							|  #{recipe.ingredients[i].unit_name}
+							|  #{recipe.ingredients[i].name}
+		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; border-bottom:1px dotted gray;")
+			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
+				| Directions
+			div(style="padding-left:10px;")
+				| #{recipe.directions}
+
+
+	include ../footer

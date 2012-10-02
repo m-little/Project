@@ -25,7 +25,7 @@ exports.login = function(req, res)
 		if (success == 1)
 			res.redirect('/');
 		else
-			res.render('login', { title: website_title, logged_in: success, username: user, user_group: group});
+			res.render('login', { title: website_title, logged_in: success});
 	}
 
 	if (req.body.username != undefined || req.body.password != undefined)

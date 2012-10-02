@@ -69,9 +69,8 @@ owner_id VARCHAR(40) NOT NULL,
 category_id SMALLINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 recipe_name VARCHAR(40) NOT NULL,
+recipe_public TINYINT(1) NOT NULL DEFAULT 1,
 directions VARCHAR(5000) NOT NULL,
-rank_count INT UNSIGNED NOT NULL DEFAULT 0,
-rank_sum INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_recipe PRIMARY KEY(recipe_id),
 CONSTRAINT fk_recipe_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(category_id),
@@ -104,7 +103,7 @@ CREATE TABLE unit
 (
 unit_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 unit_name VARCHAR(20) NOT NULL,
-abrev VARCHAR(10),
+abrev VARCHAR(10) DEFAULT '',
 use_count INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_unit PRIMARY KEY(unit_id)
 );
@@ -193,19 +192,20 @@ INSERT INTO unit (unit_name, abrev) VALUES('Partial Truckload', 'ltl');  -- 34
 INSERT INTO unit (unit_name) VALUES('Crate');  -- 35
 INSERT INTO unit (unit_name) VALUES('Bucket');  -- 36
 
-INSERT INTO category (category_name) VALUES('Side Dishes'); -- 1
-INSERT INTO category (category_name) VALUES('Fall Desserts'); -- 2
-INSERT INTO category (category_name) VALUES('Cake'); -- 3
-INSERT INTO category (category_name) VALUES('Pie'); -- 4
-INSERT INTO category (category_name) VALUES('Beef'); -- 5
-INSERT INTO category (category_name) VALUES('Chicken'); -- 6
-INSERT INTO category (category_name) VALUES('Pork'); -- 7
-INSERT INTO category (category_name) VALUES('Breakfast'); -- 8
-INSERT INTO category (category_name) VALUES('Desserts'); -- 9
+INSERT INTO category (category_name) VALUES(''); -- 1
+INSERT INTO category (category_name) VALUES('Side Dishes'); -- 2
+INSERT INTO category (category_name) VALUES('Fall Desserts'); -- 3
+INSERT INTO category (category_name) VALUES('Cake'); -- 4
+INSERT INTO category (category_name) VALUES('Pie'); -- 5
+INSERT INTO category (category_name) VALUES('Beef'); -- 6
+INSERT INTO category (category_name) VALUES('Chicken'); -- 7
+INSERT INTO category (category_name) VALUES('Pork'); -- 8
+INSERT INTO category (category_name) VALUES('Breakfast'); -- 9
+INSERT INTO category (category_name) VALUES('Desserts'); -- 10
 
-INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Curtis', '1', 'Potato Salad', 'directions');  -- 1
-INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Sam', '2', 'Grandmas Pumpkin Pie', 'directions');  -- 2
-INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Julia', '9', 'Raspberry Cheesecake Bars', 'directions'); -- 3
+INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Curtis', 2, 'Potato Salad', 'directions');  -- 1
+INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Sam', 3, 'Grandmas Pumpkin Pie', 'directions');  -- 2
+INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Julia', 10, 'Raspberry Cheesecake Bars', 'directions'); -- 3
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
@@ -257,7 +257,7 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 20, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup finly chopped sliced almonds
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 21, 5, 1.5); -- Respberry Cheesecake Bars, Butter Flavored Shortening
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 22, 12, 16); -- Respberry Cheesecake Bars, 2 8-ounce packagesCream Cheese, Softended
-INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 23, 5, .66); -- Respberry Cheesecake Bars, 2/3 cup Granulated Sugar
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 23, 5, 2/3); -- Respberry Cheesecake Bars, 2/3 cup Granulated Sugar
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 15, 1, 2); -- Respberry Cheesecake Bars, 2 eggs
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 24, 2, .75); -- Respberry Cheesecake Bars, 3/4 teaspoon almond extract
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 25, 5, 1); -- Respberry Cheesecake Bars, 1 cup seedless raspberry preserves or other  preserves or jam
