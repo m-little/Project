@@ -6,14 +6,58 @@ html.all
 	div.all
 		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; ")
 			| Create Recipe
-		div(style="float:left; width:500px; padding:4px;")
-			| Recipe Name:
-			input.input_text(style="margin-left:10px; width:300px;", name="recipe_name", required="required", autofucus)
-		div(style="float:left; width:500px; padding:4px;")
-			| Category:
-			select(size="1", style="width:200px; height:30px; font-size:16px; margin-left:10px; padding-left:10px;")
-				- for( var i = 0; i < categories.length; i++)
-					option
-						= categories[i]
+
+		div(style="padding:10px")
+			div(style="float:left; width:150px")
+				| Recipe Name:
+			div(style="float:left; width:360px")
+				input.input_text(type="text", style="margin-left:10px; width:300px;", name="recipe_name", required="required", autofucus)
+			div(style="float:left")
+				| Category:
+			div(style="float:left")
+				select(size="1", style="width:200px; font-size:16px; margin-left:10px; padding-left:10px;")
+					- for( var i = 0; i < categories.length; i++)
+						option
+							= categories[i]
+
+		div(style="clear:left; width:500px; padding:10px")
+			div(style="float:left; width:150px")
+				| Security:
+			div(style="float:left")
+				p(style="margin:0px")
+					input(type="radio", name="security", value="Public") 
+					| Public
+				p(style="margin:0px")
+					input(type="radio", name="security", value="Private")
+					| Private
+
+		div(style="clear:left; width:500px; padding:10px")
+			div(style="float:left; width:150px")
+				| Ingredients:
+			div(style="float:left")
+				input.input_text(type="text", style="margin-left:10px; width:300px", name="ingredient")
+
+		div(style="clear:left; padding:10px 10px 25px 10px")
+			div(style="float:left; width:150px")
+				| Preparation Time:
+			div(style="float:left")
+				select(size="1", style="width:200px; font-size:16px; margin-left:10px; padding-left:10px;")
+
+		div(style="width:500px; padding:10px")
+			div(style="float:left; width:150px")
+				| Serving Size:
+			div(style="float:left")
+				select(size="1", style="width:200px; font-size:16px; margin-left:10px; padding-left:10px;")
+
+		div(style="clear:left; padding:10px")
+			div(style="float:left; width:150px")
+				| Directions:
+			div(style="float:left; padding-left:10px")
+				textarea.text_box(type="text", style="width:650px; height:300px")
+
+		div(style="clear:left; width:810px; padding:10px")
+			div(style="float:right")
+				input(type="button", value="Create")
+	
 
 	include ../footer
