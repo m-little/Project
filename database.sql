@@ -40,6 +40,7 @@ CREATE TABLE picture
 picture_id SERIAL NOT NULL AUTO_INCREMENT,
 name VARCHAR(40) NOT NULL,
 caption VARCHAR(50),
+location VARCHAR(100),
 CONSTRAINT pk_picture PRIMARY KEY(picture_id)
 );
 
@@ -72,7 +73,7 @@ owner_id VARCHAR(40) NOT NULL,
 category_id SMALLINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 recipe_name VARCHAR(40) NOT NULL,
-recipe_public TINYINT(1) NOT NULL DEFAULT 1, --Boolean
+recipe_public TINYINT(1) NOT NULL DEFAULT 1,
 directions VARCHAR(5000) NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
@@ -177,7 +178,7 @@ INSERT INTO passkeys (user_id, pass, salt) VALUES('Mike', '4d00564fd19d74efff6ba
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Julia', '9bb9949ea212c05242d0110858987af879c84041', '5fc0d6f9d1b18a1a28738a9834ef6bf12c2716f9');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Curtis', '041b2e52b42326af4c9ac9c63504dd623ab51895', '1019078d1d90533aed697b1e94fbdba9bf3f4d4a');
 
-INSERT INTO picture (name, caption) VALUES('unknown', 'No Picture');
+INSERT INTO picture (name, caption, location) VALUES('unknown', 'No Picture', 'unknown.png');
 
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Sam', 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
