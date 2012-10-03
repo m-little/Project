@@ -179,6 +179,9 @@ INSERT INTO passkeys (user_id, pass, salt) VALUES('Julia', '9bb9949ea212c05242d0
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Curtis', '041b2e52b42326af4c9ac9c63504dd623ab51895', '1019078d1d90533aed697b1e94fbdba9bf3f4d4a');
 
 INSERT INTO picture (name, caption, location) VALUES('unknown', 'No Picture', 'unknown.png');
+INSERT INTO picture (name, caption, location) VALUES('Potato Salad', 'Potato Salad Yum!', 'pre_1.jpg');
+INSERT INTO picture (name, caption, location) VALUES('Grandmas Pumpkin Pie', 'Pumpkin Pie! - It has pumpkin in it.', 'pre_2.jpg');
+INSERT INTO picture (name, caption, location) VALUES('Raspberry Cheesecake Bars', 'Raspberry Cheesecake Bars; They are good for you!', 'pre_3.jpg');
 
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Sam', 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
@@ -233,9 +236,9 @@ INSERT INTO category (category_name) VALUES('Pork'); -- 8
 INSERT INTO category (category_name) VALUES('Breakfast'); -- 9
 INSERT INTO category (category_name) VALUES('Desserts'); -- 10
 
-INSERT INTO recipe (owner_id, category_id, recipe_name, directions, date_added) VALUES('Curtis', 2, 'Potato Salad', 'directions', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
-INSERT INTO recipe (owner_id, category_id, recipe_name, directions, date_added) VALUES('Sam', 3, 'Grandmas Pumpkin Pie', 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
-INSERT INTO recipe (owner_id, category_id, recipe_name, directions, date_added) VALUES('Julia', 10, 'Raspberry Cheesecake Bars', 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
+INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, directions, date_added) VALUES('Curtis', 2, 2, 'Potato Salad', 'directions', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
+INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, directions, date_added) VALUES('Sam', 3, 3, 'Grandmas Pumpkin Pie', 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
+INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, directions, date_added) VALUES('Julia', 10, 4, 'Raspberry Cheesecake Bars', 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2

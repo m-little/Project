@@ -4,7 +4,8 @@ html.all
 	include ../header
 
 	div.all
-		div(style="width:128px; height:128px; border:1px solid black;")
+		div(style="width:128px; height:128px; border:1px solid #d6d6d6; overflow:hidden;")
+			img(src="../images/user_images/#{recipe.picture.location}", style="height:100%;", alt="#{recipe.picture.caption}")
 
 		div(style="font-size:32px; width:auto; height:40px; position:relative; left:140px; top:-56px; margin-bottom:-28px;")
 			| #{recipe.name}

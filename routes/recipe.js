@@ -1,6 +1,7 @@
 var _mysql = require('mysql');
 var obj_recipe = require('../objects/recipe');
 var obj_ingredient = require('../objects/ingredient');
+var obj_picture = require('../objects/picture');
 
 exports.display_create = function(req, res)
 {
@@ -51,7 +52,7 @@ exports.display_view = function(req, res)
 	var mysql = _mysql.createClient({host: mysql_vals.host,	port: mysql_vals.port, user: mysql_vals.user, password: mysql_vals.password});
 	mysql.query('use ' + mysql_vals.database);
 
-	mysql.query("SELECT recipe_name, owner_id, directions FROM recipe WHERE recipe_id = " + req.query.r_id, 
+	mysql.query("SELECT recipe_name, owner_id, p.picture_id, p.location, p.caption, p.name, directions FROM recipe r JOIN picture p ON r.picture_id = p.picture_id WHERE recipe_id = " + req.query.r_id, 
 		function(err, result, fields) 
 		{
 			if (err) throw err;
@@ -64,7 +65,8 @@ exports.display_view = function(req, res)
 				}
 				
 				var row = result[0];
-				var new_recipe = new obj_recipe.Recipe(req.query.id, row.owner_id, row.recipe_name, row.directions);
+				var new_picture = new obj_picture.Picture(row.picture_id, row.name, row.caption, row.location);
+				var new_recipe = new obj_recipe.Recipe(req.query.id, row.owner_id, new_picture, row.recipe_name, row.directions);
 				query2(new_recipe);
 			}
 		});
