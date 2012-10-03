@@ -11,7 +11,10 @@ USE project;
 -- mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
 -- ^ this doesn't give you any feedback though...
 
-DROP TRIGGER IF EXISTS tri_category_counter;
+DROP TRIGGER IF EXISTS tri_category_counter1;
+DROP TRIGGER IF EXISTS tri_category_counter2;
+DROP TRIGGER IF EXISTS tri_unit_ingr_counter1;
+DROP TRIGGER IF EXISTS tri_unit_ingr_counter2;
 
 DROP TABLE IF EXISTS recipe_ingredient;
 DROP TABLE IF EXISTS ingredient;
@@ -69,8 +72,10 @@ owner_id VARCHAR(40) NOT NULL,
 category_id SMALLINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 recipe_name VARCHAR(40) NOT NULL,
-recipe_public TINYINT(1) NOT NULL DEFAULT 1,
+recipe_public TINYINT(1) NOT NULL DEFAULT 1, --Boolean
 directions VARCHAR(5000) NOT NULL,
+date_added DATETIME NOT NULL,
+date_edited DATETIME,
 CONSTRAINT pk_recipe PRIMARY KEY(recipe_id),
 CONSTRAINT fk_recipe_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(category_id),
@@ -83,6 +88,8 @@ comment_id SERIAL,
 owner_id VARCHAR(40) NOT NULL,
 recipe_id BIGINT UNSIGNED NOT NULL,
 content VARCHAR(500) NOT NULL,
+date_added DATETIME NOT NULL,
+date_edited DATETIME,
 CONSTRAINT pk_comment PRIMARY KEY(comment_id),
 CONSTRAINT fk_comment_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_comment_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
@@ -94,6 +101,8 @@ rank_id SERIAL,
 owner_id VARCHAR(40) NOT NULL,
 recipe_id BIGINT UNSIGNED NOT NULL,
 rank TINYINT UNSIGNED DEFAULT 0,
+date_added DATETIME NOT NULL,
+date_edited DATETIME,
 CONSTRAINT pk_recipe_ranking PRIMARY KEY(rank_id),
 CONSTRAINT fk_recipe_ranking_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_ranking_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
@@ -135,9 +144,29 @@ CONSTRAINT pk_rec_ingr PRIMARY KEY(recipe_ingr_id)
 
 delimiter |
 
-CREATE TRIGGER tri_category_counter AFTER INSERT ON recipe
+CREATE TRIGGER tri_category_counter1 AFTER INSERT ON recipe
 	FOR EACH ROW BEGIN
 		UPDATE category SET use_count = use_count + 1 WHERE category_id = NEW.category_id;
+	END;
+|
+
+CREATE TRIGGER tri_category_counter2 AFTER DELETE ON recipe
+	FOR EACH ROW BEGIN
+		UPDATE category SET use_count = use_count - 1 WHERE category_id = OLD.category_id;
+	END;
+|
+
+CREATE TRIGGER tri_unit_ingr_counter1 AFTER INSERT ON recipe_ingredient
+	FOR EACH ROW BEGIN
+		UPDATE unit SET use_count = use_count + 1 WHERE unit_id = NEW.unit_id;
+		UPDATE ingredient SET use_count = use_count + 1 WHERE ingr_id = NEW.ingr_id;
+	END;
+|
+
+CREATE TRIGGER tri_unit_ingr_counter2 AFTER DELETE ON recipe_ingredient
+	FOR EACH ROW BEGIN
+		UPDATE unit SET use_count = use_count - 1 WHERE unit_id = OLD.unit_id;
+		UPDATE ingredient SET use_count = use_count - 1 WHERE ingr_id = OLD.ingr_id;
 	END;
 |
 
@@ -203,9 +232,9 @@ INSERT INTO category (category_name) VALUES('Pork'); -- 8
 INSERT INTO category (category_name) VALUES('Breakfast'); -- 9
 INSERT INTO category (category_name) VALUES('Desserts'); -- 10
 
-INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Curtis', 2, 'Potato Salad', 'directions');  -- 1
-INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Sam', 3, 'Grandmas Pumpkin Pie', 'directions');  -- 2
-INSERT INTO recipe (owner_id, category_id, recipe_name, directions) VALUES('Julia', 10, 'Raspberry Cheesecake Bars', 'directions'); -- 3
+INSERT INTO recipe (owner_id, category_id, recipe_name, directions, date_added) VALUES('Curtis', 2, 'Potato Salad', 'directions', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
+INSERT INTO recipe (owner_id, category_id, recipe_name, directions, date_added) VALUES('Sam', 3, 'Grandmas Pumpkin Pie', 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
+INSERT INTO recipe (owner_id, category_id, recipe_name, directions, date_added) VALUES('Julia', 10, 'Raspberry Cheesecake Bars', 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
