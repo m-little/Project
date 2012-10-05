@@ -7,7 +7,8 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , user = require('./routes/user')
-  , recipe = require('./routes/recipe');
+  , recipe = require('./routes/recipe')
+  , wiki = require('./routes/wiki');
 
 var app = express();
 
@@ -65,6 +66,8 @@ app.post('/user/new', user.create);
 
 app.get('/recipe/create', recipe.display_create);
 app.get('/recipe/view', recipe.display_view);
+
+app.get('/wiki/view', wiki.display_view);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

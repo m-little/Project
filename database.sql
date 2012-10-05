@@ -74,6 +74,8 @@ category_id SMALLINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 recipe_name VARCHAR(40) NOT NULL,
 recipe_public TINYINT(1) NOT NULL DEFAULT 1,
+serving_size VARCHAR(10) DEFAULT '0-0',
+prep_time TIME DEFAULT 0,
 directions VARCHAR(5000) NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
@@ -236,9 +238,9 @@ INSERT INTO category (category_name) VALUES('Pork'); -- 8
 INSERT INTO category (category_name) VALUES('Breakfast'); -- 9
 INSERT INTO category (category_name) VALUES('Desserts'); -- 10
 
-INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, directions, date_added) VALUES('Curtis', 2, 2, 'Potato Salad', 'directions', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
-INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, directions, date_added) VALUES('Sam', 3, 3, 'Grandmas Pumpkin Pie', 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
-INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, directions, date_added) VALUES('Julia', 10, 4, 'Raspberry Cheesecake Bars', 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
+INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added) VALUES('Curtis', 2, 2, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), 'directions', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
+INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added) VALUES('Sam', 3, 3, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('01:10', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
+INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added) VALUES('Julia', 10, 4, 'Raspberry Cheesecake Bars', '3-5', STR_TO_DATE('00:40', '%H:%i'), 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
