@@ -24,8 +24,12 @@ DROP TABLE IF EXISTS recipe_ranking;
 DROP TABLE IF EXISTS recipe;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS wiki_content;
+DROP TABLE IF EXISTS wiki;
 DROP TABLE IF EXISTS picture;
 DROP TABLE IF EXISTS passkeys;
+DROP TABLE IF EXISTS video;
+
 
 CREATE TABLE passkeys
 (
@@ -42,6 +46,36 @@ name VARCHAR(40) NOT NULL,
 caption VARCHAR(50),
 location VARCHAR(100),
 CONSTRAINT pk_picture PRIMARY KEY(picture_id)
+);
+
+CREATE TABLE video
+(
+video_id SERIAL NOT NULL AUTO_INCREMENT,
+name VARCHAR(40) NOT NULL,
+caption VARCHAR(50),
+address VARCHAR(100),
+CONSTRAINT pk_video PRIMARY KEY(video_id)
+);
+
+CREATE TABLE wiki
+(
+wiki_id SERIAL,
+category_id SMALLINT UNSIGNED NOT NULL,
+video_id BIGINT UNSIGNED,
+wiki_title VARCHAR(40) NOT NULL,
+CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
+CONSTRAINT fk_wiki_video FOREIGN KEY(video_id) REFERENCES video(video_id)
+);
+
+CREATE TABLE wiki_content
+(
+wiki_cont_id SERIAL,
+wiki_id BIGINT UNSIGNED NOT NULL,
+picture_id BIGINT UNSIGNED,
+content VARCHAR(5000) NOT NULL,
+CONSTRAINT pk_wiki_cont PRIMARY KEY(wiki_cont_id),
+CONSTRAINT fk_wiki FOREIGN KEY(wiki_id) REFERENCES wiki(wiki_id),
+CONSTRAINT fk_cont_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
 );
 
 CREATE TABLE user
