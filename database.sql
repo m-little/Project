@@ -19,7 +19,7 @@ DROP TRIGGER IF EXISTS tri_unit_ingr_counter2;
 DROP TABLE IF EXISTS recipe_ingredient;
 DROP TABLE IF EXISTS ingredient;
 DROP TABLE IF EXISTS unit;
-DROP TABLE IF EXISTS comment;
+DROP TABLE IF EXISTS recipe_comment;
 DROP TABLE IF EXISTS recipe_ranking;
 DROP TABLE IF EXISTS recipe;
 DROP TABLE IF EXISTS category;
@@ -73,7 +73,7 @@ owner_id VARCHAR(40) NOT NULL,
 category_id SMALLINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 recipe_name VARCHAR(40) NOT NULL,
-recipe_public TINYINT(1) NOT NULL DEFAULT 1,
+public TINYINT(1) NOT NULL DEFAULT 1,
 serving_size VARCHAR(10) DEFAULT '0-0',
 prep_time TIME DEFAULT 0,
 directions VARCHAR(5000) NOT NULL,
@@ -85,7 +85,7 @@ CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(categ
 CONSTRAINT fk_recipe_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
 );
 
-CREATE TABLE comment
+CREATE TABLE recipe_comment
 (
 comment_id SERIAL,
 owner_id VARCHAR(40) NOT NULL,
@@ -239,8 +239,10 @@ INSERT INTO category (category_name) VALUES('Breakfast'); -- 9
 INSERT INTO category (category_name) VALUES('Desserts'); -- 10
 
 INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added) VALUES('Curtis', 2, 2, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), 'directions', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
-INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added) VALUES('Sam', 3, 3, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('01:10', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
+INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added, public) VALUES('Sam', 3, 3, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('01:10', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'), 0);  -- 2
 INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added) VALUES('Julia', 10, 4, 'Raspberry Cheesecake Bars', '3-5', STR_TO_DATE('00:40', '%H:%i'), 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
+
+INSERT INTO recipe_comment (owner_id, recipe_id, content, date_added) VALUES('Curtis', 2, "I love pumpkin pie!", STR_TO_DATE('10,1,2012 16:34', '%m,%d,%Y %H:%i')); -- 1
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
