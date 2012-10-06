@@ -38,10 +38,10 @@ body.body
 
 div.all
 {
-	position:relative; left:0px; right:0px; top:42px; bottom:32px;
+	/*position:relative; left:0px; right:0px; top:42px; bottom:32px;*/
 	font-size:18px; color:black;
 	padding:20px;
-	/*padding-bottom:70px;*/
+	padding-bottom:50px;
 	min-height:600px;
 	height:auto;
 }

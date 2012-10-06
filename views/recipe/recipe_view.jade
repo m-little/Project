@@ -63,11 +63,60 @@ html.all(style="background-image:url('../images/bg1.png');")
 						td(style="padding-right:4px;")
 							|  #{recipe.ingredients[i].unit_name}
 							|  #{recipe.ingredients[i].name}
-		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; border-bottom:1px dotted gray; background-color:white;")
+		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; background-color:white;")
 			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 				| Directions
 			div(style="padding-left:10px;")
 				| #{recipe.directions}
 
+		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; border-bottom:1px dotted gray; background-color:white;")
+			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
+				| Comments
+
+			div(style="background-image:url('../images/bg2.png'); padding:5px; padding-top:1px; padding-bottom:1px; border-radius:.6em;")
+				- for(var i = 0; i < recipe.flat_comments.length; i++)
+					- comment = recipe.flat_comments[i];
+					- if (recipe.owner == comment.owner)
+						- comment_color = 'edefff';
+					- else
+						- comment_color = 'ffffff';
+
+					div(style="padding:5px; padding-left:10px; margin:15px; margin-bottom:20px; margin-left:#{comment.indent * 50 + 10}px; border:1px solid gray; border-radius:.6em; height:auto; background-color:##{comment_color};")
+
+						//- User stuff
+						div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
+							div(style="width:64px; height:64px; overflow:hidden;")
+								img(style="width:100%;", src="../images/user_images/#{comment.picture.location}", alt="#{comment.picture.caption}", title="#{comment.picture.caption}")
+
+						div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
+							| #{comment.date_added.toDateString()} at 
+							- if (comment.date_added.getHours() > 12)
+								| #{comment.date_added.getHours() - 12}
+							- else
+								| #{comment.date_added.getHours()}
+							| :
+							- if (comment.date_added.getMinutes() < 10)
+								| 0
+							| #{comment.date_added.getMinutes()}:
+							- if (comment.date_added.getSeconds() < 10)
+								| 0
+							| #{comment.date_added.getSeconds()}
+							- if (comment.date_added.getHours() > 12)
+								|  pm
+							- else
+								|  am
+
+						div(style="color:gray; position:relative; top:-28px; left:46px; margin-bottom:-16px; width:200px;")
+							- if (comment.owner == global.session.user.id)
+								| You said:
+							- else
+								| #{comment.owner} said:
+
+						div(style="margin-left:5px; margin-right:5px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
+							| #{comment.content}
+
+						div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:3px; margin-bottom:-20px;", title="Reply to this comment.")
+
+		div(style="background-image:url('../images/comment1.png'); width:120px; height:26px; margin:auto; cursor:pointer; position:relative; top:-5px;", title="Comment on this recipe.")
 
 	include ../footer
