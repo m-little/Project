@@ -282,6 +282,7 @@ INSERT INTO recipe_comment (owner_id, recipe_id, content, date_added) VALUES('Cu
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 1, "Thanks! Try it out sometime soon.", STR_TO_DATE('10,1,2012 19:04:54', '%m,%d,%Y %H:%i:%s')); -- 2
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Julia', 2, 2, "I bet it is not that good.", STR_TO_DATE('10,1,2012 19:43:24', '%m,%d,%Y %H:%i:%s')); -- 3
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Mike', 2, 3, "Ha!", STR_TO_DATE('10,1,2012 16:44:05', '%m,%d,%Y %H:%i:%s')); -- 4
+INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 3, "Oh thaaanks.", STR_TO_DATE('10,1,2012 16:45:35', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Curtis', 2, 2, "Ok, I will", STR_TO_DATE('10,1,2012 16:47:45', '%m,%d,%Y %H:%i:%s')); -- 5
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
