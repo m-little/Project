@@ -1,0 +1,55 @@
+var _mysql = require('mysql');
+
+exports.DAO = function()
+{
+	this.client = _mysql.createClient({host: mysql_vals.host,	port: mysql_vals.port, user: mysql_vals.user, password: mysql_vals.password});
+
+	// use the project database
+	this.client.query('use ' + mysql_vals.database);
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Generic query function
+	this.query = function(sql_command, callback)
+	{
+		function output(err, result, fields) 
+		{
+			if (err) throw err;
+			else 
+			{
+				callback(result, fields);
+			}
+		}
+
+		this.client.query(sql_command, output);
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Generic query function
+	//		carried_vars is a variable you can use to carry variables from one function to another, it transfers right to the callback function.
+	//			if you don't know if you should use this, you probably don't need to.
+	//			ex. of why to use it: if an object is created and passed through a chain of functions for more use... pass it into carried_vars
+	//			ask Sam if you have questions.
+	this.query = function(sql_command, callback, carried_vars)
+	{
+		function output(err, result, fields) 
+		{
+			if (err) throw err;
+			else 
+			{
+				callback(result, fields, carried_vars);
+			}
+		}
+
+		this.client.query(sql_command, output);
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Call this when you are done with the object
+	this.die = function()
+	{
+		this.client.end();
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+}

@@ -87,6 +87,7 @@ user_fname VARCHAR(40) NOT NULL,
 user_lname VARCHAR(40) NOT NULL,
 email VARCHAR(50) NOT NULL,
 date_added DATETIME NOT NULL,
+user_points INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_user PRIMARY KEY(user_id),
 CONSTRAINT fk_user_passkeys FOREIGN KEY(user_id) REFERENCES passkeys(user_id),
 CONSTRAINT fk_user_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
@@ -284,6 +285,12 @@ INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Mike', 2, 3, "Ha!", STR_TO_DATE('10,1,2012 16:44:05', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 3, "Oh thaaanks.", STR_TO_DATE('10,1,2012 16:45:35', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Curtis', 2, 2, "Ok, I will", STR_TO_DATE('10,1,2012 16:47:45', '%m,%d,%Y %H:%i:%s')); -- 5
+
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 1, 6, STR_TO_DATE('9,28,2012 13:49:04', '%m,%d,%Y %H:%i:%s')); -- 1
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 1, 3, STR_TO_DATE('9,28,2012 17:43:34', '%m,%d,%Y %H:%i:%s')); -- 2
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike', 2, 10, STR_TO_DATE('9,30,2012 11:42:14', '%m,%d,%Y %H:%i:%s')); -- 3
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 2, 5, STR_TO_DATE('9,30,2012 15:23:45', '%m,%d,%Y %H:%i:%s')); -- 4
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2

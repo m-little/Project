@@ -4,7 +4,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
-		div(style="padding-bottom:20px; background-color:white;")
+		div(style="padding-bottom:40px; background-color:white;")
 
 			- if (recipe.public == '0')
 				div(style="float:left; clear:both; height:128px; width:24px; position:relative; top:24px; left:-18px; margin-bottom:-140px; background-image:url('../images/private.png');")
@@ -30,7 +30,19 @@ html.all(style="background-image:url('../images/bg1.png');")
 					b(style="cursor:pointer;")
 						| #{recipe.owner}
 
+		style(type="text/css")
+			div.star_power{width:#{recipe.rank / 10 * 168}px; height:32px; background-color:#ffbf00;}
+			div.star_outline{width:168px; height:32px; margin:auto; position:relative; top:-36px; margin-bottom:-32px; background-image:url('../images/star_hollow1.png'); cursor:pointer;}
 
+		//- Rating
+		div(style="width:168px; height:32px; margin:auto; position:relative; top:-36px; margin-bottom:-32px;")
+			div.star_power
+		div.star_outline(title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks)")
+
+		div(style="float:right; position:relative; top:-18px; right:10px; font-size:12px; color:gray;")
+			| Created on #{recipe.date_added.toDateString()}
+
+		// Ingredients
 		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; background-color:white;")
 			div(style="font-size:20px; float:right; clear:both;")
 				| Serving Size
@@ -63,12 +75,15 @@ html.all(style="background-image:url('../images/bg1.png');")
 						td(style="padding-right:4px;")
 							|  #{recipe.ingredients[i].unit_name}
 							|  #{recipe.ingredients[i].name}
+
+		//- Directions
 		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; background-color:white;")
 			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 				| Directions
 			div(style="padding-left:10px;")
 				| #{recipe.directions}
 
+		//- Comments
 		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; border-bottom:1px dotted gray; background-color:white;")
 			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 				| Comments
@@ -81,7 +96,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 					- else
 						- comment_color = 'ffffff';
 
-					div(style="padding:5px; padding-left:10px; margin:15px; margin-bottom:20px; margin-left:#{comment.indent * 50 + 10}px; border:1px solid gray; border-radius:.6em; height:auto; background-color:##{comment_color};")
+					div(style="padding:5px; padding-left:10px; margin:15px; margin-bottom:20px; margin-left:#{comment.indent * 50 + 10}px; border:1px solid gray; border-radius:.6em; height:auto; background-color:##{comment_color};", id="comment#{comment.id}")
 
 						//- User stuff
 						div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
@@ -115,8 +130,15 @@ html.all(style="background-image:url('../images/bg1.png');")
 						div(style="margin-left:5px; margin-right:5px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
 							| #{comment.content}
 
-						div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:3px; margin-bottom:-20px;", title="Reply to this comment.")
+						div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:3px; margin-bottom:-20px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}")
 
-		div(style="background-image:url('../images/comment1.png'); width:120px; height:26px; margin:auto; cursor:pointer; position:relative; top:-5px;", title="Comment on this recipe.")
+		div(style="background-image:url('../images/comment1.png'); width:120px; height:26px; margin:auto; cursor:pointer; position:relative; top:-5px;", title="Comment on this recipe.", id="comment")
+
+	script(src="../jquery.js")
+		$(document).ready(function()
+		{
+
+
+		}
 
 	include ../footer
