@@ -83,62 +83,153 @@ html.all(style="background-image:url('../images/bg1.png');")
 			div(style="padding-left:10px;")
 				| #{recipe.directions}
 
+		style(type="text/css")
+			div.comment{padding:5px; padding-left:10px; margin:15px; margin-bottom:20px; margin-top:40px; border:1px solid gray; border-radius:.6em; height:auto; background-image:url('../images/comment_bg1.png'); background-size:100% 100%;}
+			div.new_cancel{position:relative; top:-18px; right:100px; width:60px; margin-left:auto; border:2px dotted white; border-radius:.6em; padding:2px; padding-left:8px; padding-right:8px; margin-bottom:-20px; background-color:#b03f3f; color:white; font-weight:bold; text-align:center;}
+			div.new_cancel:hover{cursor:pointer; background-color:#b35b5b;}
+			div.new_post{position:relative; top:-7px; right:15px; width:60px; margin-left:auto; border:2px dotted white; border-radius:.6em; padding:2px; padding-left:8px; padding-right:8px; margin-bottom:-16px; background-color:#00a200; color:white; font-weight:bold; text-align:center;}
+			div.new_post:hover{cursor:pointer; background-color:#44bd44;}
+
 		//- Comments
 		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; border-bottom:1px dotted gray; background-color:white;")
 			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 				| Comments
 
-			div(style="background-image:url('../images/bg2.png'); padding:5px; padding-top:1px; padding-bottom:1px; border-radius:.6em;")
+			div(style="background-image:url('../images/bg2.png'); padding:5px; padding-top:1px; padding-bottom:1px; border-radius:.6em;", id="comments")
 				- for(var i = 0; i < recipe.flat_comments.length; i++)
 					- comment = recipe.flat_comments[i];
 					- if (recipe.owner == comment.owner)
-						- comment_color = 'edefff';
+						- comment_color = 'e9e8ff';
 					- else
 						- comment_color = 'ffffff';
 
-					div(style="padding:5px; padding-left:10px; margin:15px; margin-bottom:20px; margin-left:#{comment.indent * 50 + 10}px; border:1px solid gray; border-radius:.6em; height:auto; background-color:##{comment_color};", id="comment#{comment.id}")
+					div.comment(style="margin-left:#{comment.indent * 50 + 15}px; background-color:##{comment_color};", id="comment#{comment.id}")
 
 						//- User stuff
-						div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
-							div(style="width:64px; height:64px; overflow:hidden;")
-								img(style="width:100%;", src="../images/user_images/#{comment.picture.location}", alt="#{comment.picture.caption}", title="#{comment.picture.caption}")
+						div(style="position:relative; top:-25px; margin:-6px; margin-left:-10px; margin-bottom:-36px; padding:5px;")
+							
+							div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
+								div(style="width:64px; height:64px; overflow:hidden;")
+									img(style="width:100%;", src="../images/user_images/#{comment.picture.location}", alt="#{comment.picture.caption}", title="#{comment.picture.caption}")
 
-						div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
-							| #{comment.date_added.toDateString()} at 
-							- if (comment.date_added.getHours() > 12)
-								| #{comment.date_added.getHours() - 12}
-							- else
-								| #{comment.date_added.getHours()}
-							| :
-							- if (comment.date_added.getMinutes() < 10)
-								| 0
-							| #{comment.date_added.getMinutes()}:
-							- if (comment.date_added.getSeconds() < 10)
-								| 0
-							| #{comment.date_added.getSeconds()}
-							- if (comment.date_added.getHours() > 12)
-								|  pm
-							- else
-								|  am
+						div(style="height:20px; margin-left:40px; margin-right:10px; position:relative; top:-20px; margin-bottom:-20px;")
+							div(style="color:gray;")
+								- if (comment.owner == global.session.user.id)
+									| You 
+								- else
+									p(style="margin:0px; padding:0px; cursor:pointer;")
+										| #{comment.owner} 
 
-						div(style="color:gray; position:relative; top:-28px; left:46px; margin-bottom:-16px; width:200px;")
-							- if (comment.owner == global.session.user.id)
-								| You said:
-							- else
-								| #{comment.owner} said:
+							div(style="font-size:12px; color:gray; float:right; position:relative; top:-16px;")
+								| #{comment.date_added.toDateString()} at 
+								- if (comment.date_added.getHours() > 12)
+									| #{comment.date_added.getHours() - 12}
+								- else
+									| #{comment.date_added.getHours()}
+								| :
+								- if (comment.date_added.getMinutes() < 10)
+									| 0
+								| #{comment.date_added.getMinutes()}:
+								- if (comment.date_added.getSeconds() < 10)
+									| 0
+								| #{comment.date_added.getSeconds()}
+								- if (comment.date_added.getHours() > 12)
+									|  pm
+								- else
+									|  am
 
-						div(style="margin-left:5px; margin-right:5px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
-							| #{comment.content}
+						div(style="margin-right:5px; border:1px solid border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-top:10px; padding-left:5px; padding-right:5px;")
+							| #{comment.content} 
 
-						div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:3px; margin-bottom:-20px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}")
+						- if (global.session.user.id != comment.owner)
+							div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:3px; margin-bottom:-20px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}")
 
-		div(style="background-image:url('../images/comment1.png'); width:120px; height:26px; margin:auto; cursor:pointer; position:relative; top:-5px;", title="Comment on this recipe.", id="comment")
+				// New comment box (hides on load)			
+				- if (recipe.owner == global.session.user.id)
+					- comment_color = 'e9e8ff';
+				- else
+					- comment_color = 'ffffff';
+				div.comment(style="margin-left:15px; background-color:##{comment_color};", id="new_comment")
+
+					//- User stuff
+					div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
+						div(style="width:64px; height:64px; overflow:hidden;")
+							img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
+
+					div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
+
+					div(style="color:gray; position:relative; top:-28px; left:46px; margin-bottom:-16px; width:200px;")
+						| What will you say?
+
+					div(style="margin-left:5px; margin-right:15px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
+						textarea.input_text(style="width:100%; max-width:100%;", type="text", name="new_comment", id="new_comment_text")
+
+					div.new_post(id="new_comment_post", title="Click here to post your comment.")
+						| Post
+
+					div.new_cancel(id="new_comment_cancel", title="Click here to cancel your comment.")
+						| Cancel
+
+				// New reply box (hides on load)			
+				- if (recipe.owner == global.session.user.id)
+					- comment_color = 'e9e8ff';
+				- else
+					- comment_color = 'ffffff';
+				div.comment(style="margin-left:15px; margin-top:-6px; background-color:##{comment_color};", id="new_reply")
+
+					//- User stuff
+					div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
+						div(style="width:64px; height:64px; overflow:hidden;")
+							img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
+
+					div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
+
+					div(style="color:gray; position:relative; top:-28px; left:46px; margin-bottom:-16px; width:200px;")
+						| What will you say?
+
+					div(style="margin-left:5px; margin-right:15px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
+						textarea.input_text(style="width:100%; max-width:100%;", type="text", name="new_comment", id="new_comment_text")
+
+					div.new_post(id="new_reply_post", title="Click here to post your reply.")
+						| Post
+
+					div.new_cancel(id="new_reply_cancel", title="Click here to cancel your reply.")
+						| Cancel
+
+		div(style="background-image:url('../images/comment1.png'); width:120px; height:26px; margin:auto; cursor:pointer; position:relative; top:-5px;", title="Comment on this recipe.", id="new_comment_button")
 
 	script(src="../jquery.js")
+	script
 		$(document).ready(function()
 		{
-
-
-		}
+			$("#new_comment").hide();
+			$("#new_reply").hide();
+			$("#new_comment_button").click(function(){
+				$("#new_comment_button").hide();
+				$("#new_comment").slideDown();
+				$("#new_comment_text").focus();
+				$("[id^=reply]").slideUp();
+				$("html, body").animate({ scrollTop: $(document).height() + $("#new_comment").position().top }, "slow");
+ 
+			});
+			$("#new_comment_cancel").click(function(){
+				$("#new_comment").slideUp();
+				$("#new_comment_button").show();
+				$("[id^=reply]").slideDown();
+			});
+			$("[id^=reply]").click(function(){
+				$("[id^=reply]").slideUp();
+				$("#new_reply").insertAfter($(event.target).parent());
+				var parent = $(event.target).parent();
+				$("#new_reply").css('margin-left', parent.css('margin-left'));
+				$("#new_reply").slideDown();
+				$("#new_comment_button").hide();
+			});
+			$("#new_reply_cancel").click(function(){
+				$("#new_reply").slideUp();
+				$("[id^=reply]").slideDown();
+				$("#new_comment_button").show();
+			});
+		});
 
 	include ../footer

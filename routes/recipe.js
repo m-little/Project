@@ -10,7 +10,7 @@ exports.display_create = function(req, res)
 
 	dao.query("SELECT category_name FROM category ORDER BY category_name = '' DESC, use_count DESC", output);
 
-	function output(result, fields)
+	function output(success, result, fields)
 	{
 		var c = [];
 		for (var i in result) 
@@ -58,7 +58,7 @@ exports.display_view = function(req, res)
 	dao.query("SELECT recipe_name, owner_id, c.category_name, r.public, r.serving_size, r.prep_time, p.picture_id, p.location, p.caption, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN picture p ON r.picture_id = p.picture_id JOIN category c ON r.category_id = c.category_id WHERE recipe_id = " + req.query.r_id, output1);
 
 	// first return for basic recipe info
-	function output1(result, fields)
+	function output1(success, result, fields)
 	{
 		if (result.length == 0) // no recipe found; should make this better later
 		{
@@ -82,7 +82,7 @@ exports.display_view = function(req, res)
 	}
 
 	// next: ingredients
-	function output2(result, fields, new_recipe)
+	function output2(success, result, fields, new_recipe)
 	{
 		var ingredients = [];
 		for (var i in result) 
@@ -96,7 +96,7 @@ exports.display_view = function(req, res)
 	}
 
 	// next: comments
-	function output3(result, fields, new_recipe)
+	function output3(success, result, fields, new_recipe)
 	{
 		var comments = [];
 		for (var i in result) 
@@ -129,7 +129,7 @@ exports.display_view = function(req, res)
 	}
 
 	// next: rank
-	function output4(result, fields, new_recipe)
+	function output4(success, result, fields, new_recipe)
 	{
 		var row = result[0];
 		new_recipe.set_rank(row.avg, row.count);

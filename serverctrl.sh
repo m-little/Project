@@ -28,7 +28,7 @@ fi
 if [[ $1 =~ ^("start"|"START")$ ]]; then # Start the node process
 
 	# check to see if node process exists
-	server_online=`ps -a | grep node`
+	server_online=`ps -e | grep node`
 
 	if [ -n "$server_online" ]; then
 		echo "Node server appears to be online:"
