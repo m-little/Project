@@ -23,7 +23,17 @@ div.header
 						div.userinfo(style="width:80px;", onClick="window.location.href='/sign_up'")
 							| Sign Up!
 					td(style="width:10px;")
-						div.userinfo(onClick="window.location.href='/login'")
+						div.userinfo(onClick="show_login();")
 							| Login
+
+div.header_login_form(id="header_login_form")
+	| Username
+	input.input_text(type="text", name="username", id="header_login_username", style="background-color:#616158; color:white; margin-bottom:5px;")
+	| Password
+	input.input_text(type="password", name="password", id="header_login_password", style="background-color:#616158; color:white; margin-bottom:5px;")
+	button.submit3(style="float:left;")
+		| Login
+	button.submit3(style="float:right;", onClick="hide_login();")
+		| Cancel
 
 body.body

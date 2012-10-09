@@ -1,3 +1,36 @@
 
 div.footer
 	| Copyright &#169; 2012 OOAD Group Project
+
+
+script(src="../jquery.js")
+script
+	$(document).ready(function()
+	{
+		$("#header_login_form").hide();
+		$("#header_login_password").keypress(function(e) {
+			if (e.keyCode == 13)
+			{
+				submit_login();
+			}
+		});
+	});
+	function show_login()
+	{
+		$("#header_login_form").slideDown(100);
+		$("#header_login_username").focus();
+	}
+	function hide_login()
+	{
+		$("#header_login_form").slideUp(100);
+	}
+	function submit_login()
+	{
+		$("#header_login_form").slideUp(100);
+
+		// Create form, append the inputs to it, fill them out, then submit
+		var form = $("<form>").attr({method: 'post', action: '/login'});
+		$("<input>").attr({name: 'username', value: $("#header_login_username").val(),}).appendTo(form);
+		$("<input>").attr({name: 'password', value: $("#header_login_password").val(),}).appendTo(form);
+		form.submit();
+	}
