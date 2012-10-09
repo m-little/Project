@@ -30,6 +30,11 @@ exports.check_credentials = function check_credentials(user, pass, callback)
 			logged_in = true;
 			create_user();
 		}
+		else
+		{
+			callback(logged_in, user, row.user_group);
+			dao.die();
+		}
 
 		function create_user()
 		{
@@ -40,7 +45,7 @@ exports.check_credentials = function check_credentials(user, pass, callback)
 			dao.query("SELECT u.picture_id, caption, location FROM picture p JOIN user u ON p.picture_id = u.picture_id WHERE u.user_id = '"+user+"' LIMIT 1", set_picture, dao);
 		}
 
-		function set_picture(result, fields, dao)
+		function set_picture(success, result, fields, dao)
 		{
 			var row = result[0];
 			global.session.user.set_picture(new obj_picture.Picture(row.picture_id, row.caption, row.location));
