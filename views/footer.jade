@@ -18,6 +18,8 @@ script
 	function show_login()
 	{
 		$("#header_login_form").slideDown(100);
+		$("#header_login_username").val("");
+		$("#header_login_password").val("");
 		$("#header_login_username").focus();
 	}
 	function hide_login()
@@ -26,6 +28,16 @@ script
 	}
 	function submit_login()
 	{
+		if ($("#header_login_username").val() == '')
+		{
+			$("#header_login_username").focus();
+			return;
+		}
+		if ($("#header_login_password").val() == '')
+		{
+			$("#header_login_password").focus();
+			return;
+		}
 		$("#header_login_form").slideUp(100);
 
 		// Create form, append the inputs to it, fill them out, then submit
