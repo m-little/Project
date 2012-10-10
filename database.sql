@@ -213,9 +213,14 @@ INSERT INTO passkeys (user_id, pass, salt) VALUES('Sam', 'e233560939c66735c503f1
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Mike', '4d00564fd19d74efff6ba1f392f757f33fca273b', '4196ce6a9377e11ecc9f01517e8a118c4b596646');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Julia', '9bb9949ea212c05242d0110858987af879c84041', '5fc0d6f9d1b18a1a28738a9834ef6bf12c2716f9');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Curtis', '041b2e52b42326af4c9ac9c63504dd623ab51895', '1019078d1d90533aed697b1e94fbdba9bf3f4d4a');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('Mona', 'sdf89sdf7g87sd8g67sg67s6d7sf6s65sd64gsdg', 'fdg5hf4jd6hjhk7f6fghd4s4asdf3g4gh5fj6hg7');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('James', 'sdf89sdf7g87sdsfsdfsdfsfsga938443929kgsdg', 'fdg5hf4jd6hjhk7f6fghd4ssfsfsfsag04837hg7');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('Catherine', 'kjioudf7g87sdsfsdfsdfsf3sga938443929kgsdg', 'fdsdfsdjd6hjhk7f6fghd4ssfsfsfsag04837hg7');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('John', 'kjioudsdfeesfdsssefdfsf3sga938443929kgsdg', 'fdsdfsdjd6hjhesfsefesfsfsaggkhjkhjl04837hg7');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('Felicia', 'kjioudsdfeesfdsssefdfsf3sga938443929kgsdg', 'fdsdfsdjd6hjhesfsefesfsfsaggkhjkhjl04837hg7');
 
 INSERT INTO picture (name, caption, location) VALUES('unknown', 'No Picture', 'unknown.png');
-INSERT INTO picture (name, caption, location) VALUES('Potato Salad', 'Potato Salad Yum!', 'pre_1.jpg');
+INSERT INTO picture (name, caption, location) VALUES('Potato Salad', 'Potato Salad Yum!', 'pre_1.jpg')
 INSERT INTO picture (name, caption, location) VALUES('Grandmas Pumpkin Pie', 'Pumpkin Pie! - It has pumpkin in it.', 'pre_2.jpg');
 INSERT INTO picture (name, caption, location) VALUES('Raspberry Cheesecake Bars', 'Raspberry Cheesecake Bars; They are good for you!', 'pre_3.jpg');
 
@@ -223,6 +228,11 @@ INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Julia', 'admin', 'Julia', 'Collins', 'jlcollins4@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Curtis', 'admin', 'Curtis', 'Sydnor', 'casydnor1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Mona', 'admin', 'Mona', 'Lisa', 'mglisa@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('James', 'admin', 'James', 'Ford', 'jsford@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Catherine', 'admin', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('John', 'admin', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Felicia', 'admin', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 
 INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs" 1
 INSERT INTO unit (unit_name, abrev) VALUES('Teaspoon', 'tsp');  -- 2
