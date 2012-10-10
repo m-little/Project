@@ -18,6 +18,18 @@ div.header
 	z-index:5;
 }
 
+div.header_login_form
+{
+	position:fixed; top:48px; right:10px; 
+	padding:10px;
+	width:188px;
+	background-color:#292929;
+	border-radius:.4em; 
+	border:1px solid #bababa;
+	color:#bababa;
+	text-align:center;
+}
+
 div.title_middle
 {
 	position:absolute; left:50%; top:50%;
@@ -38,10 +50,10 @@ body.body
 
 div.all
 {
-	position:relative; left:0px; right:0px; top:42px; bottom:32px;
+	/*position:relative; left:0px; right:0px; top:42px; bottom:32px;*/
 	font-size:18px; color:black;
 	padding:20px;
-	/*padding-bottom:70px;*/
+	padding-bottom:50px;
 	min-height:600px;
 	height:auto;
 }
@@ -257,4 +269,21 @@ button.submit2:active
 {
 	padding-top:0px;
 	padding-bottom:4px;
+}
+
+button.submit3
+{
+	color:#9c9c8e;
+	font-weight:bold;
+	padding:4px;
+	padding-left:10px;
+	padding-right:10px;
+	border-radius:.8em;
+	border:1px solid #616158;
+	background-color:#292929;
+	cursor:pointer;
+}
+button.submit3:hover
+{
+	background-color:#333233;
 }
