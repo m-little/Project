@@ -5,5 +5,5 @@ html.all
 
 	div.all(style="max-width:1000px; margin:auto;")
 		p
-			| #{wiki.title}           
+			| #{wiki.title}
 	include ../footer
