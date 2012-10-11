@@ -78,7 +78,7 @@ exports.display_view = function(req, res)
 		var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
 		var new_recipe = new obj_recipe.Recipe(req.query.id, row.owner_id, row.public, new_picture, row.recipe_name, row.category_name, row.serving_size, row.prep_time, row.directions, row.date_added, row.date_edited);
 		
-		dao.query("SELECT i.ingr_id, i.picture_id, i.ingr_name, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id WHERE r.recipe_id = " + req.query.r_id, output2, new_recipe);
+		dao.query("SELECT i.ingr_id, i.picture_id, p.caption, p.location, i.ingr_name, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN picture p ON i.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output2, new_recipe);
 	}
 
 	// next: ingredients
@@ -88,7 +88,7 @@ exports.display_view = function(req, res)
 		for (var i in result) 
 		{
 			var row = result[i];
-			ingredients.push(new obj_ingredient.Ingredient(row.ingr_id, row.picture_id, row.ingr_name, row.unit_name, row.abrev, row.unit_amount))
+			ingredients.push(new obj_ingredient.Ingredient(row.ingr_id, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.ingr_name, row.unit_name, row.abrev, row.unit_amount))
 		}
 		new_recipe.set_ingredients(ingredients);
 
