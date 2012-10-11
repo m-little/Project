@@ -1,9 +1,0 @@
-doctype 5
-html.all
-
-	include ../header
-
-	div.all(style="max-width:1000px; margin:auto;")
-		p
-			| #{wiki.title}
-	include ../footer
