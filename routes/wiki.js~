@@ -19,10 +19,10 @@ exports.display_view = function(req, res)
 			new_wiki.title = row.wiki_title;
 		}
 		
-		
+		console.log(_stuff[0]);
 	}
 
 	
-	res.render('wiki/wiki_view', { title: website_title, wiki: new_wiki});
+	res.render('wiki/wiki_view', { title: website_title, stuff: _stuff});
 }
 
