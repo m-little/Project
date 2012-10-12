@@ -9,28 +9,8 @@ exports.DAO = function()
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Generic query function
-	this.query = function(sql_command, callback)
-	{
-		function output(err, result, fields) 
-		{
-			if (err)
-			{ 
-				// throw err;
-				console.error(err.stack);
-				callback(false, result, fields)
-			}
-			else 
-			{
-				callback(true, result, fields);
-			}
-		}
-
-		this.client.query(sql_command, output);
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Generic query function
+	//		carried_vars is optional
+	//
 	//		carried_vars is a variable you can use to carry variables from one function to another, it transfers right to the callback function.
 	//			if you don't know if you should use this, you probably don't need to.
 	//			ex. of why to use it: if an object is created and passed through a chain of functions for more use... pass it into carried_vars
@@ -57,47 +37,9 @@ exports.DAO = function()
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Generic transaction function
-	//		this function uses the above query function for everything but the simple BEGIN, ROLLBACK, COMMIT;
-	this.transaction = function(sql_commands, callback)
-	{
-		if (sql_commands.length == 0)
-			callback(true, {});
-
-		this.client.query('BEGIN');
-		
-		// Run first statement
-		this.query(sql_commands[0], output, {sql_commands: sql_commands, i: 0, caller:this, callback: callback, results: []});
-
-		function output(success, result, fields, vars)
-		{
-			if (!success)
-			{
-				// a problem occured! so rollback and return some error details
-				vars.caller.client.query('ROLLBACK');
-				vars.callback(false, {error_line:vars.i});
-			}
-			else 
-			{
-				// add this result set to the complete set results
-				vars.results.push(result);
-				// Move onto the next sql statement
-				vars.i += 1;
-				if (vars.i < vars.sql_commands.length)
-				{
-					vars.caller.query(vars.sql_commands[vars.i], output, vars);
-				}
-				else // No more statements so finish and return details
-				{
-					vars.caller.client.query('COMMIT');
-					vars.callback(true, {results: vars.results});
-				}
-			}
-		}
-	}
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
-
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Generic transaction function
+	//		carried_vars is optional
+	//		^ see this.query for more info
+	//
 	//		this function uses the above query function for everything but the simple BEGIN, ROLLBACK, COMMIT;
 	this.transaction = function(sql_commands, callback, carried_vars)
 	{

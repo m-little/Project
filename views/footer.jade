@@ -7,26 +7,59 @@ script(src="../jquery.js")
 script
 	$(document).ready(function()
 	{
-		$("#header_login_form").hide();
+		$("#header_menu_login").hide();
+		$("#header_menu_settings").hide();
+		$("#header_menu_recipes").hide();
 		$("#header_login_password").keypress(function(e) {
 			if (e.keyCode == 13)
 			{
 				submit_login();
 			}
 		});
+		// Function to hide div once someone clicks outside of it.
+		$(document).mouseup(function(e)
+		{
+			var div = $("#header_menu_login");
+			if (div.is(':visible') && div.has(e.target).length === 0)
+				hide_drop_login();
+			div = $("#header_menu_settings");
+			if (div.is(':visible') && div.has(e.target).length === 0)
+				hide_drop_settings();
+			div = $("#header_menu_recipes");
+			if (div.is(':visible') && div.has(e.target).length === 0)
+				hide_drop_recipes();
+		});
+		$("#header_search_bar").focusout(function()
+		{
+			// Puts the search text back if there is nothing there on leave
+			var search_bar = $("#header_search_bar");
+			if (search_bar.val() == '')
+				search_bar.val('Search');
+		});
 	});
-	function show_login()
+	//
+	// Search
+	function clear_search_bar()
 	{
-		$("#header_login_form").slideDown(100);
+		// Removes the search text
+		var search_bar = $("#header_search_bar");
+		if (search_bar.val() == 'Search')
+			search_bar.val('');
+	}
+	//
+	// Login
+	function show_drop_login()
+	{
+		$("#header_menu_login").slideDown(100);
 		$("#header_login_username").val("");
 		$("#header_login_password").val("");
 		$("#header_login_username").focus();
 	}
-	function hide_login()
+	function hide_drop_login()
 	{
-		$("#header_login_form").slideUp(100);
+		$("#header_menu_login").slideUp(100);
 	}
-	function submit_login()
+	function submit_drop_login()
 	{
 		if ($("#header_login_username").val() == '')
 		{
@@ -38,11 +71,26 @@ script
 			$("#header_login_password").focus();
 			return;
 		}
-		$("#header_login_form").slideUp(100);
-
-		// Create form, append the inputs to it, fill them out, then submit
-		var form = $("<form>").attr({method: 'post', action: '/login'});
-		$("<input>").attr({name: 'username', value: $("#header_login_username").val(),}).appendTo(form);
-		$("<input>").attr({name: 'password', value: $("#header_login_password").val(),}).appendTo(form);
-		form.submit();
+		$("#header_menu_login").slideUp(100);
+		$("#header_login_form").submit();
+	}
+	//
+	// Settings
+	function show_drop_settings()
+	{
+		$("#header_menu_settings").slideDown(100);
+	}
+	function hide_drop_settings()
+	{
+		$("#header_menu_settings").slideUp(100);
+	}
+	//
+	// Recipes
+	function show_drop_recipes()
+	{
+		$("#header_menu_recipes").slideDown(100);
+	}
+	function hide_drop_recipes()
+	{
+		$("#header_menu_recipes").slideUp(100);
 	}

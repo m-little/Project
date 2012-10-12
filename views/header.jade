@@ -7,33 +7,66 @@ div.header
 	div.title_button(style="", onClick="window.location.href='/'")
 		| #{title}
 
-	table(style="position:absolute; top:0px; right:0px; width:300px; margin:2px; margin-right:10px;")
-		tr
-			td //- This is just to allow spacing options
-			#userinfo
-				if global.session.logged_in != 0
-					td(style="width:200px;")
-						div.header_info_r
-							| Hello #{global.session.user.id}!
-					td(style="width:10px;")
-						div.userinfo_settings(style="width:50px;")
-							| &#9881
-				else
-					td(style="width:10px;")
-						div.userinfo(style="width:80px;", onClick="window.location.href='/sign_up'")
-							| Sign Up!
-					td(style="width:10px;")
-						div.userinfo(onClick="show_login();")
-							| Login
+	div(style="float:left; position:fixed; left:160px; top:9px;")
+		input.input_text(style="background-color:#616158; float:left; color:#bababa; margin-bottom:5px; height:14px;", value="Search", id="header_search_bar", onClick="clear_search_bar();")
 
-div.header_login_form(id="header_login_form")
-	| Username
-	input.input_text(type="text", name="username", id="header_login_username", style="background-color:#616158; color:white; margin-bottom:5px;")
-	| Password
-	input.input_text(type="password", name="password", id="header_login_password", style="background-color:#616158; color:white; margin-bottom:5px;")
-	button.submit3(style="float:left;", onClick="submit_login();")
-		| Login
-	button.submit3(style="float:right;", onClick="hide_login();")
-		| Cancel
+	#userinfo
+		if global.session.logged_in != 0
+			div.userinfo_settings(onClick="show_drop_settings();", id="header_button_settings")
+				| Hello #{global.session.user.id}
+			div.userinfo_button(onClick="show_drop_recipes()")
+				| Recipes
+		else
+			div.userinfo_button(onClick="show_drop_login();", id="header_button_login")
+				| Login
+			div.userinfo_button(onClick="window.location.href='/sign_up'")
+				| Sign Up!
+
+//- Start drop down boxes
+
+div.header_dropdown(id="header_menu_login", style="position:fixed; top:48px; right:10px; width:188px;")
+	form(style="margin:0px; padding:0px;", method='post', action='/login', id='header_login_form')
+		| Username
+		input.input_text(type="text", name="username", id="header_login_username", style="background-color:#616158; color:white; margin-bottom:5px;", required="required")
+		| Password
+		input.input_text(type="password", name="password", id="header_login_password", style="background-color:#616158; color:white; margin-bottom:5px;", required="required")
+		button.submit3(style="float:left;", onClick="submit_drop_login();")
+			| Login
+		button.submit3(style="float:right;", onClick="hide_drop_login();")
+			| Cancel
+
+div.header_dropdown(id="header_menu_settings", style="position:fixed; top:48px; right:10px; width:auto;")
+	div.header_dropdown_button
+		div.header_dropdown_button_icon
+			| icon 
+			//- remove later
+		| My Account
+	div.header_dropdown_button(id="header_settings_logout", onClick="window.location.href='/?logout=1'", title="Click here to logout.")
+		div.header_dropdown_button_icon
+			| icon 
+			//- remove later
+		| Log Out
+
+div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:48px; right:10px; width:auto;")
+	div.header_dropdown_button
+		div.header_dropdown_button_icon
+			| icon 
+			//- remove later
+		| My Recipes
+	div.header_dropdown_button
+		div.header_dropdown_button_icon
+			| icon 
+			//- remove later
+		| My Friend's Recipes
+	div.header_dropdown_button
+		div.header_dropdown_button_icon
+			| icon 
+			//- remove later
+		| Followed Recipes
+	div.header_dropdown_button
+		div.header_dropdown_button_icon
+			| icon 
+			//- remove later
+		| Lookup Recipes
 
 body.body
