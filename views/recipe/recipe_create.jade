@@ -3,7 +3,7 @@ html.all
 
 	include ../header
 
-	div.all
+	div.all(style="max-width:900px; margin:auto;")
 		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; ")
 			| Create Recipe
 
@@ -53,9 +53,9 @@ html.all
 			div(style="float:left; width:150px")
 				| Serving Size:
 			div(style="float:left")
-				input.input_text(type="number", min="1", max="30", value="1", name="serving_size_one", style="margin-left:10px; margin-right:10px; width:30px")
+				input.input_text(type="number", value="1", name="serving_size_one", style="margin-left:10px; margin-right:10px; width:30px")
 				| to 
-				input.input_text(type="number", min="1", max="30", value="1", name="serving_size_two", style="margin-left:10px; width:30px")
+				input.input_text(type="number", value="1", name="serving_size_two", style="margin-left:10px; width:30px")
 
 		div(style="clear:left; padding:10px")
 			div(style="float:left; width:150px")
