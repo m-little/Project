@@ -103,7 +103,7 @@ accepted INT(1) NOT NULL DEFAULT 0,
 active INT(1) NOT NULL DEFAULT 0,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
 CONSTRAINT fk_user FOREIGN KEY(user_id_1) REFERENCES user(user_id),
-CONSTRAINT fk_user FOREIGN KEY(user_id_2) REFERENCES user(user_id),
+CONSTRAINT fk_user FOREIGN KEY(user_id_2) REFERENCES user(user_id)
 );
 
 CREATE TABLE category
