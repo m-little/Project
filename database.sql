@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS recipe_comment;
 DROP TABLE IF EXISTS recipe_ranking;
 DROP TABLE IF EXISTS recipe;
 DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS user_connections;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS wiki_content;
 DROP TABLE IF EXISTS wiki;
@@ -60,7 +61,6 @@ CONSTRAINT pk_video PRIMARY KEY(video_id)
 CREATE TABLE wiki
 (
 wiki_id SERIAL,
-category_id SMALLINT UNSIGNED NOT NULL,
 video_id BIGINT UNSIGNED,
 wiki_title VARCHAR(40) NOT NULL,
 CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
@@ -102,8 +102,8 @@ relationship VARCHAR(12) NOT NULL DEFAULT 0,
 accepted INT(1) NOT NULL DEFAULT 0,
 active INT(1) NOT NULL DEFAULT 0,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
-CONSTRAINT fk_user FOREIGN KEY(user_id_1) REFERENCES user(user_id),
-CONSTRAINT fk_user FOREIGN KEY(user_id_2) REFERENCES user(user_id)
+CONSTRAINT fk_user_1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
+CONSTRAINT fk_user_2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
 );
 
 CREATE TABLE category
@@ -259,7 +259,7 @@ INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Julia', 'Friend', 1, 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Curtis', 'Friend', 1, 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'John', 'Friend', 1, );
+INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'John', 'Friend', 1, 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'James', 'Follow', 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Catherine', 'Friend', 1, 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'John', 'Follow', 0);
@@ -393,3 +393,10 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 25, 5, 1); -- Respberry Cheesecake Bars, 1 cup seedless raspberry preserves or other  preserves or jam
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 26, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup flaked coconut
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 27, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup sliced almonds
+
+INSERT INTO video (video_id, name, caption, address) VALUES(1, "Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video
+
+INSERT INTO wiki (wiki_id, video_id, wiki_title) VALUES(1, 1, "Test Wiki Title");  -- test wiki page
+
+INSERT INTO wiki_content (wiki_cont_id, wiki_id, picture_id, content) VALUES(1,1,1, "Test Content");  -- test wiki content
+

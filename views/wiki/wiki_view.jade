@@ -4,6 +4,7 @@ html.all
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
-		p
-			| #{wiki.title}           
+		- for (var i in wiki)
+			p= wiki[i]
+		p= wiki.video.name
 	include ../footer
