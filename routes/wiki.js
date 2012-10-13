@@ -5,24 +5,34 @@ var obj_picture = require('../objects/picture');
 
 exports.display_view = function(req, res)
 {
-	var dao = new obj_dao.DAO();
-	var new_wiki = new obj_wiki();	
+	if (req.query.w_id == undefined)
+	{
+		res.redirect('/');
+		return;
+	}
+
+	var dao = new obj_dao.DAO();	
 	
-	dao.query("SELECT wiki_title FROM wiki WHERE wiki_id = 1", output);
+	dao.query("SELECT w.video_id, wiki_title, v.name, v.caption, v.address FROM wiki w JOIN video v ON w.video_id = v.video_id WHERE wiki_id =" + req.query.w_id, output);
 	
 	function output(success, result, fields)
 	{
-		console.log(result);
-		for(var i in result) 
+		if (result.length == 0) 
 		{
-			var row = result[i];
-			new_wiki.title = row.wiki_title;
+			res.redirect('/');
+			return;
 		}
+
+		var row = result[0];
 		
+		var new_video = new obj_video.Video(row.video_id, row.name, row.caption, row.address);
+		var new_wiki = new obj_wiki.Wiki(req.query.w_id, new_video, row.wiki_title);
 		
+		finished(new_wiki);
 	}
 
-	
-	res.render('wiki/wiki_view', { title: website_title, wiki: new_wiki});
+	function finished(new_wiki) {
+		res.render('wiki/wiki_view', { title: website_title, wiki: new_wiki});
+	}
 }
 

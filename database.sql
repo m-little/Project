@@ -103,8 +103,8 @@ relationship VARCHAR(12) NOT NULL DEFAULT 0,
 accepted INT(1) NOT NULL DEFAULT 0,
 active INT(1) NOT NULL DEFAULT 0,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
-CONSTRAINT fk_user_connections_user1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
-CONSTRAINT fk_user_connections_user2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
+CONSTRAINT fk_user_1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
+CONSTRAINT fk_user_2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
 );
 
 CREATE TABLE category
@@ -394,3 +394,10 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 25, 5, 1); -- Respberry Cheesecake Bars, 1 cup seedless raspberry preserves or other  preserves or jam
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 26, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup flaked coconut
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 27, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup sliced almonds
+
+INSERT INTO video (video_id, name, caption, address) VALUES(1, "Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video
+
+INSERT INTO wiki (wiki_id, video_id, wiki_title) VALUES(1, 1, "Test Wiki Title");  -- test wiki page
+
+INSERT INTO wiki_content (wiki_cont_id, wiki_id, picture_id, content) VALUES(1,1,1, "Test Content");  -- test wiki content
+

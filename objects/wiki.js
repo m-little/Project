@@ -1,9 +1,12 @@
-exports.Wiki = function Wiki(id_, category_, picture_, video_, title_, content_)
+exports.Wiki = function Wiki(id_, video_, title_)
 {
 	this.id = id_;
-	this.category = category_;
-	this.picture = picture_;
 	this.video = video_;
 	this.title = title_;
-	this.content = content_;
+	this.content = [];
+
+	this.set_content = function(content_) 
+	{
+		this.content = content_;
+	}
 }
