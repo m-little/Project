@@ -20,17 +20,23 @@ exports.login = function(req, res)
 {
 	var success = -1; //-1 = hasn't tried logging in yet; 0 = fail; 1 = pass;
 
-	function result(success, user, group)
+	function result(success, user, group, location)
 	{
 		if (success == 1)
-			res.redirect('/');
+		{
+			if (location == undefined)
+				res.redirect('/');
+			else
+				res.redirect(location);
+		}
 		else
 			res.render('login', { title: website_title, logged_in: success});
 	}
 
 	if (req.body.username != undefined || req.body.password != undefined)
 	{
-		login.check_credentials(req.body.username, req.body.password, result);
+		// location argument allows us to return to the page we were on when we tried to logon.
+		login.check_credentials(req.body.username, req.body.password, result, req.body.location);
 	}
 	else //user hasn't tried to login yet. logged_in should = -1 still
 		result(success);

@@ -30,6 +30,9 @@ div.header_dropdown(id="header_menu_login", style="position:fixed; top:48px; rig
 		input.input_text(type="text", name="username", id="header_login_username", style="background-color:#616158; color:white; margin-bottom:5px;", required="required")
 		| Password
 		input.input_text(type="password", name="password", id="header_login_password", style="background-color:#616158; color:white; margin-bottom:5px;", required="required")
+		//- location argument allows us to return to the page we were on when we tried to logon.
+		input(id="header_menu_login_location", type="hidden", name="location")
+		
 		button.submit3(style="float:left;", onClick="submit_drop_login();")
 			| Login
 		button.submit3(style="float:right;", onClick="hide_drop_login();")

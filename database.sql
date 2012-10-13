@@ -23,6 +23,7 @@ DROP TABLE IF EXISTS recipe_comment;
 DROP TABLE IF EXISTS recipe_ranking;
 DROP TABLE IF EXISTS recipe;
 DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS user_connections;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS wiki_content;
 DROP TABLE IF EXISTS wiki;
@@ -102,8 +103,8 @@ relationship VARCHAR(12) NOT NULL DEFAULT 0,
 accepted INT(1) NOT NULL DEFAULT 0,
 active INT(1) NOT NULL DEFAULT 0,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
-CONSTRAINT fk_user FOREIGN KEY(user_id_1) REFERENCES user(user_id),
-CONSTRAINT fk_user FOREIGN KEY(user_id_2) REFERENCES user(user_id)
+CONSTRAINT fk_user_connections_user1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
+CONSTRAINT fk_user_connections_user2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
 );
 
 CREATE TABLE category
@@ -259,7 +260,7 @@ INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Julia', 'Friend', 1, 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Curtis', 'Friend', 1, 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'John', 'Friend', 1, );
+INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'John', 'Friend', 1, 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'James', 'Follow', 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Catherine', 'Friend', 1, 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'John', 'Follow', 0);
@@ -327,9 +328,9 @@ INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size
 INSERT INTO recipe_comment (owner_id, recipe_id, content, date_added) VALUES('Curtis', 2, "Hey, this recipe seems good!", STR_TO_DATE('10,1,2012 16:34:21', '%m,%d,%Y %H:%i:%s')); -- 1
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 1, "Thanks! Try it out sometime soon.", STR_TO_DATE('10,1,2012 19:04:54', '%m,%d,%Y %H:%i:%s')); -- 2
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Julia', 2, 2, "I bet it is not that good.", STR_TO_DATE('10,1,2012 19:43:24', '%m,%d,%Y %H:%i:%s')); -- 3
-INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Mike', 2, 3, "Ha!", STR_TO_DATE('10,1,2012 16:44:05', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 3, "Oh thaaanks.", STR_TO_DATE('10,1,2012 16:45:35', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Curtis', 2, 2, "Ok, I will", STR_TO_DATE('10,1,2012 16:47:45', '%m,%d,%Y %H:%i:%s')); -- 5
+INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Mike', 2, 3, "Ha!", STR_TO_DATE('10,1,2012 19:44:05', '%m,%d,%Y %H:%i:%s')); -- 4
+INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 3, "Oh thaaanks.", STR_TO_DATE('10,1,2012 20:45:35', '%m,%d,%Y %H:%i:%s')); -- 4
+INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Curtis', 2, 2, "Ok, I will", STR_TO_DATE('10,1,2012 19:47:45', '%m,%d,%Y %H:%i:%s')); -- 5
 
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 1, 6, STR_TO_DATE('9,28,2012 13:49:04', '%m,%d,%Y %H:%i:%s')); -- 1
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 1, 3, STR_TO_DATE('9,28,2012 17:43:34', '%m,%d,%Y %H:%i:%s')); -- 2

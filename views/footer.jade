@@ -72,6 +72,10 @@ script
 			return;
 		}
 		$("#header_menu_login").slideUp(100);
+		// location argument allows us to return to the page we were on when we tried to logon.
+		var location = window.location.href;
+		location = location.substring(location.indexOf(window.location.pathname));
+		$("#header_menu_login_location").val(location);
 		$("#header_login_form").submit();
 	}
 	//
