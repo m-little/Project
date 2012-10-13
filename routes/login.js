@@ -3,13 +3,15 @@ var obj_dao = require('../objects/database');
 var obj_user = require('../objects/user');
 var obj_picture = require('../objects/picture');
 
-exports.check_credentials = function check_credentials(user, pass, callback)
+// location argument allows us to return to the page we were on when we tried to logon.
+
+exports.check_credentials = function check_credentials(user, pass, callback, location)
 {
 	var logged_in = false;
 
 	var dao = new obj_dao.DAO();
 
-	function output(success, result, fields)
+	function output(success, result, fields, location)
 	{
 		if (result.length == 0)
 		{
@@ -32,19 +34,19 @@ exports.check_credentials = function check_credentials(user, pass, callback)
 		}
 		else
 		{
-			callback(logged_in, user, row.user_group);
+			callback(logged_in, user, row.user_group, location);
 			dao.die();
 		}
 
 		function user_created()
 		{
 			global.session.logged_in = 1;
-			callback(logged_in, user, row.user_group);
+			callback(logged_in, user, row.user_group, location);
 		}
 
 	}
 
-	dao.query("select p.user_id, pass, salt, user_group from passkeys p JOIN user u ON p.user_id = u.user_id WHERE p.user_id = '" + user + "' LIMIT 1", output);
+	dao.query("select p.user_id, pass, salt, user_group from passkeys p JOIN user u ON p.user_id = u.user_id WHERE p.user_id = '" + user + "' LIMIT 1", output, location);
 
 	return logged_in;
 }

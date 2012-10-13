@@ -61,6 +61,7 @@ CONSTRAINT pk_video PRIMARY KEY(video_id)
 CREATE TABLE wiki
 (
 wiki_id SERIAL,
+category_id SMALLINT UNSIGNED NOT NULL,
 video_id BIGINT UNSIGNED,
 wiki_title VARCHAR(40) NOT NULL,
 CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
@@ -328,9 +329,9 @@ INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size
 INSERT INTO recipe_comment (owner_id, recipe_id, content, date_added) VALUES('Curtis', 2, "Hey, this recipe seems good!", STR_TO_DATE('10,1,2012 16:34:21', '%m,%d,%Y %H:%i:%s')); -- 1
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 1, "Thanks! Try it out sometime soon.", STR_TO_DATE('10,1,2012 19:04:54', '%m,%d,%Y %H:%i:%s')); -- 2
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Julia', 2, 2, "I bet it is not that good.", STR_TO_DATE('10,1,2012 19:43:24', '%m,%d,%Y %H:%i:%s')); -- 3
-INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Mike', 2, 3, "Ha!", STR_TO_DATE('10,1,2012 16:44:05', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 3, "Oh thaaanks.", STR_TO_DATE('10,1,2012 16:45:35', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Curtis', 2, 2, "Ok, I will", STR_TO_DATE('10,1,2012 16:47:45', '%m,%d,%Y %H:%i:%s')); -- 5
+INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Mike', 2, 3, "Ha!", STR_TO_DATE('10,1,2012 19:44:05', '%m,%d,%Y %H:%i:%s')); -- 4
+INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 3, "Oh thaaanks.", STR_TO_DATE('10,1,2012 20:45:35', '%m,%d,%Y %H:%i:%s')); -- 4
+INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Curtis', 2, 2, "Ok, I will", STR_TO_DATE('10,1,2012 19:47:45', '%m,%d,%Y %H:%i:%s')); -- 5
 
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 1, 6, STR_TO_DATE('9,28,2012 13:49:04', '%m,%d,%Y %H:%i:%s')); -- 1
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 1, 3, STR_TO_DATE('9,28,2012 17:43:34', '%m,%d,%Y %H:%i:%s')); -- 2

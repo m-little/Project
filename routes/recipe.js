@@ -68,7 +68,7 @@ exports.display_view = function(req, res)
 		}
 		
 		var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
-		var new_recipe = new obj_recipe.Recipe(req.query.id, row.owner_id, row.public, new_picture, row.recipe_name, row.category_name, row.serving_size, row.prep_time, row.directions, row.date_added, row.date_edited);
+		var new_recipe = new obj_recipe.Recipe(req.query.r_id, row.owner_id, row.public, new_picture, row.recipe_name, row.category_name, row.serving_size, row.prep_time, row.directions, row.date_added, row.date_edited);
 		
 		dao.query("SELECT i.ingr_id, i.picture_id, p.caption, p.location, i.ingr_name, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN picture p ON i.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output2, new_recipe);
 	}
@@ -133,5 +133,43 @@ exports.display_view = function(req, res)
 	function finished(new_recipe)
 	{
 		res.render('recipe/recipe_view', { title: website_title, recipe: new_recipe });
+	}
+}
+
+exports.comment_on = function(req, res)
+{
+	if (req.body.recipe_id == undefined)
+	{
+		res.redirect('/');
+		return;
+	}
+
+	req.body.recipe_id = parseInt(req.body.recipe_id);
+	if (isNaN(req.body.recipe_id))
+	{
+		res.redirect('/');
+		return;
+	}
+
+	req.body.reply_comment = parseInt(req.body.reply_comment);
+	if (isNaN(req.body.reply_comment))
+	{
+		res.redirect('/');
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+
+	dao.query("INSERT INTO recipe_comment(owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('" + global.session.user.id + "', " + req.body.recipe_id + ", " + req.body.reply_comment + ", '" + req.body.comment_content + "', NOW())", output, req.body.recipe_id);
+
+	function output(success, result, fields, recipe_id)
+	{
+		if (!success)
+		{
+			res.redirect('/');
+			return;
+		}
+		else
+			res.redirect('/recipe/view?r_id=' + recipe_id);
 	}
 }

@@ -66,6 +66,7 @@ app.post('/user/new', user.create);
 
 app.get('/recipe/create', recipe.display_create);
 app.get('/recipe/view', recipe.display_view);
+app.post('/recipe/comment_on', recipe.comment_on);
 
 app.get('/wiki/view', wiki.display_view);
 
