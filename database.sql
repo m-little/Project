@@ -73,6 +73,7 @@ CREATE TABLE wiki_content
 wiki_cont_id SERIAL,
 wiki_id BIGINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
+title VARCHAR(40),
 content VARCHAR(5000) NOT NULL,
 CONSTRAINT pk_wiki_cont PRIMARY KEY(wiki_cont_id),
 CONSTRAINT fk_wiki FOREIGN KEY(wiki_id) REFERENCES wiki(wiki_id),
@@ -399,5 +400,5 @@ INSERT INTO video (video_id, name, caption, address) VALUES(1, "Test Video", "Te
 
 INSERT INTO wiki (wiki_id, video_id, wiki_title) VALUES(1, 1, "Test Wiki Title");  -- test wiki page
 
-INSERT INTO wiki_content (wiki_cont_id, wiki_id, picture_id, content) VALUES(1,1,1, "Test Content");  -- test wiki content
+INSERT INTO wiki_content (wiki_cont_id, wiki_id, picture_id, title, content) VALUES(1,1,1, "Content Title", "Test Content");  -- test wiki content
 
