@@ -3,7 +3,7 @@ html.all
 
 	include ../header
 
-	div.all
+	div.all(style="max-width:900px; margin:auto;")
 		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; ")
 			| Create Recipe
 
@@ -19,6 +19,12 @@ html.all
 					- for( var i = 0; i < categories.length; i++)
 						option
 							= categories[i]
+		div(style="clear:left; padding:10px")
+			div(style="float:left; width:150px")
+				| Picture Upload:
+			div(style="float:left")
+				input(type="file", name="recipe_picture", style="margin-left:10px")
+
 
 		div(style="clear:left; width:500px; padding:10px")
 			div(style="float:left; width:150px")
@@ -47,7 +53,9 @@ html.all
 			div(style="float:left; width:150px")
 				| Serving Size:
 			div(style="float:left")
-				select(size="1", style="width:200px; font-size:16px; margin-left:10px; padding-left:10px;")
+				input.input_text(type="number", value="1", name="serving_size_one", style="margin-left:10px; margin-right:10px; width:30px")
+				| to 
+				input.input_text(type="number", value="1", name="serving_size_two", style="margin-left:10px; width:30px")
 
 		div(style="clear:left; padding:10px")
 			div(style="float:left; width:150px")
@@ -57,7 +65,7 @@ html.all
 
 		div(style="clear:left; width:810px; padding:10px")
 			div(style="float:right")
-				input(type="button", value="Create")
+				input(type="button", value="Create", style="height:30px; width:80px")
 	
 
 	include ../footer
