@@ -23,7 +23,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 			//- Owner
 			div(style="position:relative; left:10px; top:-26px; font-size:16px; float:left; clear:both; width:auto; height:auto; padding:4px; padding-left:16px; padding-right:16px; background-color:white; border-top-left-radius:.6em; border-top-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default;")
-				- if (recipe.owner == global.session.user.id)
+				- if (global.session.logged_in && recipe.owner == global.session.user.id)
 					| Owned by You
 				- else
 					| Owned by 
@@ -114,7 +114,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 						div(style="height:20px; margin-left:40px; margin-right:10px; position:relative; top:-20px; margin-bottom:-20px;")
 							div(style="color:gray;")
-								- if (comment.owner == global.session.user.id)
+								- if (global.session.logged_in && comment.owner == global.session.user.id)
 									| You 
 								- else
 									p(style="margin:0px; padding:0px; cursor:pointer;")
@@ -141,62 +141,63 @@ html.all(style="background-image:url('../images/bg1.png');")
 						div(style="margin-right:5px; border:1px solid border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-top:10px; padding-left:5px; padding-right:5px;")
 							| #{comment.content} 
 
-						- if (global.session.user.id != comment.owner)
+						- if (global.session.logged_in && global.session.user.id != comment.owner)
 							div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:3px; margin-bottom:-20px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}")
 
-				// New comment box (hides on load)			
-				- if (recipe.owner == global.session.user.id)
-					- comment_color = 'e9e8ff';
-				- else
-					- comment_color = 'ffffff';
-				div.comment(style="margin-left:15px; background-color:##{comment_color};", id="new_comment")
+				- if (global.session.logged_in)
+					// New comment box (hides on load)			
+					- if (recipe.owner == global.session.user.id)
+						- comment_color = 'e9e8ff';
+					- else
+						- comment_color = 'ffffff';
+					div.comment(style="margin-left:15px; background-color:##{comment_color};", id="new_comment")
 
-					//- User stuff
-					div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
-						div(style="width:64px; height:64px; overflow:hidden;")
-							img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
+						//- User stuff
+						div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
+							div(style="width:64px; height:64px; overflow:hidden;")
+								img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
 
-					div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
+						div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
 
-					div(style="color:gray; position:relative; top:-28px; left:46px; margin-bottom:-16px; width:200px;")
-						| What will you say?
+						div(style="color:gray; position:relative; top:-28px; left:46px; margin-bottom:-16px; width:200px;")
+							| What will you say?
 
-					div(style="margin-left:5px; margin-right:15px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
-						textarea.input_text(style="width:100%; max-width:100%;", type="text", name="new_comment", id="new_comment_text")
+						div(style="margin-left:5px; margin-right:15px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
+							textarea.input_text(style="width:100%; max-width:100%;", type="text", name="new_comment", id="new_comment_text")
 
-					div.new_post(id="new_comment_post", title="Click here to post your comment.")
-						| Post
+						div.new_post(id="new_comment_post", title="Click here to post your comment.")
+							| Post
 
-					div.new_cancel(id="new_comment_cancel", title="Click here to cancel your comment.")
-						| Cancel
+						div.new_cancel(id="new_comment_cancel", title="Click here to cancel your comment.")
+							| Cancel
 
-				// New reply box (hides on load)			
-				- if (recipe.owner == global.session.user.id)
-					- comment_color = 'e9e8ff';
-				- else
-					- comment_color = 'ffffff';
-				div.comment(style="margin-left:15px; margin-top:-6px; background-color:##{comment_color};", id="new_reply")
+					// New reply box (hides on load)			
+					- if (recipe.owner == global.session.user.id)
+						- comment_color = 'e9e8ff';
+					- else
+						- comment_color = 'ffffff';
+					div.comment(style="margin-left:15px; margin-top:-6px; background-color:##{comment_color};", id="new_reply")
 
-					//- User stuff
-					div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
-						div(style="width:64px; height:64px; overflow:hidden;")
-							img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
+						//- User stuff
+						div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-28px; top:-22px; margin-bottom:-24px; margin-right:-24px;")
+							div(style="width:64px; height:64px; overflow:hidden;")
+								img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
 
-					div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
+						div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
 
-					div(style="color:gray; position:relative; top:-28px; left:46px; margin-bottom:-16px; width:200px;")
-						| What will you say?
+						div(style="color:gray; position:relative; top:-28px; left:46px; margin-bottom:-16px; width:200px;")
+							| What will you say?
 
-					div(style="margin-left:5px; margin-right:15px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
-						textarea.input_text(style="width:100%; max-width:100%;", type="text", name="new_comment", id="new_comment_text")
+						div(style="margin-left:5px; margin-right:15px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
+							textarea.input_text(style="width:100%; max-width:100%;", type="text", name="new_comment", id="new_comment_text")
 
-					div.new_post(id="new_reply_post", title="Click here to post your reply.")
-						| Post
+						div.new_post(id="new_reply_post", title="Click here to post your reply.")
+							| Post
 
-					div.new_cancel(id="new_reply_cancel", title="Click here to cancel your reply.")
-						| Cancel
-
-		div(style="background-image:url('../images/comment1.png'); width:120px; height:26px; margin:auto; cursor:pointer; position:relative; top:-5px;", title="Comment on this recipe.", id="new_comment_button")
+						div.new_cancel(id="new_reply_cancel", title="Click here to cancel your reply.")
+							| Cancel
+		- if (global.session.logged_in)
+			div(style="background-image:url('../images/comment1.png'); width:120px; height:26px; margin:auto; cursor:pointer; position:relative; top:-5px;", title="Comment on this recipe.", id="new_comment_button")
 
 	script(src="../jquery.js")
 	script

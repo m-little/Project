@@ -281,6 +281,11 @@ button.submit1:active
 	padding-top:3px;
 	padding-bottom:5px;
 }
+button.submit1:disabled
+{
+	background-color:#c5d1c2;
+	cursor:default;
+}
 
 button.submit2
 {

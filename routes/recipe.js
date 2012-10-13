@@ -39,12 +39,6 @@ exports.display_view = function(req, res)
 		return;
 	}
 
-	if (global.session.logged_in == 0)
-	{
-		res.redirect('/login');
-		return;
-	}
-
 	req.query.r_id = parseInt(req.query.r_id);
 	if (isNaN(req.query.r_id))
 	{
@@ -63,7 +57,6 @@ exports.display_view = function(req, res)
 		if (result.length == 0) // no recipe found; should make this better later
 		{
 			res.redirect('/');
-			mysql.end();
 			return;
 		}
 
@@ -71,7 +64,6 @@ exports.display_view = function(req, res)
 		if (row.public == '0' && row.owner_id != global.session.user.id)
 		{
 			res.redirect('/');
-			mysql.end();
 			return;
 		}
 		

@@ -1,4 +1,3 @@
-// var _mysql = require('mysql');
 var crypto = require('crypto');
 var obj_dao = require('../objects/database');
 var obj_user = require('../objects/user');
@@ -28,7 +27,8 @@ exports.check_credentials = function check_credentials(user, pass, callback)
 		if (new_pass == row.pass)
 		{
 			logged_in = true;
-			create_user();
+			global.session.user = new obj_user.User(user, row.user_group, user_created);
+			dao.die();
 		}
 		else
 		{
@@ -36,26 +36,10 @@ exports.check_credentials = function check_credentials(user, pass, callback)
 			dao.die();
 		}
 
-		function create_user()
-		{
-			global.session.user = new obj_user.User(user, row.user_group);
-			global.session.logged_in = 1;
-
-			var dao = new obj_dao.DAO();
-			dao.query("SELECT u.picture_id, caption, location FROM picture p JOIN user u ON p.picture_id = u.picture_id WHERE u.user_id = '"+user+"' LIMIT 1", set_picture, dao);
-		}
-
-		function set_picture(success, result, fields, dao)
-		{
-			var row = result[0];
-			global.session.user.set_picture(new obj_picture.Picture(row.picture_id, row.caption, row.location));
-			user_created();
-		}
-
 		function user_created()
 		{
+			global.session.logged_in = 1;
 			callback(logged_in, user, row.user_group);
-			dao.die();
 		}
 
 	}
