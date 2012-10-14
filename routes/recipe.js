@@ -49,7 +49,7 @@ exports.display_view = function(req, res)
 	var dao = new obj_dao.DAO();
 
 	// Command to start the whole chain of events of loading
-	dao.query("SELECT recipe_name, owner_id, c.category_name, r.public, r.serving_size, r.prep_time, p.picture_id, p.location, p.caption, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN picture p ON r.picture_id = p.picture_id JOIN category c ON r.category_id = c.category_id WHERE recipe_id = " + req.query.r_id, output1);
+	dao.query("SELECT recipe_name, owner_id, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE recipe_id = " + req.query.r_id, output1);
 
 	// first return for basic recipe info
 	function output1(success, result, fields)
@@ -61,20 +61,33 @@ exports.display_view = function(req, res)
 		}
 
 		var row = result[0];
-		if (row.public == '0' && row.owner_id != global.session.user.id)
+		if (row.public == '0' && (!global.session.logged_in || row.owner_id != global.session.user.id))
 		{
 			res.redirect('/');
 			return;
 		}
 		
-		var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
-		var new_recipe = new obj_recipe.Recipe(req.query.r_id, row.owner_id, row.public, new_picture, row.recipe_name, row.category_name, row.serving_size, row.prep_time, row.directions, row.date_added, row.date_edited);
+		var new_recipe = new obj_recipe.Recipe(req.query.r_id, row.owner_id, row.public, row.recipe_name, row.category_name, row.serving_size, row.prep_time, row.ready_time, row.directions, row.date_added, row.date_edited);
 		
-		dao.query("SELECT i.ingr_id, i.picture_id, p.caption, p.location, i.ingr_name, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN picture p ON i.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output2, new_recipe);
+		dao.query("SELECT p.picture_id, p.caption, p.location FROM recipe_picture rp JOIN picture p ON rp.picture_id = p.picture_id WHERE rp.recipe_id = " + req.query.r_id, output2, new_recipe);
+	}
+
+	// next: pictures
+	function output2(success, result, fields, new_recipe)
+	{
+		var pictures = [];
+		for (var i in result) 
+		{
+			var row = result[i];
+			pictures.push(new obj_picture.Picture(row.picture_id, row.caption, row.location))
+		}
+		new_recipe.set_pictures(pictures);
+
+		dao.query("SELECT i.ingr_id, i.picture_id, p.caption, p.location, i.ingr_name, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN picture p ON i.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output3, new_recipe);
 	}
 
 	// next: ingredients
-	function output2(success, result, fields, new_recipe)
+	function output3(success, result, fields, new_recipe)
 	{
 		var ingredients = [];
 		for (var i in result) 
@@ -84,11 +97,11 @@ exports.display_view = function(req, res)
 		}
 		new_recipe.set_ingredients(ingredients);
 
-		dao.query("SELECT comment_id, reply_comment_id, owner_id, content, DATE_FORMAT(c.date_added, '%c/%e/%Y %H:%i:%S') AS date_added, DATE_FORMAT(c.date_edited, '%c/%e/%Y %H:%i:%S') as date_edited, p.picture_id, p.caption, p.location FROM recipe_comment c JOIN user u ON c.owner_id = u.user_id JOIN picture p ON u.picture_id = p.picture_id WHERE recipe_id = " + req.query.r_id + " ORDER BY comment_id, date_added", output3, new_recipe);
+		dao.query("SELECT comment_id, reply_comment_id, owner_id, content, DATE_FORMAT(c.date_added, '%c/%e/%Y %H:%i:%S') AS date_added, DATE_FORMAT(c.date_edited, '%c/%e/%Y %H:%i:%S') as date_edited, p.picture_id, p.caption, p.location FROM recipe_comment c JOIN user u ON c.owner_id = u.user_id JOIN picture p ON u.picture_id = p.picture_id WHERE recipe_id = " + req.query.r_id + " ORDER BY comment_id, date_added", output4, new_recipe);
 	}
 
 	// next: comments
-	function output3(success, result, fields, new_recipe)
+	function output4(success, result, fields, new_recipe)
 	{
 		var comments = [];
 		for (var i in result) 
@@ -117,11 +130,11 @@ exports.display_view = function(req, res)
 		// Now flatten the comment/reply tree so it can be seen correctly on the page.
 		new_recipe.flatten_comments();
 
-		dao.query("SELECT AVG(rank) as avg, COUNT(rank) as count FROM recipe_ranking WHERE recipe_id = " + req.query.r_id, output4, new_recipe);
+		dao.query("SELECT AVG(rank) as avg, COUNT(rank) as count FROM recipe_ranking WHERE recipe_id = " + req.query.r_id, output5, new_recipe);
 	}
 
 	// next: rank
-	function output4(success, result, fields, new_recipe)
+	function output5(success, result, fields, new_recipe)
 	{
 		var row = result[0];
 		new_recipe.set_rank(row.avg, row.count);

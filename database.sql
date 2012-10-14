@@ -21,6 +21,7 @@ DROP TABLE IF EXISTS ingredient;
 DROP TABLE IF EXISTS unit;
 DROP TABLE IF EXISTS recipe_comment;
 DROP TABLE IF EXISTS recipe_ranking;
+DROP TABLE IF EXISTS recipe_picture;
 DROP TABLE IF EXISTS recipe;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user_connections;
@@ -121,18 +122,27 @@ CREATE TABLE recipe
 recipe_id SERIAL,
 owner_id VARCHAR(40) NOT NULL,
 category_id SMALLINT UNSIGNED NOT NULL,
-picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 recipe_name VARCHAR(40) NOT NULL,
 public TINYINT(1) NOT NULL DEFAULT 1,
 serving_size VARCHAR(10) DEFAULT '0-0',
 prep_time TIME DEFAULT 0,
+ready_time TIME DEFAULT 0,
 directions VARCHAR(5000) NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
 CONSTRAINT pk_recipe PRIMARY KEY(recipe_id),
 CONSTRAINT fk_recipe_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
-CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(category_id),
-CONSTRAINT fk_recipe_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
+CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(category_id)
+);
+
+CREATE TABLE recipe_picture
+(
+recipe_picture_id SERIAL,
+recipe_id BIGINT UNSIGNED NOT NULL,
+picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
+CONSTRAINT pk_recipe_picture PRIMARY KEY(recipe_picture_id),
+CONSTRAINT fk_recipe_picture_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id),
+CONSTRAINT fk_recipe_picture_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
 );
 
 CREATE TABLE recipe_comment
@@ -247,6 +257,7 @@ INSERT INTO picture (name, caption, location) VALUES('james', 'James "Sawyer" Fo
 INSERT INTO picture (name, caption, location) VALUES('kate', 'Kate Middleton', 'kate_middleton.jpg'); -- 9
 INSERT INTO picture (name, caption, location) VALUES('john', 'Johnny Depp', 'johnny_depp.jpg'); -- 10
 INSERT INTO picture (name, caption, location) VALUES('felicia', 'Falicia Day', 'felicia_day.jpg'); -- 11
+INSERT INTO picture (name, caption, location) VALUES('Grandmas Pumpkin Pie', 'Just out of the oven.', 'pre_2_2.jpg'); -- 12
 
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added) VALUES('Sam', 2, 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
@@ -322,9 +333,14 @@ INSERT INTO category (category_name) VALUES('Pork'); -- 8
 INSERT INTO category (category_name) VALUES('Breakfast'); -- 9
 INSERT INTO category (category_name) VALUES('Desserts'); -- 10
 
-INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added) VALUES('Curtis', 2, 3, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), 'directions', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
-INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added) VALUES('Sam', 3, 4, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('01:10', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
-INSERT INTO recipe (owner_id, category_id, picture_id, recipe_name, serving_size, prep_time, directions, date_added) VALUES('Julia', 10, 5, 'Raspberry Cheesecake Bars', '3-5', STR_TO_DATE('00:40', '%H:%i'), 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Curtis', 2, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Sam', 3, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('01:10', '%H:%i'), STR_TO_DATE('02:00', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Julia', 10, 'Raspberry Cheesecake Bars', '3-5', STR_TO_DATE('00:40', '%H:%i'), STR_TO_DATE('01:10', '%H:%i'), 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
+
+INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(1, 3);
+INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(2, 4);
+INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(2, 12);
+INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(3, 5);
 
 INSERT INTO recipe_comment (owner_id, recipe_id, content, date_added) VALUES('Curtis', 2, "Hey, this recipe seems good!", STR_TO_DATE('10,1,2012 16:34:21', '%m,%d,%Y %H:%i:%s')); -- 1
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 1, "Thanks! Try it out sometime soon.", STR_TO_DATE('10,1,2012 19:04:54', '%m,%d,%Y %H:%i:%s')); -- 2

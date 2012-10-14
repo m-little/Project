@@ -9,17 +9,22 @@ html.all(style="background-image:url('../images/bg1.png');")
 			- if (recipe.public == '0')
 				div(style="float:left; clear:both; height:128px; width:24px; position:relative; top:24px; left:-18px; margin-bottom:-140px; background-image:url('../images/private.png');")
 
-			//- Image
-			div(style="width:100%; height:180px; border:1px solid #d6d6d6; overflow:hidden;")
-				img(src="../images/user_images/#{recipe.picture.location}", style="width:100%; position:relative; top:-64px;", alt="#{recipe.picture.caption}", title="#{recipe.picture.caption}")
+			div(id="recipe_pic_prev", style="position:relative; left:-18px; top:66px; width:24px; height:44px; margin-bottom:-46px; background-image:url('../images/prev1.png'); cursor:pointer;", title="Previous photo.", onClick="prev_picture();")
+			div(id="recipe_pic_next", style="position:relative; left:19px; top:66px; float:right; width:24px; height:44px; margin-bottom:-46px; background-image:url('../images/next1.png'); cursor:pointer;", title="Next photo.", , onClick="next_picture();")
 
 			//- Recipe Category
-			div(style="position:relative; right:10px; top:-182px; font-size:28px; float:right; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default;", title="Category")
+			div(style="position:relative; right:10px; top:0px; font-size:28px; float:right; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default; z-index:2;", title="Category")
 				| #{recipe.category}
 
 			//- Recipe Name
-			div(style="position:relative; left:10px; top:-182px; font-size:32px; float:left; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default;")
+			div(style="position:relative; left:10px; top:0px; font-size:32px; float:left; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default; z-index:2;")
 				| #{recipe.name}
+
+			//- Image
+			div(id="recipe_photo_div", style="width:100%; max-height:auto; min-height:160px; height:160px; overflow:hidden;")
+				img(id="recipe_photo", src="../images/user_images/#{recipe.get_picture(0).location}", style="width:100%; position:relative;", alt="#{recipe.get_picture(0).caption}", title="#{recipe.get_picture(0).caption}", onLoad="refresh_picture();")
+
+			div(id="recipe_pic_drag", style="position:relative; right:8px; top:-24px; float:right; width:27px; height:14px; margin-bottom:-46px; background-image:url('../images/drag1.png'); cursor:s-resize; z-index:2;", title="Enlarge this photo. Double click to reset.", onClick="zoom_photo($('#recipe_pic_zoom').position());")
 
 			//- Owner
 			div(style="position:relative; left:10px; top:-26px; font-size:16px; float:left; clear:both; width:auto; height:auto; padding:4px; padding-left:16px; padding-right:16px; background-color:white; border-top-left-radius:.6em; border-top-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default;")
@@ -31,11 +36,11 @@ html.all(style="background-image:url('../images/bg1.png');")
 						| #{recipe.owner}
 
 		style(type="text/css")
-			div.star_power{width:#{recipe.rank / 10 * 168}px; height:32px; background-color:#ffbf00;}
+			div.star_power{width:#{recipe.rank / 10 * 168}px; height:100%; background-color:#ffbf00;}
 			div.star_outline{width:168px; height:32px; margin:auto; position:relative; top:-36px; margin-bottom:-32px; background-image:url('../images/star_hollow1.png'); cursor:pointer;}
 
 		//- Rating
-		div(style="width:168px; height:32px; margin:auto; position:relative; top:-36px; margin-bottom:-32px;")
+		div(style="width:168px; height:30px; margin:auto; position:relative; left:1px; top:-34px; margin-bottom:-32px; padding-bottom:3px;")
 			div.star_power
 		div.star_outline(title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks)")
 
@@ -44,14 +49,23 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 		// Ingredients
 		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; background-color:white;")
-			div(style="font-size:20px; float:right; clear:both;")
-				| Serving Size
-			div(style="font-size:18px; float:right; clear:both; padding-right:15px;")
-				| #{recipe.serving_size}
-			div(style="font-size:20px; float:right; clear:both;")
-				| Prep Time
-			div(style="font-size:18px; float:right; clear:both; padding-right:15px;")
-				| #{recipe.prep_time}
+
+			div(style="border:1px solid gray; border-radius:.6em; float:right; position:relative; right:-140px; padding:6px;")
+				div(style="font-size:16px; float:right; clear:both; text-align:center; width:100%;")
+					| Serving Size
+				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%;")
+					| #{recipe.serving_size}
+
+				div(style="font-size:16px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:4px;")
+					| Prep Time
+				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%;")
+					| #{recipe.prep_time}
+
+				div(style="font-size:16px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:4px;")
+					| Ready in
+				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%;")
+					| #{recipe.ready_time}
+
 			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 				| Ingredients
 			table(style="margin-left:10px;")
@@ -82,7 +96,6 @@ html.all(style="background-image:url('../images/bg1.png');")
 				| Directions
 			div(style="padding-left:10px;")
 				| #{recipe.directions}
-				| #{recipe.id}
 
 		style(type="text/css")
 			div.comment{padding:5px; padding-left:10px; margin:15px; margin-bottom:20px; margin-top:25px; border:1px solid gray; border-radius:.6em; height:auto; background-image:url('../images/comment_bg1.png'); background-size:100% 100%;}
@@ -211,6 +224,9 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 	script(src="../jquery.js")
 	script
+		var resizing_image = false;
+		var image_index = 0;
+		var images = [#{recipe.pictures_string().toString()}];
 		$(document).ready(function()
 		{
 			$("#new_comment").hide();
@@ -243,6 +259,62 @@ html.all(style="background-image:url('../images/bg1.png');")
 				$("[id^=reply]").slideDown();
 				$("#new_comment_button").show();
 			});
+			$("#recipe_pic_drag").mousedown(function(e)
+			{
+				e.preventDefault();
+				resizing_image = true;
+				$(document).mousemove(function(e){
+					if (resizing_image)
+					{
+						$("#recipe_photo_div").css('height', e.pageY-54);
+						if ($("#recipe_photo_div").height() > $("#recipe_photo").height())
+							$("#recipe_photo_div").css('height', $("#recipe_photo").height());
+					}
+				});
+			});
+			$("#recipe_pic_drag").dblclick(function()
+			{
+				$("#recipe_photo_div").css('height', $("#recipe_photo_div").css('min-height'));
+			});
+			$(document).mouseup(function(e){
+				resizing_image = false;
+			});
+			if (images.length <= 1)
+			{
+				$("#recipe_pic_prev").hide();
+				$("#recipe_pic_next").hide();
+			}
 		});
+		function prev_picture()
+		{
+			$("#recipe_photo").fadeOut(200, function()
+				{
+					image_index -= 1;
+					if (image_index < 0)
+						image_index = images.length - 1;
+					$("#recipe_photo").attr('src', "../images/user_images/" + images[image_index].location);
+					$("#recipe_photo").attr('title', images[image_index].caption);
+					$("#recipe_photo").fadeIn(200);
+					// refresh_picture gets called when the image has loaded... see image declaration above
+				});
+		}
+		function next_picture()
+		{
+			$("#recipe_photo").fadeOut(200, function()
+				{
+					image_index += 1;
+					if (image_index >= images.length)
+						image_index = 0;
+					$("#recipe_photo").attr('src', "../images/user_images/" + images[image_index].location);
+					$("#recipe_photo").attr('title', images[image_index].caption);
+					$("#recipe_photo").fadeIn(200);
+					// refresh_picture gets called when the image has loaded... see image declaration above
+				});
+		}
+		function refresh_picture()
+		{
+			if ($("#recipe_photo_div").height() > $("#recipe_photo").height())
+				$("#recipe_photo_div").css('height', $("#recipe_photo").height());
+		}
 
 	include ../footer

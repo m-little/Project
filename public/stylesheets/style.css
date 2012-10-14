@@ -10,7 +10,6 @@ html.all
 div.header
 {
 	position:fixed; left:0px; right:0px; top:0px; 
-	/*min-width:800px;*/
 	height:42px; 
 	color:#bababa;
 	font-size:16px;
@@ -28,6 +27,7 @@ div.header_dropdown
 	border:1px solid #bababa;
 	color:#bababa;
 	text-align:center;
+	z-index:7;
 }
 
 div.header_dropdown_button
