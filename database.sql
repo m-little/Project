@@ -11,6 +11,8 @@ USE project;
 -- mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
 -- ^ this doesn't give you any feedback though...
 
+SET foreign_key_checks = 0;
+
 DROP TRIGGER IF EXISTS tri_category_counter1;
 DROP TRIGGER IF EXISTS tri_category_counter2;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter1;
@@ -32,6 +34,7 @@ DROP TABLE IF EXISTS picture;
 DROP TABLE IF EXISTS passkeys;
 DROP TABLE IF EXISTS video;
 
+SET foreign_key_checks = 1;
 
 CREATE TABLE passkeys
 (
@@ -83,7 +86,7 @@ CONSTRAINT fk_cont_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id
 
 CREATE TABLE user
 (
-user_id VARCHAR(40) NOT NULL,
+user_id VARCHAR(40) NOT NULL UNIQUE,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 user_group VARCHAR(20) NOT NULL,
 user_fname VARCHAR(40) NOT NULL,
@@ -98,7 +101,7 @@ CONSTRAINT fk_user_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id
 
 CREATE TABLE user_connections
 (
-connection_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+connection_id SERIAL,
 user_id_1 VARCHAR(40) NOT NULL,
 user_id_2 VARCHAR(40) NOT NULL, 
 relationship VARCHAR(12) NOT NULL DEFAULT 0,
@@ -155,8 +158,8 @@ content VARCHAR(500) NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
 CONSTRAINT pk_comment PRIMARY KEY(comment_id),
-CONSTRAINT fk_comment_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
-CONSTRAINT fk_comment_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
+CONSTRAINT fk_recipe_comment_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
+CONSTRAINT fk_recipe_comment_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
 );
 
 CREATE TABLE recipe_ranking
