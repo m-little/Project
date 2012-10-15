@@ -58,6 +58,7 @@ app.post('*', function(req, res, next) {
   });
 
 app.get('/', routes.index);
+app.post('/', routes.index);
 app.get('/login', routes.login);
 app.post('/login', routes.login);
 

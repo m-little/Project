@@ -6,11 +6,12 @@ var login = require('./login.js');
 
 exports.index = function(req, res)
 {
-	if (req.query.logout == '1')
+	if (req.body.logout == '1')
 	{
 		global.session.logged_in = 0;
 		req.session.logged_in = 0;
 		global.session.destroy();
+		res.redirect(req.body.location);
 	}
 
 	res.render('index', { title: website_title });

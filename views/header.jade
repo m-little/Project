@@ -44,10 +44,13 @@ div.header_dropdown(id="header_menu_settings", style="position:fixed; top:48px; 
 			| icon 
 			//- remove later
 		| My Account
-	div.header_dropdown_button(id="header_settings_logout", onClick="window.location.href='/?logout=1'", title="Click here to logout.")
+	div.header_dropdown_button(id="header_settings_logout", onClick="$('#logout_form').submit();", title="Click here to logout.")
 		div.header_dropdown_button_icon
 			| icon 
 			//- remove later
+		form(id="logout_form", style="margin:0px; padding:0px;", method="post", action="/")
+			input(id="logout_form_location", type="hidden", name="location")
+			input(type="hidden", name="logout", value="1")
 		| Log Out
 
 div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:48px; right:10px; width:auto;")

@@ -10,6 +10,11 @@ script
 		$("#header_menu_login").hide();
 		$("#header_menu_settings").hide();
 		$("#header_menu_recipes").hide();
+		// Update location for logging out
+		var location = window.location.href;
+		location = location.substring(location.indexOf(window.location.pathname));
+		$("#logout_form_location").val(location);
+		//
 		$("#header_login_password").keypress(function(e) {
 			if (e.keyCode == 13)
 			{
