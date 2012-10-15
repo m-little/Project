@@ -11,8 +11,6 @@ USE project;
 -- mysql --user=student --password=student < /usr/local/node/docs/project/database.sql
 -- ^ this doesn't give you any feedback though...
 
-SET foreign_key_checks = 0;
-
 DROP TRIGGER IF EXISTS tri_category_counter1;
 DROP TRIGGER IF EXISTS tri_category_counter2;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter1;
@@ -33,8 +31,6 @@ DROP TABLE IF EXISTS wiki;
 DROP TABLE IF EXISTS picture;
 DROP TABLE IF EXISTS passkeys;
 DROP TABLE IF EXISTS video;
-
-SET foreign_key_checks = 1;
 
 CREATE TABLE passkeys
 (
@@ -65,7 +61,6 @@ CONSTRAINT pk_video PRIMARY KEY(video_id)
 CREATE TABLE wiki
 (
 wiki_id SERIAL,
-category_id SMALLINT UNSIGNED NOT NULL,
 video_id BIGINT UNSIGNED,
 wiki_title VARCHAR(40) NOT NULL,
 CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
@@ -243,11 +238,11 @@ INSERT INTO passkeys (user_id, pass, salt) VALUES('Sam', 'e233560939c66735c503f1
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Mike', '4d00564fd19d74efff6ba1f392f757f33fca273b', '4196ce6a9377e11ecc9f01517e8a118c4b596646');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Julia', '9bb9949ea212c05242d0110858987af879c84041', '5fc0d6f9d1b18a1a28738a9834ef6bf12c2716f9');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Curtis', '041b2e52b42326af4c9ac9c63504dd623ab51895', '1019078d1d90533aed697b1e94fbdba9bf3f4d4a');
-INSERT INTO passkeys (user_id, pass, salt) VALUES('Mona', 'sdf89sdf7g87sd8g67sg67s6d7sf6s65sd64gsdg', 'fdg5hf4jd6hjhk7f6fghd4s4asdf3g4gh5fj6hg7');
-INSERT INTO passkeys (user_id, pass, salt) VALUES('James', 'sdf89sdf7g87sdsfsdfsdfsfsga938443929kgsdg', 'fdg5hf4jd6hjhk7f6fghd4ssfsfsfsag04837hg7');
-INSERT INTO passkeys (user_id, pass, salt) VALUES('Catherine', 'kjioudf7g87sdsfsdfsdfsf3sga938443929kgsdg', 'fdsdfsdjd6hjhk7f6fghd4ssfsfsfsag04837hg7');
-INSERT INTO passkeys (user_id, pass, salt) VALUES('John', 'kjioudsdfeesfdsssefdfsf3sga938443929kgsdg', 'fdsdfsdjd6hjhesfsefesfsfsaggkhjkhjl04837hg7');
-INSERT INTO passkeys (user_id, pass, salt) VALUES('Felicia', 'kjioudsdfeesfdsssefdfsf3sga938443929kgsdg', 'fdsdfsdjd6hjhesfsefesfsfsaggkhjkhjl04837hg7');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('Mona', 'eb99762e96c220d67e6683c25fcd3666ea67041b', 'aecbe931addcaba9bf8eaeaa92606fc6d1b35857');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('James', '047281f78707c60625a3c16b5c23daa664e0b09d', '81bb94396ea3e8ff99b9fc3d9ffcd0510d979e0c');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('Catherine', 'e540334e5f07b9b136c5b0b489df7a2efa736947', '73e8a8b5c53e648b2ce978a499edba4e64482d99');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('John', '2eb605c2fcd4b05b709bef4cad5ecd289139a143', 'a8f474ca1460e5670c1f0756b99f4d9a01ffbab9');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('Felicia', 'bcf3f218b57a5362e3162b77d1dfb54167923618', 'c031c0deb66133614c85bdc40a8019ec90c01b98');
 
 INSERT INTO picture (name, caption, location) VALUES('unknown', 'No Picture', 'unknown.png'); -- 1
 INSERT INTO picture (name, caption, location) VALUES('sam1', 'Sam Luebbert', 'sam1.png'); -- 2
