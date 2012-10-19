@@ -28,6 +28,7 @@ DROP TABLE IF EXISTS user_connections;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS wiki_content;
 DROP TABLE IF EXISTS wiki;
+DROP TABLE IF EXISTS wiki_category;
 DROP TABLE IF EXISTS picture;
 DROP TABLE IF EXISTS passkeys;
 DROP TABLE IF EXISTS video;
@@ -62,9 +63,18 @@ CREATE TABLE wiki
 (
 wiki_id SERIAL,
 video_id BIGINT UNSIGNED,
+wiki_cat_id BIGINT UNSIGNED,
 wiki_title VARCHAR(40) NOT NULL,
 CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
 CONSTRAINT fk_wiki_video FOREIGN KEY(video_id) REFERENCES video(video_id)
+);
+
+CREATE TABLE wiki_category
+(
+wiki_cat_id SERIAL NOT NULL AUTO_INCREMENT,
+category_name VARCHAR(40) NOT NULL,
+use_count INT UNSIGNED NOT NULL DEFAULT 0,
+CONSTRAINT pk_wiki_cat PRIMARY KEY(wiki_cat_id)
 );
 
 CREATE TABLE wiki_content
@@ -410,9 +420,15 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 26, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup flaked coconut
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 27, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup sliced almonds
 
+-- Wiki data
 INSERT INTO video (video_id, name, caption, address) VALUES(1, "Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video
 
-INSERT INTO wiki (wiki_id, video_id, wiki_title) VALUES(1, 1, "Test Wiki Title");  -- test wiki page
+-- Wiki categories
+INSERT INTO wiki_category (category_name) VALUES ("Ingredients");
 
-INSERT INTO wiki_content (wiki_cont_id, wiki_id, picture_id, title, content) VALUES(1,1,1, "Content Title", "Test Content");  -- test wiki content
+-- Wiki pages
+INSERT INTO wiki (wiki_id, video_id, wiki_title, wiki_cat_id) VALUES(1, 1, "Common Ingredients",1);  -- test wiki page
 
+-- Wiki content
+INSERT INTO wiki_content (wiki_cont_id, wiki_id, picture_id, title, content) VALUES(1,1,1, "Salt", "salt");  -- test wiki content
+INSERT INTO wiki_content (wiki_cont_id, wiki_id, picture_id, title, content) VALUES(2,1,1, "Sugar", "sugar");
