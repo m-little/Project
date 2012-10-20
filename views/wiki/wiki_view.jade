@@ -4,7 +4,12 @@ html.all
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
-		- for (var i in wiki)
-			p= wiki[i]
-		p= wiki.video.name
+		h1= wiki.title
+		- for(var i in wiki.content)
+			p= wiki.content[i].content
+
+		<iframe width="560" height="315" src="#{wiki.video.address}" frameborder="0" allowfullscreen></iframe>
+
+
+	
 	include ../footer
