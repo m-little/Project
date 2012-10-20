@@ -89,6 +89,9 @@ user_lname VARCHAR(40) NOT NULL,
 email VARCHAR(50) NOT NULL,
 date_added DATETIME NOT NULL,
 user_points INT UNSIGNED NOT NULL DEFAULT 0,
+active TINYINT(1) DEFAULT 0,
+validation_value VARCHAR(40) DEFAULT '',
+validation_date DATETIME NOT NULL DEFAULT 0,
 CONSTRAINT pk_user PRIMARY KEY(user_id),
 CONSTRAINT fk_user_passkeys FOREIGN KEY(user_id) REFERENCES passkeys(user_id),
 CONSTRAINT fk_user_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
@@ -257,15 +260,15 @@ INSERT INTO picture (name, caption, location) VALUES('john', 'Johnny Depp', 'joh
 INSERT INTO picture (name, caption, location) VALUES('felicia', 'Falicia Day', 'felicia_day.jpg'); -- 11
 INSERT INTO picture (name, caption, location) VALUES('Grandmas Pumpkin Pie', 'Just out of the oven.', 'pre_2_2.jpg'); -- 12
 
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added) VALUES('Sam', 2, 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
-INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
-INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added) VALUES('Julia', 'admin', 'Julia', 'Collins', 'jlcollins4@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added) VALUES('Curtis', 6, 'admin', 'Curtis', 'Sydnor', 'casydnor1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added) VALUES('Mona', 7, 'admin', 'Mona', 'Lisa', 'mglisa@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added) VALUES('James', 8, 'admin', 'James', 'Ford', 'jsford@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added) VALUES('Catherine', 9, 'admin', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added) VALUES('John', 10, 'admin', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added) VALUES('Felicia', 11, 'admin', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Sam', 2, 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Julia', 'admin', 'Julia', 'Collins', 'jlcollins4@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Curtis', 6, 'admin', 'Curtis', 'Sydnor', 'casydnor1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mona', 7, 'admin', 'Mona', 'Lisa', 'mglisa@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('James', 8, 'admin', 'James', 'Ford', 'jsford@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Catherine', 9, 'admin', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('John', 10, 'admin', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Felicia', 11, 'admin', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Julia', 'Friend', 1, 1);
 INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Curtis', 'Friend', 1, 1);

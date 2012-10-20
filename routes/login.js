@@ -11,7 +11,7 @@ exports.check_credentials = function check_credentials(user, pass, callback, loc
 
 	var dao = new obj_dao.DAO();
 
-	function output(success, result, fields, location)
+	function output(success, result, fields, res, location)
 	{
 		if (result.length == 0)
 		{
@@ -20,6 +20,13 @@ exports.check_credentials = function check_credentials(user, pass, callback, loc
 		}
 
 		var row = result[0];
+
+		if (row.active == 0) // user not validated yet
+		{
+			global.session.error_message.message = "It looks like you have not yet validated your email.";
+			res.redirect('/error');
+			return;
+		}
 
 		// Create a hashed pass to compare with the stored one.
 		var shasum = crypto.createHash('sha1');
@@ -46,7 +53,7 @@ exports.check_credentials = function check_credentials(user, pass, callback, loc
 
 	}
 
-	dao.query("select p.user_id, pass, salt, user_group from passkeys p JOIN user u ON p.user_id = u.user_id WHERE p.user_id = '" + user + "' LIMIT 1", output, location);
+	dao.query("select p.user_id, pass, salt, user_group, active from passkeys p JOIN user u ON p.user_id = u.user_id WHERE p.user_id = '" + user + "' LIMIT 1", output, location);
 
 	return logged_in;
 }

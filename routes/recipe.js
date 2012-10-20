@@ -42,7 +42,8 @@ exports.display_view = function(req, res)
 	req.query.r_id = parseInt(req.query.r_id);
 	if (isNaN(req.query.r_id))
 	{
-		res.redirect('/');
+		global.session.error_message.message = "The recipe could not be found at the location given.";
+		res.redirect('/error');
 		return;
 	}
 
@@ -54,16 +55,26 @@ exports.display_view = function(req, res)
 	// first return for basic recipe info
 	function output1(success, result, fields)
 	{
-		if (result.length == 0) // no recipe found; should make this better later
+		if (!success)
 		{
-			res.redirect('/');
+			res.redirect('/500error');
+			return;
+		}
+
+		if (result.length == 0) // no recipe found
+		{
+			global.session.error_message.code = "recipe_none";
+			global.session.error_message.message = "That recipe does not seem to exist.";
+			res.redirect('/error');
 			return;
 		}
 
 		var row = result[0];
 		if (row.public == '0' && (!global.session.logged_in || row.owner_id != global.session.user.id))
 		{
-			res.redirect('/');
+			global.session.error_message.code = "recipe_private";
+			global.session.error_message.message = "That recipe is currently private.";
+			res.redirect('/error');
 			return;
 		}
 		
@@ -75,6 +86,12 @@ exports.display_view = function(req, res)
 	// next: pictures
 	function output2(success, result, fields, new_recipe)
 	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
 		var pictures = [];
 		for (var i in result) 
 		{
@@ -89,6 +106,12 @@ exports.display_view = function(req, res)
 	// next: ingredients
 	function output3(success, result, fields, new_recipe)
 	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
 		var ingredients = [];
 		for (var i in result) 
 		{
@@ -103,6 +126,12 @@ exports.display_view = function(req, res)
 	// next: comments
 	function output4(success, result, fields, new_recipe)
 	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
 		var comments = [];
 		for (var i in result) 
 		{
@@ -136,6 +165,12 @@ exports.display_view = function(req, res)
 	// next: rank
 	function output5(success, result, fields, new_recipe)
 	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+		
 		var row = result[0];
 		new_recipe.set_rank(row.avg, row.count);
 
@@ -153,21 +188,24 @@ exports.comment_on = function(req, res)
 {
 	if (req.body.recipe_id == undefined)
 	{
-		res.redirect('/');
+		global.session.error_message.message = "An error occured when linking to the recipe.";
+		res.redirect('/error');
 		return;
 	}
 
 	req.body.recipe_id = parseInt(req.body.recipe_id);
 	if (isNaN(req.body.recipe_id))
 	{
-		res.redirect('/');
+		global.session.error_message.message = "The recipe could not be found at the location given.";
+		res.redirect('/error');
 		return;
 	}
 
 	req.body.reply_comment = parseInt(req.body.reply_comment);
 	if (isNaN(req.body.reply_comment))
 	{
-		res.redirect('/');
+		global.session.error_message.message = "The comment could not be found at the location given.";
+		res.redirect('/error');
 		return;
 	}
 
@@ -179,7 +217,7 @@ exports.comment_on = function(req, res)
 	{
 		if (!success)
 		{
-			res.redirect('/');
+			res.redirect('/500error');
 			return;
 		}
 		else

@@ -31,13 +31,13 @@ exports.login = function(req, res)
 				res.redirect(location);
 		}
 		else
-			res.render('login', { title: website_title, logged_in: success});
+			res.render('login', { title: website_title, logged_in: success, v: req.query.v});
 	}
 
 	if (req.body.username != undefined || req.body.password != undefined)
 	{
 		// location argument allows us to return to the page we were on when we tried to logon.
-		login.check_credentials(req.body.username, req.body.password, result, req.body.location);
+		login.check_credentials(req.body.username, req.body.password, result, res, req.body.location);
 	}
 	else //user hasn't tried to login yet. logged_in should = -1 still
 		result(success);

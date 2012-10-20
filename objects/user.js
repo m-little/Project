@@ -20,7 +20,7 @@ function User(user_id, user_group, callback)
 		var row = result[0];
 		vars.user.set_picture(new obj_picture.Picture(row.picture_id, row.caption, row.location));
 		vars.dao.die();
-		vars.callback();
+		vars.callback(success);
 	}
 
 	dao.query("SELECT u.picture_id, caption, location FROM picture p JOIN user u ON p.picture_id = u.picture_id WHERE u.user_id = '"+this.id+"' LIMIT 1", load_picture, {dao:dao, user:this, callback:callback});

@@ -8,6 +8,9 @@ html.all
 			if logged_in == 0
 				div.notify1_bad
 					| Your username or password was not found.
+			if v == 1
+				div.notify1_good
+					| Your account has been validated.  Please login.
 
 		div(style="position:absolute; left:50%; top:160px; margin-left:-170px; width:290px; height:190px; padding:20px; padding-top:10px; text-align:center; border-radius:1em; background-color:white;")
 			h1.head1(style="margin-bottom:40px;")
