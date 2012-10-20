@@ -23,7 +23,7 @@ app.configure(function(){
 	app.use(express.cookieParser());
 	app.use(express.session({secret: 'Woawoawoawoah'}));
 	app.use(app.router);
-	app.use(express.static(path.join(__dirname, 'public')));
+	app.use(express.static(path.join(__dirname, 'public'), {maxAge: 100*60*5}));
 
 	// Error handling
 	// plenty of room for expansion.

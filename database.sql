@@ -269,6 +269,15 @@ INSERT INTO picture (name, caption, location) VALUES('kate', 'Kate Middleton', '
 INSERT INTO picture (name, caption, location) VALUES('john', 'Johnny Depp', 'johnny_depp.jpg'); -- 10
 INSERT INTO picture (name, caption, location) VALUES('felicia', 'Falicia Day', 'felicia_day.jpg'); -- 11
 INSERT INTO picture (name, caption, location) VALUES('Grandmas Pumpkin Pie', 'Just out of the oven.', 'pre_2_2.jpg'); -- 12
+INSERT INTO picture (name, caption, location) VALUES('Ginger', 'Gingers!', 'pre_ing1.jpg'); -- 13
+INSERT INTO picture (name, caption, location) VALUES('Egg', 'Eggs', 'pre_ing2.jpg'); -- 14
+INSERT INTO picture (name, caption, location) VALUES('Sugar', 'Sugar', 'pre_ing3.jpg'); -- 15
+INSERT INTO picture (name, caption, location) VALUES('Evaporated Milk', 'Evaporated Milk', 'pre_ing4.jpg'); -- 16
+INSERT INTO picture (name, caption, location) VALUES('Solid Packed Pumpkin', 'Solid Packed Pumpkin', 'pre_ing5.jpg'); -- 17
+INSERT INTO picture (name, caption, location) VALUES('Unbaked Pie Shells', 'Unbaked Pie Shells', 'pre_ing6.jpg'); -- 18
+INSERT INTO picture (name, caption, location) VALUES('Salt', 'Salt', 'pre_ing7.jpg'); -- 19
+INSERT INTO picture (name, caption, location) VALUES('Cinnamon', 'Cinnamon', 'pre_ing8.jpg'); -- 20
+INSERT INTO picture (name, caption, location) VALUES('Nutmeg', 'Nutmeg', 'pre_ing9.jpg'); -- 21
 
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Sam', 2, 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
@@ -344,7 +353,7 @@ INSERT INTO category (category_name) VALUES('Pork'); -- 8
 INSERT INTO category (category_name) VALUES('Breakfast'); -- 9
 INSERT INTO category (category_name) VALUES('Desserts'); -- 10
 
-INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Curtis', 2, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Curtis', 2, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), '1. Do this\n2. Do that\n3. Maybe your done?', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Sam', 3, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('01:10', '%H:%i'), STR_TO_DATE('02:00', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Julia', 10, 'Raspberry Cheesecake Bars', '3-5', STR_TO_DATE('00:40', '%H:%i'), STR_TO_DATE('01:10', '%H:%i'), 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
 
@@ -374,15 +383,15 @@ INSERT INTO ingredient (ingr_name) VALUES('Chopped Fresh Dill');  -- 5
 INSERT INTO ingredient (ingr_name) VALUES('Dijon Mustard');  -- 6
 INSERT INTO ingredient (ingr_name) VALUES('Lemon Juice');  -- 7
 INSERT INTO ingredient (ingr_name) VALUES('Pepper');  -- 8
-INSERT INTO ingredient (ingr_name) VALUES('Unbaked Pie Shells');  -- 9
-INSERT INTO ingredient (ingr_name) VALUES('Sugar');  -- 10
-INSERT INTO ingredient (ingr_name) VALUES('Salt');  -- 11
-INSERT INTO ingredient (ingr_name) VALUES('Cinnamon');  -- 12
-INSERT INTO ingredient (ingr_name) VALUES('Ginger');  -- 13
-INSERT INTO ingredient (ingr_name) VALUES('Nutmeg');  -- 14
-INSERT INTO ingredient (ingr_name) VALUES('Eggs');  -- 15
-INSERT INTO ingredient (ingr_name) VALUES('Solid Pack Pumpkin');  -- 16
-INSERT INTO ingredient (ingr_name) VALUES('Evaporated Milk');  -- 17
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Unbaked Pie Shells', 18);  -- 9
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Sugar', 15);  -- 10
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Salt', 19);  -- 11
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Cinnamon', 20);  -- 12
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Ginger', 13);  -- 13
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Nutmeg', 21);  -- 14
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Eggs', 14);  -- 15
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Solid Pack Pumpkin', 17);  -- 16
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Evaporated Milk', 16);  -- 17
 INSERT INTO ingredient (ingr_name) VALUES('All Purpose Flour');  -- 18
 INSERT INTO ingredient (ingr_name) VALUES('Brown Sugar');  -- 19
 INSERT INTO ingredient (ingr_name) VALUES('Finely Chopped Sliced Almonds');  -- 20

@@ -56,6 +56,15 @@ exports.Recipe = function Recipe(id_, owner_, public_, name_, cate_, serv_, prep
 		return locations;
 	}
 
+	// this returns a client side javascript happy array to use when cycling through ingredients.
+	this.ingredients_string = function()
+	{
+		var ingredients = [];
+		for (var i = 0; i < this.ingredients.length; i++)
+			ingredients.push("{name: '" + this.ingredients[i].name + "', picture_location: '" + this.ingredients[i].picture.location + "', id: '" + this.ingredients[i].id + "', use_count: " + this.ingredients[i].use_count + "}");
+		return ingredients;
+	}
+
 	this.set_ingredients = function(ing_)
 	{
 		this.ingredients = ing_;

@@ -4,7 +4,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
-		div(style="padding-bottom:40px; background-color:white;")
+		div(style="padding-bottom:40px; background-color:white; margin-bottom:10px; border:1px solid #c2c2c2;")
 
 			- if (recipe.public == '0')
 				div(style="float:left; clear:both; height:128px; width:24px; position:relative; top:24px; left:-18px; margin-bottom:-140px; background-image:url('../images/private.png');")
@@ -13,11 +13,11 @@ html.all(style="background-image:url('../images/bg1.png');")
 			div(id="recipe_pic_next", style="position:relative; left:19px; top:66px; float:right; width:24px; height:44px; margin-bottom:-46px; background-image:url('../images/next1.png'); cursor:pointer;", title="Next photo.", , onClick="next_picture();")
 
 			//- Recipe Category
-			div(style="position:relative; right:10px; top:0px; font-size:28px; float:right; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default; z-index:2;", title="Category")
+			div(style="position:relative; right:10px; top:2px; margin-top:-2px; font-size:28px; float:right; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default; z-index:2;", title="Category")
 				| #{recipe.category}
 
 			//- Recipe Name
-			div(style="position:relative; left:10px; top:0px; font-size:32px; float:left; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default; z-index:2;")
+			div(style="position:relative; left:10px; top:2px; margin-top:-2px; font-size:32px; float:left; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default; z-index:2;")
 				| #{recipe.name}
 
 			//- Image
@@ -35,33 +35,33 @@ html.all(style="background-image:url('../images/bg1.png');")
 					b(style="cursor:pointer;")
 						| #{recipe.owner}
 
-		style(type="text/css")
-			div.star_power{width:#{recipe.rank / 10 * 168}px; height:100%; background-color:#ffbf00;}
-			div.star_outline{width:168px; height:32px; margin:auto; position:relative; top:-36px; margin-bottom:-32px; background-image:url('../images/star_hollow1.png'); cursor:pointer;}
+			style(type="text/css")
+				div.star_power{width:#{recipe.rank / 10 * 168}px; height:100%; background-color:#ffbf00;}
+				div.star_outline{width:168px; height:32px; margin:auto; position:relative; top:4px; margin-bottom:-32px; background-image:url('../images/star_hollow1.png'); cursor:pointer;}
 
-		//- Rating
-		div(style="width:168px; height:30px; margin:auto; position:relative; left:1px; top:-34px; margin-bottom:-32px; padding-bottom:3px;")
-			div.star_power
-		div.star_outline(title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks)")
+			//- Rating
+			div(style="width:168px; height:30px; margin:auto; position:relative; left:1px; top:6px; margin-bottom:-32px; padding-bottom:3px;")
+				div.star_power
+			div.star_outline(title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks)")
 
-		div(style="float:right; position:relative; top:-18px; right:10px; font-size:12px; color:gray;")
-			| Created on #{recipe.date_added.toDateString()}
+			div(style="float:right; position:relative; top:22px; right:10px; font-size:12px; color:gray;")
+				| Created on #{recipe.date_added.toDateString()}
 
 		// Ingredients
-		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; background-color:white;")
+		div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; min-height:186px;")
 
-			div(style="border:1px solid gray; border-radius:.6em; float:right; position:relative; right:-140px; padding:6px;")
+			div(style="border-radius:.6em; float:right; position:relative; padding:6px; margin:6px;")
 				div(style="font-size:16px; float:right; clear:both; text-align:center; width:100%;")
 					| Serving Size
-				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%;")
+				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%; margin-bottom:6px;")
 					| #{recipe.serving_size}
 
-				div(style="font-size:16px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:4px;")
+				div(style="font-size:16px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:10px;")
 					| Prep Time
-				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%;")
+				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%; margin-bottom:6px;")
 					| #{recipe.prep_time}
 
-				div(style="font-size:16px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:4px;")
+				div(style="font-size:16px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:10px;")
 					| Ready in
 				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%;")
 					| #{recipe.ready_time}
@@ -87,15 +87,19 @@ html.all(style="background-image:url('../images/bg1.png');")
 							- else
 								| #{recipe.ingredients[i].amount} 
 						td(style="padding-right:4px;")
-							|  #{recipe.ingredients[i].unit_name}
-							|  #{recipe.ingredients[i].name}
+							|  #{recipe.ingredients[i].unit_name} 
+							b(style="cursor:pointer;")
+								a(id="ingr#{recipe.ingredients[i].id}", href="", style="color:black; text-decoration:none;")
+									| #{recipe.ingredients[i].name}
 
 		//- Directions
-		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; background-color:white;")
+		div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white;")
 			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 				| Directions
 			div(style="padding-left:10px;")
-				| #{recipe.directions}
+				- for direction in recipe.directions.split('\n')
+					div(style="margin-top:6px; min-height:19px;")
+						| #{direction}
 
 		style(type="text/css")
 			div.comment{padding:5px; padding-left:10px; margin:15px; margin-bottom:20px; margin-top:25px; border:1px solid gray; border-radius:.6em; height:auto; background-image:url('../images/comment_bg1.png'); background-size:100% 100%;}
@@ -105,15 +109,15 @@ html.all(style="background-image:url('../images/bg1.png');")
 			div.new_post:hover{cursor:pointer; background-color:#44bd44;}
 
 		//- Comments
-		div(style="font-size:16px; height:auto; padding:10px; border-top:1px dotted gray; border-bottom:1px dotted gray; background-color:white;")
+		div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; background-color:white;")
 			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 				| Comments
 
-			div(style="background-image:url('../images/bg2.png'); padding:5px; padding-top:1px; padding-bottom:1px; border-radius:.6em;", id="comments")
+			div(style="padding:5px; padding-top:1px; padding-bottom:1px; border-radius:.6em;", id="comments")
 				- for(var i = 0; i < recipe.flat_comments.length; i++)
 					- comment = recipe.flat_comments[i];
 					- if (recipe.owner == comment.owner)
-						- comment_color = 'e9e8ff';
+						- comment_color = 'e8f0ff';
 					- else
 						- comment_color = 'ffffff';
 
@@ -153,7 +157,9 @@ html.all(style="background-image:url('../images/bg1.png');")
 									|  am
 
 						div(style="margin-right:5px; margin-left:40px; border:1px solid border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-top:10px; padding-left:5px; padding-right:5px;")
-							| #{comment.content}
+							- for piece in comment.content.split('\n')
+								div(style="margin-top:2px; min-height:19px;")
+									| #{piece}
 
 						- if (global.session.logged_in && global.session.user.id != comment.owner)
 							div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:3px; margin-bottom:-20px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}")
@@ -161,7 +167,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 				- if (global.session.logged_in)
 					// New comment box (hides on load)			
 					- if (recipe.owner == global.session.user.id)
-						- comment_color = 'e9e8ff';
+						- comment_color = 'e8f0ff';
 					- else
 						- comment_color = 'ffffff';
 					div.comment(style="margin-left:30px; background-color:##{comment_color};", id="new_comment")
@@ -192,7 +198,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 					// New reply box (hides on load)			
 					- if (recipe.owner == global.session.user.id)
-						- comment_color = 'e9e8ff';
+						- comment_color = 'e8f0ff';
 					- else
 						- comment_color = 'ffffff';
 					div.comment(style="margin-left:30px; background-color:##{comment_color};", id="new_reply")
@@ -227,6 +233,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 		var resizing_image = false;
 		var image_index = 0;
 		var images = [#{recipe.pictures_string().toString()}];
+		var ingredients = [#{recipe.ingredients_string().toString()}];
 		$(document).ready(function()
 		{
 			$("#new_comment").hide();
@@ -284,6 +291,27 @@ html.all(style="background-image:url('../images/bg1.png');")
 				$("#recipe_pic_prev").hide();
 				$("#recipe_pic_next").hide();
 			}
+			// Ingredient hover stuff
+			$("[id^=ingr]").hover(function(e){
+				var ingr_num = event.target.id.match(/[0-9]+/g);
+				var index = 0;
+				for (var i = 0; i < ingredients.length; i++)
+				{
+					if (ingredients[i].id == ingr_num)
+						index = i;
+				}
+				$("<div></div>").attr({id:'ingr_float', style:'float:left; position:absolute; left:'+(e.pageX + 16)+'px; top:'+e.pageY+'px; min-width:180px; background-color:white; border:1px solid #c2c2c2; z-index:2;'}).appendTo('body');
+				$("<div></div>").attr({id:'ingr_float_image_div', style: "overflow:hidden; width:48px; height:48px; margin:4px; float:left;"}).appendTo('#ingr_float');
+				$("<img>").attr({src: "../images/user_images/" + ingredients[index].picture_location, style: "width:100%;"}).appendTo("#ingr_float_image_div");
+				$("<div>" + ingredients[index].name + "</div>").attr({style: "white-space:nowrap; float:left; margin:4px; margin-right:10px;"}).appendTo("#ingr_float");
+				$("<div>" + ingredients[index].use_count + "</div>").attr({style: "color:blue; font-size:10px; float:right; clear:both; margin:4px; margin-right:14px; margin-top:-18px; position:relative; top:-14px;"}).appendTo("#ingr_float");
+				$("<div>Click to learn more.</div>").attr({style: "white-space:nowrap; color:gray; font-size:12px; float:right; clear:both; margin:4px; margin-right:10px; margin-top:-18px;"}).appendTo("#ingr_float");
+			}, function(e){
+				$("#ingr_float").remove();
+			});
+			$("[id^=ingr]").mousemove(function(e){
+				$("#ingr_float").css({left: (e.pageX + 16) + 'px', top: e.pageY + 'px'});
+			});
 		});
 		function prev_picture()
 		{

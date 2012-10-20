@@ -5,13 +5,13 @@ var obj_picture = require('../objects/picture');
 
 // location argument allows us to return to the page we were on when we tried to logon.
 
-exports.check_credentials = function check_credentials(user, pass, callback, location)
+exports.check_credentials = function check_credentials(user, pass, callback, res, location)
 {
 	var logged_in = false;
 
 	var dao = new obj_dao.DAO();
 
-	function output(success, result, fields, res, location)
+	function output(success, result, fields, vars)
 	{
 		if (result.length == 0)
 		{
@@ -24,7 +24,7 @@ exports.check_credentials = function check_credentials(user, pass, callback, loc
 		if (row.active == 0) // user not validated yet
 		{
 			global.session.error_message.message = "It looks like you have not yet validated your email.";
-			res.redirect('/error');
+			vars.res.redirect('/error');
 			return;
 		}
 
@@ -41,19 +41,19 @@ exports.check_credentials = function check_credentials(user, pass, callback, loc
 		}
 		else
 		{
-			callback(logged_in, user, row.user_group, location);
+			callback(logged_in, user, row.user_group, vars.location);
 			dao.die();
 		}
 
 		function user_created()
 		{
 			global.session.logged_in = 1;
-			callback(logged_in, user, row.user_group, location);
+			callback(logged_in, user, row.user_group, vars.location);
 		}
 
 	}
 
-	dao.query("select p.user_id, pass, salt, user_group, active from passkeys p JOIN user u ON p.user_id = u.user_id WHERE p.user_id = '" + user + "' LIMIT 1", output, location);
+	dao.query("select p.user_id, pass, salt, user_group, active from passkeys p JOIN user u ON p.user_id = u.user_id WHERE p.user_id = '" + user + "' LIMIT 1", output, {res: res, location: location});
 
 	return logged_in;
 }
