@@ -78,6 +78,7 @@ app.get('/user/validate', user.validate);
 app.get('/recipe/create', recipe.display_create);
 app.get('/recipe/view', recipe.display_view);
 app.post('/recipe/comment_on', recipe.comment_on);
+app.get('/recipe/my', recipe.my);
 
 app.get('/wiki/view', wiki.display_view);
 

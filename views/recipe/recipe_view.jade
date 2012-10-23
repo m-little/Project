@@ -131,9 +131,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 									img(style="width:100%;", src="../images/user_images/#{comment.picture.location}", alt="#{comment.picture.caption}", title="#{comment.picture.caption}")
 
 						div(style="height:20px; margin-left:45px; margin-right:10px; position:relative; top:-20px; margin-bottom:-20px;")
-							div(style="color:gray;")
+							div(style="color:gray; width:10px; overflow:show;")
 								- if (global.session.logged_in && comment.owner == global.session.user.id)
-									| You 
+									p(style="margin:0px; padding:0px;")
+										| You 
 								- else
 									p(style="margin:0px; padding:0px; cursor:pointer;")
 										| #{comment.owner} 
@@ -155,6 +156,9 @@ html.all(style="background-image:url('../images/bg1.png');")
 									|  pm
 								- else
 									|  am
+							if (global.session.logged_in && comment.owner != global.session.user.id && !comment.seen)
+								div(style="float:right; font-size:12px; color:green; margin-right:10px; margin-bottom:-16px; position:relative; top:-16px;")
+									| New
 
 						div(style="margin-right:5px; margin-left:40px; border:1px solid border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-top:10px; padding-left:5px; padding-right:5px;")
 							- for piece in comment.content.split('\n')
@@ -162,7 +166,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 									| #{piece}
 
 						- if (global.session.logged_in && global.session.user.id != comment.owner)
-							div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:3px; margin-bottom:-20px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}")
+							div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}")
 
 				- if (global.session.logged_in)
 					// New comment box (hides on load)			

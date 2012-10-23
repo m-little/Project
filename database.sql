@@ -165,6 +165,7 @@ reply_comment_id BIGINT UNSIGNED DEFAULT 0,
 content VARCHAR(500) NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
+seen TINYINT(1) NOT NULL DEFAULT 0,
 CONSTRAINT pk_comment PRIMARY KEY(comment_id),
 CONSTRAINT fk_recipe_comment_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_comment_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)

@@ -11,6 +11,7 @@ exports.Recipe = function Recipe(id_, owner_, public_, name_, cate_, serv_, prep
 	this.pictures = [];
 	this.ingredients = [];
 	this.comments = [];
+	this.unseen_comment_count = -1;
 	this.flat_comments = [];
 	this.serving_size = serv_;
 	this.prep_time = "";

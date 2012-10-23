@@ -1,4 +1,4 @@
-exports.Comment = function Comment(id_, owner_, owner_pic_, content_, date_added_, date_edited_)
+exports.Comment = function Comment(id_, owner_, owner_pic_, content_, date_added_, date_edited_, seen_)
 {
 	this.id = id_;
 	this.owner = owner_;
@@ -9,6 +9,7 @@ exports.Comment = function Comment(id_, owner_, owner_pic_, content_, date_added
 	this.replies = [];
 	this.flat_replies = [];
 	this.indent = 0;
+	this.seen = seen_;
 
 	this.add_reply = function(reply)
 	{
