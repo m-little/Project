@@ -115,7 +115,8 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 			div(style="padding:5px; padding-top:1px; padding-bottom:1px; border-radius:.6em;", id="comments")
 				- for(var i = 0; i < recipe.flat_comments.length; i++)
-					- comment = recipe.flat_comments[i];
+					- var comment = recipe.flat_comments[i];
+					- var comment_color = '';
 					- if (recipe.owner == comment.owner)
 						- comment_color = 'e8f0ff';
 					- else
@@ -170,6 +171,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 				- if (global.session.logged_in)
 					// New comment box (hides on load)			
+					- var comment_color = '';
 					- if (recipe.owner == global.session.user.id)
 						- comment_color = 'e8f0ff';
 					- else
@@ -179,7 +181,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						//- User stuff
 						div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-36px; top:-12px; margin-bottom:-24px; margin-right:-24px; border:1px solid gray; border-radius:.6em; width:64px; background-color:##{comment_color};")
 								div(style="width:64px; height:64px; overflow:hidden;")
-									img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{comment.picture.caption}")
+									img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
 
 						div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
 
@@ -200,7 +202,8 @@ html.all(style="background-image:url('../images/bg1.png');")
 							div.new_cancel(id="new_comment_cancel", title="Click here to cancel your comment.")
 								| Cancel
 
-					// New reply box (hides on load)			
+					// New reply box (hides on load)
+					- var comment_color = '';			
 					- if (recipe.owner == global.session.user.id)
 						- comment_color = 'e8f0ff';
 					- else
@@ -210,7 +213,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						//- User stuff
 						div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-36px; top:-12px; margin-bottom:-24px; margin-right:-24px; border:1px solid gray; border-radius:.6em; width:64px; background-color:##{comment_color};")
 								div(style="width:64px; height:64px; overflow:hidden;")
-									img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{comment.picture.caption}")
+									img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
 
 						div(style="color:gray; position:relative; top:-50px; left:50px; margin-bottom:-50px; width:200px;")
 							| What will you say?

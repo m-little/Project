@@ -141,6 +141,7 @@ ready_time TIME DEFAULT 0,
 directions VARCHAR(5000) NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
+active TINYINT(1) NOT NULL DEFAULT 1,
 CONSTRAINT pk_recipe PRIMARY KEY(recipe_id),
 CONSTRAINT fk_recipe_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(category_id)

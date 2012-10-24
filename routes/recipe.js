@@ -197,6 +197,7 @@ exports.display_view = function(req, res)
 	
 	function finished(new_recipe)
 	{
+		console.log(new_recipe.comments.length);
 		res.render('recipe/recipe_view', { title: website_title, recipe: new_recipe });
 	}
 }
