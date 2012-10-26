@@ -1,9 +1,8 @@
 doctype 5
-html.all
+html.all(style="background-image:url('../images/bg1.png');")
 
 	include ../header
-
-	div.all(style="max-width:900px; margin:auto;")
+	div.all(style="max-width:900px; height:800px; padding:10px; border:1px solid #c2c2c2; background-color:white; margin:auto;")
 		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; ")
 			| Create Recipe
 
@@ -11,11 +10,11 @@ html.all
 			div(style="float:left; width:150px")
 				| Recipe Name:
 			div(style="float:left; width:360px")
-				input.input_text(type="text", style="margin-left:10px; width:300px;", name="recipe_name", required="required", autofucus)
+				input.input_text(type="text", class="recipe_name", style="margin-left:10px; width:300px;", required="required", autofucus)
 			div(style="float:left")
 				| Category:
 			div(style="float:left")
-				select(size="1", style="width:200px; font-size:16px; margin-left:10px; padding-left:10px;")
+				select(size="1", class="category", mstyle="width:200px; font-size:16px; margin-left:10px; padding-left:10px;")
 					- for( var i = 0; i < categories.length; i++)
 						option
 							= categories[i]
@@ -23,7 +22,7 @@ html.all
 			div(style="float:left; width:150px")
 				| Picture Upload:
 			div(style="float:left")
-				input(type="file", name="recipe_picture", style="margin-left:10px")
+				input(type="file", class="recipe_picture", name="recipe_picture", style="margin-left:10px")
 
 
 		div(style="clear:left; width:500px; padding:10px")
@@ -31,41 +30,117 @@ html.all
 				| Security:
 			div(style="float:left")
 				p(style="margin:0px")
-					input(type="radio", name="security", value="Public") 
-					| Public
-				p(style="margin:0px")
-					input(type="radio", name="security", value="Private")
+					input(type="radio", name="security", value="Private", checked="checked") 
 					| Private
+				p(style="margin:0px")
+					input(type="radio", name="security", value="Public")
+					| Public
 
-		div(style="clear:left; width:500px; padding:10px")
-			div(style="float:left; width:150px")
+		div.ingredient(style="clear:left; width:600px; padding:10px")
+			div(style="float:left; height:27px; width:150px")
 				| Ingredients:
 			div(style="float:left")
-				input.input_text(type="text", style="margin-left:10px; width:300px", name="ingredient")
+				input.input_text(type="text", class="ingredient_name", style="margin-left:10px; width:300px", name="ingredient")
+			div(style="float:left")
+				input.add_ingredient(type="button", value="Add Ingredient", style="margin-left:10px; height:27px")
 
-		div(style="clear:left; padding:10px 10px 25px 10px")
-			div(style="float:left; width:150px")
+		div(style="clear:left; heigt:26px; width:500px; padding:10px")
+			div(style="float:left; height:26px; width:160px; line-height:140%")
 				| Preparation Time:
 			div(style="float:left")
-				select(size="1", style="width:200px; font-size:16px; margin-left:10px; padding-left:10px;")
+				| Hours:
+				input.input_text(type="number", class="preparation_hours", value="0", name="preparation_hours", style="margin-left:10px; margin-right:10px; width:30px")
+				| Minutes:
+				input.input_text(type="number", class="preparation_minutes", value="0", name="preparation_minutes", style="margin-left:10px; margin-right:10px; width:30px")
+
+		div(style="clear:left; height:26px; width:500px; padding:10px")
+			div(style="float:left; height:26px; width:160px; line-height:140%")
+				| Ready Time:
+			div(style="float:left")
+				| Hours:
+				input.input_text(type="number", class="ready_hours", value="0", name="ready_hours", style="margin-left:10px; margin-right:10px; width:30px")
+				| Minutes:
+				input.input_text(type="number", class="ready_minutes", value="0", name="ready_minutes", style="margin-left:10px; margin-right:10px; width:30px")
 
 		div(style="width:500px; padding:10px")
-			div(style="float:left; width:150px")
+			div(style="float:left; width:150px; height:26px; line-height:140%")
 				| Serving Size:
 			div(style="float:left")
-				input.input_text(type="number", value="1", name="serving_size_one", style="margin-left:10px; margin-right:10px; width:30px")
+				input.input_text(type="number", class="serving_size_one", value="1", name="serving_size_one", style="margin-left:10px; margin-right:10px; width:30px")
 				| to 
-				input.input_text(type="number", value="1", name="serving_size_two", style="margin-left:10px; width:30px")
+				input.input_text(type="number", class="serving_size_two", value="1", name="serving_size_two", style="margin-left:10px; width:30px")
 
 		div(style="clear:left; padding:10px")
 			div(style="float:left; width:150px")
 				| Directions:
 			div(style="float:left; padding-left:10px")
-				textarea.text_box(type="text", style="width:650px; height:300px")
+				textarea.text_box(type="text", class="directions", style="width:650px; height:300px")
 
 		div(style="clear:left; width:810px; padding:10px")
 			div(style="float:right")
-				input(type="button", value="Create", style="height:30px; width:80px")
-	
+				input(type="button", class="recipe_submit", value="Create", style="height:30px; width:80px")
+
+	script(src="../jquery.js")
+	script
+		$(document).ready(function()
+		{
+			$('.add_ingredient').live('click', function() {
+				$('.add_ingredient').hide();
+				$('.ingredient').append('<div style="clear:left; float:left; margin-top:5px;"><input class="input_text ingredient_name" type="text", style="margin-left:160px; width:300px"></div>');
+				$('.ingredient').append('<div style="float:left; margin-top:5px;"><input type="button" class="add_ingredient" value="Add Ingredient" style="margin-left:10px; height:27px"></div>');
+			});
+
+			$('.recipe_submit').click(function() {
+				var recipe_obj = new Object();
+				recipe_obj.recipe_name = $('.recipe_name').val();
+				recipe_obj.category = $('.category').val();
+				recipe_obj.picture = $('.recipe_picture').val();
+				recipe_obj.privacy_status = $('input:radio:checked').val();
+
+				var ingredient_array = new Array();
+				$('.ingredient_name').each(function() {
+					ingredient_array.push($(this).val());
+				});
+				recipe_obj.ingredients = ingredient_array;
+
+				var preparation_hours = $('.preparation_hours').val();
+				var preparation_minutes = $('.preparation_minutes').val();
+				recipe_obj.preparation_time = convert_time(preparation_hours, preparation_minutes);
+
+				var ready_hours = $('.ready_hours').val();
+				var ready_minutes = $('.ready_minutes').val();
+				recipe_obj.ready_time = convert_time(ready_hours, ready_minutes);
+
+				var serving_size_one = $('.serving_size_one').val();
+				var serving_size_two = $('.serving_size_two').val();
+				recipe_obj.serving_size = serving_size_one + "-" + serving_size_two;
+
+				recipe_obj.directions = $('.directions').val();
+
+				var json = JSON.stringify(recipe_obj);
+
+				$.ajax({
+					type: 'POST',
+					url: '/recipe/test',
+					data: {recipe: json}, 
+					dataType: 'json',
+					success: function(data){
+						alert(data);
+					}
+				});
+			});
+		});
+
+		function convert_time(hours, minutes) {
+			var str_1 = "" + hours;
+			var pad_1 = "00";
+			pad_1 = pad_1.substring(0, pad_1.length - str_1.length) + str_1;
+
+			var str_2 = "" + minutes;
+			var pad_2 = "00";
+			pad_2 = pad_2.substring(0, pad_2.length - str_2.length) + str_2;
+
+			return pad_1 + ":" + pad_2;			
+		}
 
 	include ../footer
