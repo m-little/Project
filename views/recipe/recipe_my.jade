@@ -21,11 +21,11 @@ html.all(style="background-image:url('../images/bg1.png');")
 					- if (public_recipes[i].unseen_comment_count != 0)
 						- recipe_color = '4564ff';
 
-					div(style="float:left; border-radius:.3em; margin:4px; padding:2px; background-color:##{recipe_color}; background-image:url('../images/stripes1.png'); cursor:pointer;", title="#{public_recipes[i].name}")
+					div(style="float:left; border-radius:.3em; margin:4px; padding:2px; background-color:##{recipe_color}; background-image:url('../images/stripes1.png'); cursor:pointer;", title="#{public_recipes[i].name}", onClick="window.location.href='/recipe/view?r_id=#{public_recipes[i].id}'")
 						div(style="width:110px; height:98px; overflow:hidden; margin-bottom:-98px;")
 							img(src="../images/user_images/#{public_recipes[i].get_picture(0).location}", style="float:left; min-height:100%; min-width:100%; max-height:150%; max-width:150%;")
 
-						div(style="float:left; width:110px; min-height:98px; border-radius:.3em;", onClick="window.location.href='/recipe/view?r_id=#{public_recipes[i].id}'")
+						div(style="float:left; width:110px; min-height:98px; border-radius:.3em;")
 
 							div(style="margin:2px; padding:2px; background-color:white; border-radius:.3em; opacity:.8; filter:alpha(opacity=80); text-align:center;")
 								a(href="/recipe/view?r_id=#{public_recipes[i].id}", style="text-decoration:none; color:black;")

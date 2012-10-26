@@ -260,9 +260,33 @@ html.all(style="background-image:url('../images/bg1.png');")
 			});
 			$("[id^=reply]").click(function(){
 				$("[id^=reply]").slideUp();
-				$("#new_reply").insertAfter($(event.target).parent());
+				var count = parseInt(event.target.id.match(/[0-9]+/g)) + 1;
+				var margin = $($(event.target).parent()).css('margin-left').match(/[0-9]+/g);
 				var parent = $(event.target).parent();
 				$("#new_reply").css('margin-left', (parseInt(parent.css('margin-left')) + 50).toString() + 'px');
+				while(1)
+				{
+					var comment = "#comment" + count.toString();
+					if ($(comment).attr('id') == undefined)
+					{
+						if (parent == undefined)
+							parent = $(event.target).parent();
+						break;
+					}
+					else
+					{
+						// alert($(comment).css('margin-left').match(/[0-9]+/g) + ' = ' + margin);
+						if (parseInt($(comment).css('margin-left').match(/[0-9]+/g)) != margin)
+						{
+							parent = $(comment);
+							// alert('!=');
+						}
+						else
+							break;
+						count++;
+					}
+				}
+				$("#new_reply").insertAfter(parent);
 				$("#new_reply").slideDown();
 				$("#new_reply_text").focus();
 				$("#new_reply_target_id").val(this.id.match(/[0-9]+/g));
