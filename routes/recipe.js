@@ -274,3 +274,40 @@ exports.my = function(req, res)
 		res.render('recipe/recipe_my', { title: website_title, public_recipes: public_recipes, private_recipes: private_recipes });
 	}
 }
+
+exports.submit_recipe = function(req, res)
+{
+	recipe_obj = new Object();
+	recipe_obj = (JSON.parse(req.body.recipe));
+	console.log(recipe_obj);
+
+	var dao = new obj_dao.DAO();
+	//dao.query("SELECT category_id FROM category WHERE category_name = 'Pork'", output);
+
+	function output(success, result, fields) {
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+		else {		
+			var row = result[0];
+			dao.query("INSERT INTO recipe(owner_id, category_id, recipe_name, public, serving_size, prep_time, ready_time, directions, date_added) VALUES('" + global.session.user.id + "', " + row.category_id + ", '" + recipe_obj.recipe_name + "', '" + recipe_obj.privacy_status + "', '" + recipe_obj.serving_size + "', '" + recipe_obj.preparation_time + "', '" + recipe_obj.ready_time + "', '" + recipe_obj.directions + "', NOW())", output2);
+		}
+    }
+
+    function output2(success, result, fields) {
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+    }
+
+    //for(var i = 0; i <= recipe_obj.ingredients.length; i++) {
+
+    //}
+
+	return;
+}
+
