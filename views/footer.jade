@@ -7,9 +7,13 @@ script(src="../jquery.js")
 script
 	$(document).ready(function()
 	{
+		// hide boxes and place them correctly.  removes the ghost of a box on slow loading.
 		$("#header_menu_login").hide();
+		$("#header_menu_login").css('top', '48px');
 		$("#header_menu_settings").hide();
+		$("#header_menu_settings").css('top', '48px');
 		$("#header_menu_recipes").hide();
+		$("#header_menu_recipes").css('top', '48px');
 		// Update location for logging out
 		var location = window.location.href;
 		location = location.substring(location.indexOf(window.location.pathname));
