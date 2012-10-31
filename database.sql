@@ -426,9 +426,8 @@ INSERT INTO ingredient (ingr_name) VALUES('Pork Chops'); -- 32
 INSERT INTO ingredient (ingr_name) VALUES('Seasoned dry stuffing'); -- 33
 INSERT INTO ingredient (ingr_name) VALUES('Ground Beef'); -- 34
 INSERT INTO ingredient (ingr_name) VALUES('1 ounce Package of Ranch Dressing Mix'); -- 35
-INSERT INTO ingredient (ingr_name) VALUES('Egg'); -- 36
-INSERT INTO ingredient (ingr_name) VALUES('Crushed Saltine Crackers'); -- 37
-INSERT INTO ingredient (ingr_name) VALUES('Chopped Onion'); -- 38
+INSERT INTO ingredient (ingr_name) VALUES('Crushed Saltine Crackers'); -- 36
+INSERT INTO ingredient (ingr_name) VALUES('Chopped Onion'); -- 37
 
 
 
@@ -462,7 +461,7 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 27, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup sliced almonds
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 15, 5, 1); -- Simple White Cake, 1 Cup of White Sugar
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 28, 5, .5); -- Simple White Cake, 1/2 Cup of butter
-INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 14, 1, 2); -- Simple White Cake, 2 eggs
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 15, 1, 2); -- Simple White Cake, 2 eggs
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 29, 2, 2); -- Simple White Cake, 2 teaspoons vanilla extract
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 18, 5, 1); -- Simple White Cake, 1 cup of flour
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 30, 2, 1.75); -- Simple White Cake, 1 3/4 teaspoons of backing powder
@@ -475,9 +474,9 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(5, 8, 3, .25); -- Oven-Fried Pork Chops, 1/4 Teaspoon of Black Pepper
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 34, 14, 2); -- Ranch Burgers, 2lbs Lean Ground Beef
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 33, 12, 1); -- Ranch Burgers, 1 (1 ounce) package ranch dressing mix
-INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 36, 1, 1); -- Ranch Burgers, 1 eggs lightly beaten
-INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 37, 5, .75); -- Ranch Burgers, 3/4 cup crushed saltine crackers
-INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 38, 1, 1); -- Ranch Burgers, 1 Onion chopped
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 15, 1, 1); -- Ranch Burgers, 1 eggs lightly beaten
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 36, 5, .75); -- Ranch Burgers, 3/4 cup crushed saltine crackers
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 37, 1, 1); -- Ranch Burgers, 1 Onion chopped
 
 
 -- Wiki data
