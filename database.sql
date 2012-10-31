@@ -280,6 +280,9 @@ INSERT INTO picture (name, caption, location) VALUES('Unbaked Pie Shells', 'Unba
 INSERT INTO picture (name, caption, location) VALUES('Salt', 'Salt', 'pre_ing7.jpg'); -- 19
 INSERT INTO picture (name, caption, location) VALUES('Cinnamon', 'Cinnamon', 'pre_ing8.jpg'); -- 20
 INSERT INTO picture (name, caption, location) VALUES('Nutmeg', 'Nutmeg', 'pre_ing9.jpg'); -- 21
+INSERT INTO picture (name, caption, location) VALUES('Simple White Cake', 'CAKE!', 'simple_white.jpg'); -- 22
+INSERT INTO picture (name, caption, location) VALUES('Oven-Friend Pork Chops', 'pork chops', 'pork_chops.jpg'); -- 23
+INSERT INTO picture (name, caption, location) VALUES('Ranch Burgers', 'ranch burgers', 'ranch_burgers.jpg'); -- 24
 
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Sam', 2, 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
@@ -356,13 +359,20 @@ INSERT INTO category (category_name) VALUES('Breakfast'); -- 9
 INSERT INTO category (category_name) VALUES('Desserts'); -- 10
 
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Curtis', 2, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), '1. Do this\n2. Do that\n3. Maybe your done?', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
-INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Sam', 3, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('01:10', '%H:%i'), STR_TO_DATE('02:00', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
-INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Julia', 10, 'Raspberry Cheesecake Bars', '3-5', STR_TO_DATE('00:40', '%H:%i'), STR_TO_DATE('01:10', '%H:%i'), 'directions', STR_TO_DATE('9,28,2012 12:00', '%m,%d,%Y %H:%i')); -- 3
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Sam', 3, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('00:10', '%H:%i'), STR_TO_DATE('02:00', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Julia', 10, 'Raspberry Cheesecake Bars', '3-5', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('9,28,2012 19:00', '%m,%d,%Y %H:%i')); -- 3
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Mike', 4, 'Simple White Cake', '6-10', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,25,2012 19:00', '%m,%d,%Y %H:%i')); -- 4
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Curtis', 8, 'Oven-fried Pork Chops', '4', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:00', '%m,%d,%Y %H:%i')); -- 5
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Sam', 6, 'Ranch Burgers', '8', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:05', '%m,%d,%Y %H:%i')); -- 6
+
 
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(1, 3);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(2, 4);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(2, 12);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(3, 5);
+INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(4, 22);
+INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(5, 23);
+INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(6, 24);
 
 INSERT INTO recipe_comment (owner_id, recipe_id, content, date_added) VALUES('Curtis', 2, "Hey, this recipe seems good!", STR_TO_DATE('10,1,2012 16:34:21', '%m,%d,%Y %H:%i:%s')); -- 1
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 1, "Thanks! Try it out sometime soon.", STR_TO_DATE('10,1,2012 19:04:54', '%m,%d,%Y %H:%i:%s')); -- 2
@@ -376,6 +386,10 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike', 2, 10, STR_TO_DATE('9,30,2012 11:42:14', '%m,%d,%Y %H:%i:%s')); -- 3
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 2, 5, STR_TO_DATE('9,30,2012 15:23:45', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike', 4, 9, STR_TO_DATE('10,28,2012 12:18:02', '%m,%d,%Y %H:%i:%s')); -- 5
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curtis', 5, 6, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 6, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
+
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
@@ -404,6 +418,19 @@ INSERT INTO ingredient (ingr_name) VALUES('Almond Extract');  -- 24
 INSERT INTO ingredient (ingr_name) VALUES('Seedless Raspberry Preserves');  -- 25
 INSERT INTO ingredient (ingr_name) VALUES('Flaked Coconut');  -- 26
 INSERT INTO ingredient (ingr_name) VALUES('Sliced Almonds');  -- 27
+INSERT INTO ingredient (ingr_name) VALUES('Butter'); -- 28
+INSERT INTO ingredient (ingr_name) VALUES('Vanilla Extract'); -- 29
+INSERT INTO ingredient (ingr_name) VALUES('Baking Powder'); -- 30
+INSERT INTO ingredient (ingr_name) VALUES('Milk'); -- 31
+INSERT INTO ingredient (ingr_name) VALUES('Pork Chops'); -- 32
+INSERT INTO ingredient (ingr_name) VALUES('Seasoned dry stuffing'); -- 33
+INSERT INTO ingredient (ingr_name) VALUES('Ground Beef'); -- 34
+INSERT INTO ingredient (ingr_name) VALUES('1 ounce Package of Ranch Dressing Mix'); -- 35
+INSERT INTO ingredient (ingr_name) VALUES('Egg'); -- 36
+INSERT INTO ingredient (ingr_name) VALUES('Crushed Saltine Crackers'); -- 37
+INSERT INTO ingredient (ingr_name) VALUES('Chopped Onion'); -- 38
+
+
 
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 1, 1, 3); -- Potato Salad, 3 pounds potatoes scrubbed and quartered
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 2, 5, .5); -- Potato Salad, Italian Style Dressing 3/4 cup
@@ -433,16 +460,40 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 25, 5, 1); -- Respberry Cheesecake Bars, 1 cup seedless raspberry preserves or other  preserves or jam
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 26, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup flaked coconut
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(3, 27, 5, .5); -- Respberry Cheesecake Bars, 1/2 cup sliced almonds
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 15, 5, 1); -- Simple White Cake, 1 Cup of White Sugar
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 28, 5, .5); -- Simple White Cake, 1/2 Cup of butter
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 14, 1, 2); -- Simple White Cake, 2 eggs
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 29, 2, 2); -- Simple White Cake, 2 teaspoons vanilla extract
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 18, 5, 1); -- Simple White Cake, 1 cup of flour
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 30, 2, 1.75); -- Simple White Cake, 1 3/4 teaspoons of backing powder
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(4, 31, 5, .5); -- Simple White Cake, 1/2 cup of milk
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(5, 32, 1, 4); -- Oven-Fried Pork Chops 4 Pork Chops, trimmed
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(5, 28, 2, 2); -- Oven-Fried Pork Chops, 12 Tablespoons butter, melted
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(5, 15, 1, 1); -- Oven-Fried Pork Chops, 1 egg
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(5, 31, 2, 2); -- Oven-Fried Pork Chops, 2 Tablespoons of milk
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(5, 33, 5, 1); -- Oven-Fried Pork Chops, 1 Cup Herb Seasoned Dry Stuffing
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(5, 8, 3, .25); -- Oven-Fried Pork Chops, 1/4 Teaspoon of Black Pepper
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 34, 14, 2); -- Ranch Burgers, 2lbs Lean Ground Beef
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 33, 12, 1); -- Ranch Burgers, 1 (1 ounce) package ranch dressing mix
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 36, 1, 1); -- Ranch Burgers, 1 eggs lightly beaten
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 37, 5, .75); -- Ranch Burgers, 3/4 cup crushed saltine crackers
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 38, 1, 1); -- Ranch Burgers, 1 Onion chopped
+
 
 -- Wiki data
-INSERT INTO video (video_id, name, caption, address) VALUES(1, "Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video
+INSERT INTO video (name, caption, address) VALUES("Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video
 
 -- Wiki categories
-INSERT INTO wiki_category (category_name) VALUES ("Ingredients");
-
+INSERT INTO wiki_category (category_name) VALUES ("Ingredients"); -- 1
+INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 2
 -- Wiki pages
-INSERT INTO wiki (wiki_id, video_id, wiki_title, wiki_cat_id) VALUES(1, 1, "Common Ingredients",1);  -- test wiki page
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Common Ingredients",1);  -- Common Ingredients Page
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Poultry", 2);  -- Poultry Page
 
 -- Wiki content
-INSERT INTO wiki_content (wiki_cont_id, wiki_id, picture_id, title, content) VALUES(1,1,1, "Salt", "salt");  -- test wiki content
-INSERT INTO wiki_content (wiki_cont_id, wiki_id, picture_id, title, content) VALUES(2,1,1, "Sugar", "sugar");
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,1, "Salt", "Salt, also known as rock salt, is a crystalline mineral that is composed primarily of sodium chloride (NaCl), a chemical compound belonging to the larger class of ionic salts."); -- 1 
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,1, "Sugar", "Sugar is the generalised name for a class of sweet flavored substances used as food. They are carbohydrates and as this name implies, are composed of carbon, hydrogen and oxygen."); -- 2
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,1, "Pepper", "Black pepper (Piper nigrum) is a flowering vine in the family Piperaceae, cultivated for its fruit, which is usually dried and used as a spice and seasoning. The fruit, known as a peppercorn when dried, is approximately 5 millimetres (0.20 in) in diameter, dark red when fully mature, and, like all drupes, contains a single seed"); -- 3
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,1, "Butter", "Butter is a dairy product made by churning fresh or fermented cream or milk. It is generally used as a spread and a condiment, as well as in cooking, such as baking, sauce making, and pan frying. Butter consists of butterfat, milk proteins and water."); -- 4
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,1, "Flour", "Flour is a powder which is made by grinding cereal grains, other seeds or roots (like Cassava). It is the main ingredient of bread, which is a staple food for many cultures, making the availability of adequate supplies of flour a major economic and political issue at various times throughout history. Wheat flour is one of the most important foods in European, North American, Middle Eastern, Indian and North African cultures, and is the defining ingredient in most of their styles of breads and pastries. Maize flour has been important in Mesoamerican cuisine since ancient times, and remains a staple in much of Latin American cuisine.[citation needed] Rye flour is an important constituent of bread in much of central/northern Europe."); -- 5
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,1, "Chicken", "The chicken (Gallus gallus domesticus is a domesticated fowl, a subspecies of the Red Junglefowl. As one of the most common and widespread domestic animals, and with a population of more than 24 billion in 2003,[1] there are more chickens in the world than any other species of bird. Humans keep chickens primarily as a source of food, consuming both their meat and their eggs. The chicken's cultural and culinary dominance could be considered amazing to some in view of its believed domestic origin and purpose and it has inspired contributions to culture, art, cuisine, science and religion [2] from antiquity to the present."); -- 5

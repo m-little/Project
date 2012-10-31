@@ -5,10 +5,12 @@ html.all
 
 	div.all(style="max-width:1000px; margin:auto;")
 		h1= wiki.title
+
 		- for(var i in wiki.content)
 			p= wiki.content[i].content
 
-		<iframe width="560" height="315" src="#{wiki.video.address}" frameborder="0" allowfullscreen></iframe>
+		- if(wiki.video.id != 1)
+			<iframe width="560" height="315" src="#{wiki.video.address}" frameborder="0" allowfullscreen></iframe>
 
 
 	
