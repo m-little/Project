@@ -4,14 +4,16 @@ html.all
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
-		h1= wiki.title
-
-		- for(var i in wiki.content)
-			p= wiki.content[i].content
-
-		- if(wiki.video.id != 1)
-			<iframe width="560" height="315" src="#{wiki.video.address}" frameborder="0" allowfullscreen></iframe>
-
-
+		div
+			h1= wiki.title
+		div(style="font-size:16px; height:auto; padding:10px; margin-bottom:10px; background-color:white;")
+			- for(var i in wiki.content)
+				div(style="float:right")
+					img(style="width:100px", src="../images/user_images/johnny_depp.jpg")
+				div
+					p= wiki.content[i].content
+					hr
+		div
+			<iframe width="560" height="315" src="#{wiki.video.address}?wmode=transparent" frameborder="0" allowfullscreen></iframe>
 	
 	include ../footer
