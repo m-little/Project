@@ -1,18 +1,26 @@
 doctype 5
-html.all
+html.all(style="background-image:url('../images/bg1.png');")
 
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
 		div
 			h1= wiki.title
-		div(style="font-size:16px; height:auto; padding:10px; margin-bottom:10px; background-color:white;")
-			- for(var i in wiki.content)
-				div(style="float:right")
-					img(style="width:100px", src="../images/user_images/johnny_depp.jpg")
-				div
-					p= wiki.content[i].content
-					hr
+		- for(var i in wiki.content)
+			div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
+				
+				div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
+					| #{wiki.content[i].title}
+
+				- if(wiki.content[i].picture.id != 1)
+					div(style="float:right; position:relative; top: -28px; height: 80px; width: 80px; margin-bottom:-28px; margin-left:8px;")
+						img(src= "../images/user_images/#{wiki.content[i].picture.location}", style= "max-width:100%;")
+
+				div(style="padding-left:10px;")
+					- for content in wiki.content[i].content.split('\n')
+						div(style="margin-top:6px; min-height:19px;")
+							| #{content}
+		
 
 		- if (wiki.video.id != 1)
 			div
