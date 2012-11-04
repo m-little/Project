@@ -22,7 +22,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 			//- Image
 			div(id="recipe_photo_div", style="width:100%; max-height:auto; min-height:160px; height:160px; overflow:hidden;")
-				img(id="recipe_photo", src="../images/user_images/#{recipe.get_picture(0).location}", style="width:100%; position:relative;", alt="#{recipe.get_picture(0).caption}", title="#{recipe.get_picture(0).caption}", onLoad="refresh_picture();")
+				img(id="picture_id", src="../images/user_images/#{wiki.get_picture(0).location}", style="width:100%; position:relative;", alt="#{wiki.get_picture(0).caption}", title="#{wiki.get_picture(0).caption}", onLoad="refresh_picture();")
 
 			div(id="recipe_pic_drag", style="position:relative; right:8px; top:-24px; float:right; width:27px; height:14px; margin-bottom:-46px; background-image:url('../images/drag1.png'); cursor:s-resize; z-index:2;", title="Enlarge this photo. Double click to reset.", onClick="zoom_photo($('#recipe_pic_zoom').position());")
 
