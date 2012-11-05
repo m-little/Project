@@ -6,8 +6,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 	div.all(style="max-width:1000px; margin:auto;")
 		div
 			h1= wiki.title
-			//div(id="wiki_photo_div", style="width:100%; max-height:auto; min-height:160px; height:160px; overflow:hidden;")
-				img(id="wiki_photo", src="../images/user_images/#{recipe.get_picture(0).location}", style="width:100%; position:relative;", alt="#{recipe.get_picture(0).caption}", title="#{recipe.get_picture(0).caption}", onLoad="refresh_picture();")
+			
 		- for(var i in wiki.content)
 			div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
 				
@@ -21,7 +20,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 				div(style="padding-left:10px;")
 					- for content in wiki.content[i].content.split('\n')
 						div(style="margin-top:6px; min-height:19px;")
-							| #{content}
+							p!= content
 		
 
 		- if (wiki.video.id != 1)

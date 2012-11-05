@@ -42,7 +42,7 @@ exports.display_view = function(req, res)
 	// this function builds the wiki_content objects and stores them in an array that is then put in the 'wiki' object
 	function output2(success, result, fields, new_wiki)
 	{
-		console.log(result);
+		//console.log(result);
 
 		var content_array = new Array();
 
@@ -53,12 +53,12 @@ exports.display_view = function(req, res)
 			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
 			var new_content = new obj_content.Wiki_Content(new_picture, row.title, row.content);
 
-			console.log(new_content);
+			//console.log(new_content);
 			content_array.push(new_content);
 		}
 
 		new_wiki.set_content(content_array);
-		console.log(new_wiki);
+		//console.log(new_wiki);
 		dao.die();
 		finished(new_wiki);
 	}
