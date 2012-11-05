@@ -83,7 +83,7 @@ wiki_cont_id SERIAL,
 wiki_id BIGINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 title VARCHAR(40),
-content VARCHAR(5000) NOT NULL,
+content TEXT NOT NULL,
 CONSTRAINT pk_wiki_cont PRIMARY KEY(wiki_cont_id),
 CONSTRAINT fk_wiki FOREIGN KEY(wiki_id) REFERENCES wiki(wiki_id),
 CONSTRAINT fk_cont_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
