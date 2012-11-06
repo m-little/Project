@@ -22,12 +22,12 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 			//- Image
 			div(id="recipe_photo_div", style="width:100%; max-height:auto; min-height:160px; height:160px; overflow:hidden;")
-				img(id="picture_id", src="../images/user_images/#{recipe.get_picture(0).location}", style="width:100%; position:relative;", alt="#{recipe.get_picture(0).caption}", title="#{recipe.get_picture(0).caption}", onLoad="refresh_picture();")
+				img(id="recipe_photo", src="../images/user_images/#{recipe.get_picture(0).location}", style="width:100%; position:relative;", alt="#{recipe.get_picture(0).caption}", title="#{recipe.get_picture(0).caption}", onLoad="refresh_picture();")
 
 			div(id="recipe_pic_drag", style="position:relative; right:8px; top:-24px; float:right; width:27px; height:14px; margin-bottom:-46px; background-image:url('../images/drag1.png'); cursor:s-resize; z-index:2;", title="Enlarge this photo. Double click to reset.", onClick="zoom_photo($('#recipe_pic_zoom').position());")
 
 			//- Owner
-			div(style="position:relative; left:10px; top:-26px; font-size:16px; float:left; clear:both; width:auto; height:auto; padding:4px; padding-left:16px; padding-right:16px; background-color:white; border-top-left-radius:.6em; border-top-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default;")
+			div(id="recipe_owner", style="position:relative; left:10px; top:-26px; font-size:16px; float:left; clear:both; width:auto; height:auto; padding:4px; padding-left:16px; padding-right:16px; background-color:white; border-top-left-radius:.6em; border-top-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default;")
 				- if (global.session.logged_in && recipe.owner == global.session.user.id)
 					| Owned by You
 				- else
@@ -42,7 +42,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			//- Rating
 			div(style="width:168px; height:30px; margin:auto; position:relative; left:1px; top:6px; margin-bottom:-32px; padding-bottom:3px;")
 				div.star_power
-			div.star_outline(title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks)")
+			div.star_outline(id="recipe_rank", title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks)", onClick="show_rank();")
 
 			div(style="float:right; position:relative; top:22px; right:10px; font-size:12px; color:gray;")
 				| Created on #{recipe.date_added.toDateString()}
@@ -114,25 +114,32 @@ html.all(style="background-image:url('../images/bg1.png');")
 				| Comments
 
 			div(style="padding:5px; padding-top:1px; padding-bottom:1px; border-radius:.6em;", id="comments")
-				- for(var i = 0; i < recipe.flat_comments.length; i++)
-					- var comment = recipe.flat_comments[i];
+				- for(var i = -1; i < recipe.flat_comments.length; i++)
+					- var comment
+					- var hidden
+					- if (i == -1)
+						- comment = {indent: 0, id: 0, owner:'none', date_added: new Date(), date_edited: new Date(), picture: {location:'unknown.png', caption:''}, content: '', seen: 1};
+						- hidden = 'hidden';
+					- else
+						- comment = recipe.flat_comments[i];
+						- hidden = 'visible';
 					- var comment_color = '';
 					- if (recipe.owner == comment.owner)
 						- comment_color = 'e8f0ff';
 					- else
 						- comment_color = 'ffffff';
 
-					div.comment(style="margin-left:#{comment.indent * 50 + 30}px; background-color:##{comment_color};", id="comment#{comment.id}")
+					div.comment(style="margin-left:#{comment.indent * 50 + 30}px; background-color:##{comment_color}; visibility:#{hidden};", id="comment#{comment.id}")
 
 						//- User stuff
 						div(style="position:relative; top:-25px; margin:-6px; margin-left:-10px; margin-bottom:-36px; padding:5px;")
 							
-							div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-32px; top:14px; margin-bottom:-24px; margin-right:-24px; border:1px solid gray; border-radius:.6em; width:64px; background-color:##{comment_color};")
+							div(id="comment_image_box", style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-32px; top:14px; margin-bottom:-24px; margin-right:-24px; border:1px solid gray; border-radius:.6em; width:64px; background-color:##{comment_color};")
 								div(style="width:64px; height:64px; overflow:hidden;")
-									img(style="width:100%;", src="../images/user_images/#{comment.picture.location}", alt="#{comment.picture.caption}", title="#{comment.picture.caption}")
+									img(id="comment_image", style="width:100%;", src="../images/user_images/#{comment.picture.location}", alt="#{comment.picture.caption}", title="#{comment.picture.caption}")
 
 						div(style="height:20px; margin-left:45px; margin-right:10px; position:relative; top:-20px; margin-bottom:-20px;")
-							div(style="color:gray; width:10px; overflow:show;")
+							div(id="comment_owner", style="color:gray; width:10px; overflow:show;")
 								- if (global.session.logged_in && comment.owner == global.session.user.id)
 									p(style="margin:0px; padding:0px;")
 										| You 
@@ -140,8 +147,8 @@ html.all(style="background-image:url('../images/bg1.png');")
 									p(style="margin:0px; padding:0px; cursor:pointer;")
 										| #{comment.owner} 
 
-							div(style="font-size:12px; color:gray; float:right; position:relative; top:-16px;")
-								| #{comment.date_added.toDateString()} at 
+							div(id="comment_date_added", style="font-size:12px; color:gray; float:right; position:relative; top:-16px;")
+								| Posted #{comment.date_added.toDateString()} at 
 								- if (comment.date_added.getHours() > 12)
 									| #{comment.date_added.getHours() - 12}
 								- else
@@ -157,17 +164,42 @@ html.all(style="background-image:url('../images/bg1.png');")
 									|  pm
 								- else
 									|  am
+
+							- if (comment.date_edited.getFullYear() != 1969)
+								div(id="comment_date_edited", style="font-size:12px; color:gray; float:right; position:relative; top:-16px; right:20px; margin-left:25px; visibility:#{hidden};")
+									| Edited #{comment.date_edited.toDateString()} at 
+									- if (comment.date_edited.getHours() > 12)
+										| #{comment.date_edited.getHours() - 12}
+									- else
+										| #{comment.date_edited.getHours()}
+									| :
+									- if (comment.date_edited.getMinutes() < 10)
+										| 0
+									| #{comment.date_edited.getMinutes()}:
+									- if (comment.date_edited.getSeconds() < 10)
+										| 0
+									| #{comment.date_edited.getSeconds()}
+									- if (comment.date_edited.getHours() > 12)
+										|  pm
+									- else
+										|  am
+							- else if (global.session.logged_in && comment.owner == global.session.user.id)
+								div(id="comment_date_edited", style="font-size:12px; color:gray; float:right; position:relative; top:-16px; right:20px; margin-left:25px; visibility:#{hidden};")
+
 							if (global.session.logged_in && comment.owner != global.session.user.id && global.session.user.id == recipe.owner && !comment.seen)
-								div(style="float:right; font-size:12px; color:green; margin-right:10px; margin-bottom:-16px; position:relative; top:-16px;")
+								div(id="comment_new_note", style="float:right; font-size:12px; color:green; margin-bottom:-16px; position:relative; top:-16px; right:10px;")
 									| New
 
-						div(style="margin-right:5px; margin-left:40px; border:1px solid border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-top:10px; padding-left:5px; padding-right:5px;")
+						div(id="comment_context", style="margin-right:5px; margin-left:40px; border:1px solid border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-top:10px; padding-left:5px; padding-right:5px;")
 							- for piece in comment.content.split('\n')
 								div(style="margin-top:2px; min-height:19px;")
-									| #{piece}
+									| #{piece} 
 
-						- if (global.session.logged_in && global.session.user.id != comment.owner)
-							div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}")
+						- if (global.session.logged_in)
+							- if (global.session.user.id != comment.owner)
+								div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}")
+							- else
+								div(style="background-image:url('../images/edit1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Edit your comment.", id="edit#{comment.id}")
 
 				- if (global.session.logged_in)
 					// New comment box (hides on load)			
@@ -193,10 +225,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 							div(style="margin-left:45px; margin-right:15px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
 								textarea.input_text(style="width:100%; max-width:100%;", type="text", name="comment_content", id="new_comment_text")
 
-							input(type="hidden", name="reply_comment", value="0")
-							input(id="new_reply_target_id", type="hidden", name="recipe_id", value="#{recipe.id}")
+							input(id="new_comment_target_id", type="hidden", name="reply_comment", value="0")
+							input(id="new_comment_recipe_id", type="hidden", name="recipe_id", value="#{recipe.id}")
 
-							div.new_post(id="new_comment_post", title="Click here to post your comment.", onClick="this.parentNode.submit();")
+							div.new_post(id="new_comment_post", title="Click here to post your comment.", onClick="send_comment();")
 								| Post
 
 							div.new_cancel(id="new_comment_cancel", title="Click here to cancel your comment.")
@@ -224,9 +256,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 								textarea.input_text(style="width:100%; max-width:100%;", type="text", name="comment_content", id="new_reply_text")
 
 							input(id="new_reply_target_id", type="hidden", name="reply_comment")
-							input(id="new_reply_target_id", type="hidden", name="recipe_id", value="#{recipe.id}")
+							input(id="new_reply_type", type="hidden", name="reply_type")
+							input(id="new_reply_recipe_id", type="hidden", name="recipe_id", value="#{recipe.id}")
 
-							div.new_post(id="new_reply_post", title="Click here to post your reply.", onClick="this.parentNode.submit();")
+							div.new_post(id="new_reply_post", title="Click here to post your reply.", onClick="send_reply();")
 								| Post
 
 							div.new_cancel(id="new_reply_cancel", title="Click here to cancel your reply.")
@@ -245,6 +278,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 		{
 			$("#new_comment").hide();
 			$("#new_reply").hide();
+			$("#comment0").hide();
 			$("#new_comment_button").click(function(){
 				$("#new_comment_button").hide();
 				$("#new_comment").slideDown();
@@ -258,44 +292,60 @@ html.all(style="background-image:url('../images/bg1.png');")
 				$("#new_comment_button").show();
 				$("[id^=reply]").slideDown();
 			});
-			$("[id^=reply]").click(function(){
+			$("[id^=reply]").click(function(){ // show new reply
 				$("[id^=reply]").slideUp();
-				var count = parseInt(event.target.id.match(/[0-9]+/g)) + 1;
+				$("[id^=edit]").slideUp();
 				var margin = $($(event.target).parent()).css('margin-left').match(/[0-9]+/g);
 				var parent = $(event.target).parent();
 				$("#new_reply").css('margin-left', (parseInt(parent.css('margin-left')) + 50).toString() + 'px');
-				while(1)
+				var comments = $("[id^=comment]");
+				var flag = false;
+				for (var i = 0; i < comments.length; i++)
 				{
-					var comment = "#comment" + count.toString();
-					if ($(comment).attr('id') == undefined)
+					if (comments[i].id.match(/[0-9]+/g) == null) continue;
+					if (!flag && comments[i].id == parent.attr('id'))
 					{
-						if (parent == undefined)
-							parent = $(event.target).parent();
-						break;
+						flag = true;
+						continue;
+					}
+					if (!flag)
+						continue;
+					if (parseInt($('#' + comments[i].id).css('margin-left').match(/[0-9]+/g)) != margin)
+					{
+						parent = $('#' + comments[i].id);
 					}
 					else
-					{
-						// alert($(comment).css('margin-left').match(/[0-9]+/g) + ' = ' + margin);
-						if (parseInt($(comment).css('margin-left').match(/[0-9]+/g)) != margin)
-						{
-							parent = $(comment);
-							// alert('!=');
-						}
-						else
-							break;
-						count++;
-					}
+						break;
 				}
 				$("#new_reply").insertAfter(parent);
+				$("#new_reply_post").text('Post');
+				$("#new_reply_type").val('post');
 				$("#new_reply").slideDown();
+				$("#new_reply_text").val('');
 				$("#new_reply_text").focus();
 				$("#new_reply_target_id").val(this.id.match(/[0-9]+/g));
 				$("#new_comment_button").hide();
 			});
+			$("[id^=edit]").click(function(){ // edit the comment
+				$("[id^=reply]").slideUp();
+				$("[id^=edit]").slideUp();
+				$("#new_reply").insertAfter($(event.target).parent());
+				$(event.target).parent().hide();
+				var content_list = $(event.target).parent().find('#comment_context').children('div');
+				var content = '';
+				for (var i = 0; i < content_list.length; i++)
+				{
+					content += $(content_list[i]).text() + '\n';
+				}
+				$("#new_reply_text").val(content);
+				$("#new_reply_post").text('Update');
+				$("#new_reply_type").val('edit');
+				$("#new_reply_target_id").val(this.id.match(/[0-9]+/g));
+				$("#new_reply").css('margin-left', $($(event.target).parent()).css('margin-left'));
+				$("#new_reply").show();
+			});
 			$("#new_reply_cancel").click(function(){
-				$("#new_reply").slideUp();
-				$("[id^=reply]").slideDown();
-				$("#new_comment_button").show();
+				hide_new_reply();
 			});
 			$("#recipe_pic_drag").mousedown(function(e)
 			{
@@ -316,6 +366,9 @@ html.all(style="background-image:url('../images/bg1.png');")
 			});
 			$(document).mouseup(function(e){
 				resizing_image = false;
+				var div = $("#rank_submit");
+				if (div.has(e.target).length === 0)
+					$("#rank_submit").fadeOut(function(){$("#rank_submit").remove();});
 			});
 			if (images.length <= 1)
 			{
@@ -374,6 +427,131 @@ html.all(style="background-image:url('../images/bg1.png');")
 		{
 			if ($("#recipe_photo_div").height() > $("#recipe_photo").height())
 				$("#recipe_photo_div").css('height', $("#recipe_photo").height());
+		}
+		function hide_new_reply()
+		{
+			if ($("#new_reply_type").val() == 'edit')
+			{
+				$("#comment" + $("#new_reply_target_id").val()).show();
+				$("#new_reply").hide();
+			}
+			else
+				$("#new_reply").slideUp();
+			$("[id^=reply]").slideDown();
+			$("[id^=edit]").slideDown();
+			$("#new_comment_button").show();
+		}
+		function send_reply()
+		{
+			if ($("#new_reply_type").val() == 'post')
+				$.ajax({
+					type: 'POST',
+					url: '/recipe/comment_on',
+					data: {recipe_id: "#{recipe.id}", reply_comment: $("#new_reply_target_id").val(), comment_content: $("#new_reply_text").val()}, 
+					dataType: 'json',
+					success: new_reply});
+			else if ($("#new_reply_type").val() == 'edit')
+				$.ajax({
+					type: 'POST',
+					url: '/recipe/edit_comment',
+					data: {edit_comment: $("#new_reply_target_id").val(), comment_content: $("#new_reply_text").val()}, 
+					dataType: 'json',
+					success: new_edit});
+		}
+		function send_comment()
+		{
+			$.ajax({
+				type: 'POST',
+				url: '/recipe/comment_on',
+				data: {recipe_id: "#{recipe.id}", reply_comment: 0, comment_content: $("#new_comment_text").val()}, 
+				dataType: 'json',
+				success: new_comment});
+		}
+		function new_reply(data, success)
+		{
+			// Clone other comments to keep formatting
+			var new_comment = $("#comment" + $("#new_reply_target_id").val()).clone();
+			new_comment.attr({id: "comment" + data.new_id});
+			new_comment.css('margin-left', $("#new_reply").css('margin-left'));
+			// find parts and fix their text
+			new_comment.find('#comment_owner').text('You');
+			new_comment.find('#comment_date_added').text(data.date);
+			new_comment.find("[id^=reply]").remove();
+			new_comment.find("#comment_new_note").remove();
+			new_comment.find("#comment_date_edited").text('');
+			var comment_context = new_comment.find('#comment_context');
+			// remove the new comment's content
+			comment_context.empty();
+			var lines = $("#new_reply_text").val().split('\n');
+			for (var i = 0; i < lines.length; i++)
+			{
+				comment_context.append('<div>' + lines[i] + '</div>');
+			}
+			// Update the image
+			var image = new_comment.find("#comment_image");
+			image.attr({src: "../images/user_images/" + data.user_pic.location, alt: data.user_pic.caption, title: data.user_pic.caption});
+			if ($("#recipe_owner").text() == "Owned by You")
+			{
+				new_comment.css('background-color', '#e8f0ff');
+				new_comment.find("#comment_image_box").css('background-color', '#e8f0ff');
+			}
+			new_comment.insertBefore($("#new_reply"));
+			new_comment.slideDown();
+			$("#new_reply").slideUp();
+			hide_new_reply();
+		}
+		function new_edit(data, success)
+		{
+			$("[id^=reply]").slideDown();
+			$("[id^=edit]").slideDown();
+			var comment = $("#comment" + $("#new_reply_target_id").val());
+			var comment_context = comment.find('#comment_context');
+			comment.find("#comment_date_edited").text('Edited ' + data.date);
+			comment_context.empty();
+			var lines = $("#new_reply_text").val().split('\n');
+			for (var i = 0; i < lines.length; i++)
+			{
+				comment_context.append('<div>' + lines[i] + '</div>');
+			}
+			comment.show();
+			$("#new_reply").hide();
+		}
+		function new_comment(data, success)
+		{
+			// Clone other comments to keep formatting
+			var new_comment = $("#comment0").clone();
+			new_comment.attr({id: "comment" + data.new_id});
+			// find parts and fix their text
+			new_comment.find('#comment_owner').text('You');
+			new_comment.find('#comment_date_added').text(data.date);
+			new_comment.find("[id^=reply]").remove();
+			new_comment.find("#comment_new_note").remove();
+			var comment_context = new_comment.find('#comment_context');
+			// remove the new comment's content
+			comment_context.empty();
+			var lines = $("#new_comment_text").val().split('\n');
+			for (var i = 0; i < lines.length; i++)
+			{
+				comment_context.append('<div>' + lines[i] + '</div>');
+			}
+			// Update the image
+			var image = new_comment.find("#comment_image");
+			image.attr({src: "../images/user_images/" + data.user_pic.location, alt: data.user_pic.caption, title: data.user_pic.caption});
+			if ($("#recipe_owner").text() == "Owned by You")
+			{
+				new_comment.css('background-color', '#e8f0ff');
+				new_comment.find("#comment_image_box").css('background-color', '#e8f0ff');
+			}
+			new_comment.appendTo('#comments');
+			new_comment.slideDown();
+			$("#new_comment").slideUp();
+			$("#new_comment_button").show();
+			$("[id^=reply]").slideDown();
+			$("[id^=edit]").slideDown();
+		}
+		function show_rank()
+		{
+			$("<div></div>").attr({id: "rank_submit", style: "width:210px; height:50px; position:absolute; top:" + ($("#recipe_rank").position().top + 40) + "px; left:50%; margin-left:-105px; background-color:white; border-radius:.6em; border:1px solid #c2c2c2;"}).appendTo('body');
 		}
 
 	include ../footer

@@ -228,9 +228,9 @@ exports.comment_on = function(req, res)
 
 	var dao = new obj_dao.DAO();
 
-	dao.query("INSERT INTO recipe_comment(owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('" + global.session.user.id + "', " + req.body.recipe_id + ", " + req.body.reply_comment + ", '" + req.body.comment_content + "', NOW())", output, req.body.recipe_id);
+	dao.query("INSERT INTO recipe_comment(owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('" + global.session.user.id + "', " + req.body.recipe_id + ", " + req.body.reply_comment + ", '" + req.body.comment_content + "', NOW())", output);
 
-	function output(success, result, fields, recipe_id)
+	function output(success, result, fields)
 	{
 		if (!success)
 		{
@@ -238,7 +238,39 @@ exports.comment_on = function(req, res)
 			return;
 		}
 		else
-			res.redirect('/recipe/view?r_id=' + recipe_id);
+		{
+			var date = new Date();
+			res.send({new_id: result.insertId, date: date.toDateString() + " at " + (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()) + ":" + (date.getMinutes() < 10 ? 0 : "") + date.getMinutes() + ":" + (date.getSeconds() < 10 ? 0 : "") + date.getSeconds() + (date.getHours() > 12 ? " pm" : " am"), user_pic: global.session.user.picture});
+		}
+	}
+}
+
+exports.edit_comment = function(req, res)
+{
+	req.body.edit_comment = parseInt(req.body.edit_comment);
+	if (isNaN(req.body.edit_comment))
+	{
+		global.session.error_message.message = "The comment could not be found at the location given.";
+		res.redirect('/error');
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+
+	dao.query("UPDATE recipe_comment SET content = '" + req.body.comment_content + "', date_edited = NOW() WHERE comment_id = " + req.body.edit_comment, output);
+
+	function output(success, result, fields)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+		else
+		{
+			var date = new Date();
+			res.send({date: date.toDateString() + " at " + (date.getHours() > 12 ? date.getHours() - 12 : date.getHours()) + ":" + (date.getMinutes() < 10 ? 0 : "") + date.getMinutes() + ":" + (date.getSeconds() < 10 ? 0 : "") + date.getSeconds() + (date.getHours() > 12 ? " pm" : " am")});
+		}
 	}
 }
 
