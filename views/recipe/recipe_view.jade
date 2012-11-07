@@ -36,8 +36,8 @@ html.all(style="background-image:url('../images/bg1.png');")
 						| #{recipe.owner}
 
 			style(type="text/css")
-				div.star_power{width:#{recipe.rank / 10 * 168}px; height:100%; background-color:#ffbf00;}
-				div.star_outline{width:168px; height:32px; margin:auto; position:relative; top:4px; margin-bottom:-32px; background-image:url('../images/star_hollow1.png'); cursor:pointer;}
+				div.star_power{width:#{recipe.rank / 10 * 167}px; height:100%; background-color:#ffbf00;}
+				div.star_outline{width:170px; height:32px; margin:auto; position:relative; top:4px; margin-bottom:-32px; background-image:url('../images/star_hollow1.png'); cursor:pointer;}
 
 			//- Rating
 			div(style="width:168px; height:30px; margin:auto; position:relative; left:1px; top:6px; margin-bottom:-32px; padding-bottom:3px;")
@@ -51,17 +51,17 @@ html.all(style="background-image:url('../images/bg1.png');")
 		div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; min-height:186px;")
 
 			div(style="border-radius:.6em; float:right; position:relative; padding:6px; margin:6px;")
-				div(style="font-size:16px; float:right; clear:both; text-align:center; width:100%;")
+				div(style="font-size:14px; float:right; clear:both; text-align:center; width:100%;")
 					| Serving Size
 				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%; margin-bottom:6px;")
 					| #{recipe.serving_size}
 
-				div(style="font-size:16px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:10px;")
+				div(style="font-size:14px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:10px;")
 					| Prep Time
 				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%; margin-bottom:6px;")
 					| #{recipe.prep_time}
 
-				div(style="font-size:16px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:10px;")
+				div(style="font-size:14px; float:right; clear:both; border-top:1px dashed gray; width:100%; text-align:center; margin-top:4px; padding-top:10px;")
 					| Ready in
 				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%;")
 					| #{recipe.ready_time}
@@ -102,11 +102,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						| #{direction}
 
 		style(type="text/css")
-			div.comment{padding:5px; padding-left:10px; margin:15px; margin-bottom:20px; margin-top:25px; border:1px solid gray; border-radius:.6em; height:auto; background-image:url('../images/comment_bg1.png'); background-size:100% 100%;}
-			div.new_cancel{position:relative; top:-18px; right:100px; width:60px; margin-left:auto; border:2px dotted white; border-radius:.6em; padding:2px; padding-left:8px; padding-right:8px; margin-bottom:-20px; background-color:#b03f3f; color:white; font-weight:bold; text-align:center;}
-			div.new_cancel:hover{cursor:pointer; background-color:#b35b5b;}
-			div.new_post{position:relative; top:-7px; right:15px; width:60px; margin-left:auto; border:2px dotted white; border-radius:.6em; padding:2px; padding-left:8px; padding-right:8px; margin-bottom:-16px; background-color:#00a200; color:white; font-weight:bold; text-align:center;}
-			div.new_post:hover{cursor:pointer; background-color:#44bd44;}
+			div.comment{padding:5px; padding-left:10px; margin:15px; margin-bottom:20px; margin-top:25px; border:1px solid gray; border-radius:.3em; height:auto;}
 
 		//- Comments
 		div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; background-color:white;")
@@ -129,12 +125,14 @@ html.all(style="background-image:url('../images/bg1.png');")
 					- else
 						- comment_color = 'ffffff';
 
-					div.comment(style="margin-left:#{comment.indent * 50 + 30}px; background-color:##{comment_color}; visibility:#{hidden};", id="comment#{comment.id}")
+					div.comment(style="margin-left:#{comment.indent * 50 + 30}px; background-color:##{comment_color}; visibility:#{hidden};", id="comment_div#{comment.id}", onmouseout="$('#reply#{comment.id}').hide(); $('#edit#{comment.id}').hide();", onmouseover="if (show_buttons) {$('#reply#{comment.id}').show(); $('#edit#{comment.id}').show();}")
 
 						//- User stuff
+						div(id="comment_up", style="width:13px; height:9px; background-image:url('../images/up1.png'); background-size:100% 100%; z-index:2; position:relative; left:50px; top:-14px; margin-bottom:-16px; background-color:##{comment_color};")
+
 						div(style="position:relative; top:-25px; margin:-6px; margin-left:-10px; margin-bottom:-36px; padding:5px;")
 							
-							div(id="comment_image_box", style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-32px; top:14px; margin-bottom:-24px; margin-right:-24px; border:1px solid gray; border-radius:.6em; width:64px; background-color:##{comment_color};")
+							div(id="comment_image_box", style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-32px; top:14px; margin-bottom:-24px; margin-right:-24px; border:1px solid gray; border-radius:.3em; width:64px; background-color:##{comment_color};")
 								div(style="width:64px; height:64px; overflow:hidden;")
 									img(id="comment_image", style="width:100%;", src="../images/user_images/#{comment.picture.location}", alt="#{comment.picture.caption}", title="#{comment.picture.caption}")
 
@@ -193,7 +191,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						div(id="comment_context", style="margin-right:5px; margin-left:40px; border:1px solid border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-top:10px; padding-left:5px; padding-right:5px;")
 							- for piece in comment.content.split('\n')
 								div(style="margin-top:2px; min-height:19px;")
-									| #{piece} 
+									| #{piece}
 
 						- if (global.session.logged_in)
 							- if (global.session.user.id != comment.owner)
@@ -220,7 +218,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						div(style="color:gray; position:relative; top:-50px; left:50px; margin-bottom:-50px; width:200px;")
 							| What will you say?
 
-						form(style="margin:0px; padding:0px;", method="post", action="/recipe/comment_on")
+						div(style="margin:0px; padding:0px; overflow:auto;")
 
 							div(style="margin-left:45px; margin-right:15px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
 								textarea.input_text(style="width:100%; max-width:100%;", type="text", name="comment_content", id="new_comment_text")
@@ -228,10 +226,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 							input(id="new_comment_target_id", type="hidden", name="reply_comment", value="0")
 							input(id="new_comment_recipe_id", type="hidden", name="recipe_id", value="#{recipe.id}")
 
-							div.new_post(id="new_comment_post", title="Click here to post your comment.", onClick="send_comment();")
+							button.button1b(id="new_comment_post", title="Click here to post your comment.", onClick="send_comment();", style="float:right; margin-right:10px;")
 								| Post
 
-							div.new_cancel(id="new_comment_cancel", title="Click here to cancel your comment.")
+							button.button1r(id="new_comment_cancel", title="Click here to cancel your comment.", style="float:right;")
 								| Cancel
 
 					// New reply box (hides on load)
@@ -250,7 +248,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						div(style="color:gray; position:relative; top:-50px; left:50px; margin-bottom:-50px; width:200px;")
 							| What will you say?
 
-						form(style="margin:0px; padding:0px;", method="post", action="/recipe/comment_on")
+						div(style="margin:0px; padding:0px; overflow:auto;")
 
 							div(style="margin-left:45px; margin-right:15px; border-top:1px solid #dedede; border-radius:.2em; padding:4px; padding-left:5px; padding-right:5px;")
 								textarea.input_text(style="width:100%; max-width:100%;", type="text", name="comment_content", id="new_reply_text")
@@ -259,10 +257,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 							input(id="new_reply_type", type="hidden", name="reply_type")
 							input(id="new_reply_recipe_id", type="hidden", name="recipe_id", value="#{recipe.id}")
 
-							div.new_post(id="new_reply_post", title="Click here to post your reply.", onClick="send_reply();")
+							button.button1b(id="new_reply_post", title="Click here to post your reply.", onClick="send_reply();", style="float:right; margin-right:10px;")
 								| Post
 
-							div.new_cancel(id="new_reply_cancel", title="Click here to cancel your reply.")
+							button.button1r(id="new_reply_cancel", title="Click here to cancel your reply.", onClick="", style="float:right;")
 								| Cancel
 
 		- if (global.session.logged_in)
@@ -274,31 +272,33 @@ html.all(style="background-image:url('../images/bg1.png');")
 		var image_index = 0;
 		var images = [#{recipe.pictures_string().toString()}];
 		var ingredients = [#{recipe.ingredients_string().toString()}];
+		var show_buttons = true;
 		$(document).ready(function()
 		{
 			$("#new_comment").hide();
 			$("#new_reply").hide();
-			$("#comment0").hide();
+			$("#comment_div0").hide();
+			$("[id^=reply]").hide();
+			$("[id^=edit]").hide();
 			$("#new_comment_button").click(function(){
 				$("#new_comment_button").hide();
 				$("#new_comment").slideDown();
 				$("#new_comment_text").focus();
-				$("[id^=reply]").slideUp();
+				show_buttons = false;
 				$("html, body").animate({ scrollTop: $(document).height() + $("#new_comment").position().top }, "slow");
  
 			});
 			$("#new_comment_cancel").click(function(){
 				$("#new_comment").slideUp();
 				$("#new_comment_button").show();
-				$("[id^=reply]").slideDown();
+				show_buttons = true;
 			});
 			$("[id^=reply]").click(function(){ // show new reply
-				$("[id^=reply]").slideUp();
-				$("[id^=edit]").slideUp();
+				show_buttons = false;
 				var margin = $($(event.target).parent()).css('margin-left').match(/[0-9]+/g);
 				var parent = $(event.target).parent();
 				$("#new_reply").css('margin-left', (parseInt(parent.css('margin-left')) + 50).toString() + 'px');
-				var comments = $("[id^=comment]");
+				var comments = $("[id^=comment_div]");
 				var flag = false;
 				for (var i = 0; i < comments.length; i++)
 				{
@@ -327,15 +327,15 @@ html.all(style="background-image:url('../images/bg1.png');")
 				$("#new_comment_button").hide();
 			});
 			$("[id^=edit]").click(function(){ // edit the comment
-				$("[id^=reply]").slideUp();
-				$("[id^=edit]").slideUp();
+				show_buttons = false;
 				$("#new_reply").insertAfter($(event.target).parent());
 				$(event.target).parent().hide();
 				var content_list = $(event.target).parent().find('#comment_context').children('div');
 				var content = '';
 				for (var i = 0; i < content_list.length; i++)
 				{
-					content += $(content_list[i]).text() + '\n';
+					if (i != 0) content += '\n';
+					content += $(content_list[i]).text();
 				}
 				$("#new_reply_text").val(content);
 				$("#new_reply_post").text('Update');
@@ -437,8 +437,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			}
 			else
 				$("#new_reply").slideUp();
-			$("[id^=reply]").slideDown();
-			$("[id^=edit]").slideDown();
+			show_buttons = true;
 			$("#new_comment_button").show();
 		}
 		function send_reply()
@@ -470,13 +469,15 @@ html.all(style="background-image:url('../images/bg1.png');")
 		function new_reply(data, success)
 		{
 			// Clone other comments to keep formatting
-			var new_comment = $("#comment" + $("#new_reply_target_id").val()).clone();
-			new_comment.attr({id: "comment" + data.new_id});
+			var new_comment = $("#comment_div" + $("#new_reply_target_id").val()).clone();
+			new_comment.attr({id: "comment_div" + data.new_id, onmouseout: "$('#reply" + data.new_id + "').hide(); $('#edit" + data.new_id + "').hide();", onmouseover:"if (show_buttons) {$('#reply" + data.new_id + "').show(); $('#edit" + data.new_id + "').show();}"});
 			new_comment.css('margin-left', $("#new_reply").css('margin-left'));
 			// find parts and fix their text
 			new_comment.find('#comment_owner').text('You');
-			new_comment.find('#comment_date_added').text(data.date);
-			new_comment.find("[id^=reply]").remove();
+			new_comment.find('#comment_date_added').text('Posted ' + data.date);
+			var new_edit = new_comment.find("[id^=reply]");
+			new_edit.attr({id: 'edit' + data.new_id.toString(), title: 'Edit your comment.'});
+			new_edit.css('background-image', "url('../images/edit1.png')");
 			new_comment.find("#comment_new_note").remove();
 			new_comment.find("#comment_date_edited").text('');
 			var comment_context = new_comment.find('#comment_context');
@@ -494,16 +495,16 @@ html.all(style="background-image:url('../images/bg1.png');")
 			{
 				new_comment.css('background-color', '#e8f0ff');
 				new_comment.find("#comment_image_box").css('background-color', '#e8f0ff');
+				new_comment.find("#comment_up").css('background-color', '#e8f0ff');
 			}
 			new_comment.insertBefore($("#new_reply"));
 			new_comment.slideDown();
-			$("#new_reply").slideUp();
-			hide_new_reply();
+			show_buttons = true;
+			$("#new_reply").hide();
 		}
 		function new_edit(data, success)
 		{
-			$("[id^=reply]").slideDown();
-			$("[id^=edit]").slideDown();
+			show_buttons = true;
 			var comment = $("#comment" + $("#new_reply_target_id").val());
 			var comment_context = comment.find('#comment_context');
 			comment.find("#comment_date_edited").text('Edited ' + data.date);
@@ -546,8 +547,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			new_comment.slideDown();
 			$("#new_comment").slideUp();
 			$("#new_comment_button").show();
-			$("[id^=reply]").slideDown();
-			$("[id^=edit]").slideDown();
+			show_buttons = true;
 		}
 		function show_rank()
 		{
