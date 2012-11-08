@@ -79,6 +79,7 @@ app.get('/recipe/create', recipe.display_create);
 app.post('/recipe/test', recipe.submit_recipe);
 app.get('/recipe/view', recipe.display_view);
 app.post('/recipe/comment_on', recipe.comment_on);
+app.post('/recipe/set_rank', recipe.set_rank);
 app.post('/recipe/edit_comment', recipe.edit_comment);
 app.get('/recipe/my', recipe.my);
 
