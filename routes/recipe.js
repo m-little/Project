@@ -429,7 +429,6 @@ exports.my = function(req, res)
 			else
 				private_recipes.push(global.session.user.recipes[i]);
 		}
-		dao.die();
 		res.render('recipe/recipe_my', { title: website_title, public_recipes: public_recipes, private_recipes: private_recipes });
 	}
 }
