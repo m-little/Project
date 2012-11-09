@@ -28,7 +28,7 @@ html.all
 						div(style="font-size:12px; text-align:center;")
 							| This is a permanent username!
 
-					div(id="invalid_id", style="float:left; color:white; font-size:12px; margin-top:33px; margin-left:20px; padding:2px; padding-left:6px; padding-right:6px; background-color:#db4c4c; border:1px solid red; border-radius:.6em;")
+					div(id="invalid_id", style="float:left; color:white; font-size:12px; margin-top:33px; margin-left:20px; padding:2px; padding-left:6px; padding-right:6px; background-color:#db4c4c; border:1px solid red; border-radius:.6em; visiblility:hidden;")
 						| This username is in use, please choose another.
 
 					div(style="float:left; padding-left:40px; clear:left;")
@@ -46,7 +46,7 @@ html.all
 						div(style="clear:left; margin:8px; margin-left:20px;")
 							input.input_text(id="email", type="email", name="email", maxlength="50", required="required")
 
-					div(id="not_email", style="float:left; color:white; font-size:12px; margin-top:53px; margin-left:20px; padding:2px; padding-left:6px; padding-right:6px; background-color:#db4c4c; border:1px solid red; border-radius:.6em;")
+					div(id="not_email", style="float:left; color:white; font-size:12px; margin-top:53px; margin-left:20px; padding:2px; padding-left:6px; padding-right:6px; background-color:#db4c4c; border:1px solid red; border-radius:.6em; visiblility:hidden;")
 						| This doesn't look like a valid email.
 
 				div(style="background-color:#292929; color:white; padding:4px; padding-left:10px; border-radius:2em; margin-bottom:20px;")
@@ -63,7 +63,7 @@ html.all
 						div(style="clear:both; margin:8px; margin-left:20px;")
 							input.input_text(id="password2", type="password", name="password_confirm", maxlength="16", required="required")
 
-					div(id="mismatch_passwords", style="float:left; clear:both; color:white; font-size:12px; margin-left:190px; margin-top:10px; padding:2px; padding-left:6px; padding-right:6px; background-color:#db4c4c; border:1px solid red; border-radius:.6em;")
+					div(id="mismatch_passwords", style="float:left; clear:both; color:white; font-size:12px; margin-left:190px; margin-top:10px; padding:2px; padding-left:6px; padding-right:6px; background-color:#db4c4c; border:1px solid red; border-radius:.6em; visiblility:hidden;")
 						| Your passwords do not match up.
 
 				div(style="background-color:#292929; color:white; padding:4px; padding-left:10px; border-radius:2em; margin-bottom:20px;")
@@ -83,8 +83,11 @@ html.all
 		{
 			check_passes();
 			$("#invalid_id").hide();
+			$("#invalid_id").css('visiblility', 'visible');
 			$("#not_email").hide();
+			$("#not_email").css('visiblility', 'visible');
 			$("#mismatch_passwords").hide();
+			$("#mismatch_passwords").css('visiblility', 'visible');
 			// $("#invalid_id").hide();
 			$("#username").bind('keyup change', function()
 			{

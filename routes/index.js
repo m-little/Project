@@ -45,5 +45,10 @@ exports.login = function(req, res)
 
 exports.sign_up = function(req, res)
 {
+	if (global.session.logged_in)
+	{
+		res.redirect('/');
+		return;
+	}
 	res.render('sign_up', { title: website_title, miss: req.query.miss });
 };

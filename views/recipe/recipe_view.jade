@@ -7,7 +7,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 		div(style="padding-bottom:40px; background-color:white; margin-bottom:10px; border:1px solid #c2c2c2;")
 
 			- if (recipe.public == '0')
-				div(style="float:left; clear:both; height:128px; width:24px; position:relative; top:24px; left:-18px; margin-bottom:-140px; background-image:url('../images/private.png');")
+				div(style="float:left; clear:both; height:73px; width:86px; position:relative; top:-28px; left:-36px; margin-bottom:-140px; background-image:url('../images/private.png'); background-repeat:no-repeat; z-index:3;")
 
 			div(id="recipe_pic_prev", style="position:relative; left:-18px; top:66px; width:24px; height:44px; margin-bottom:-46px; background-image:url('../images/prev1.png'); cursor:pointer;", title="Previous photo.", onClick="prev_picture();")
 			div(id="recipe_pic_next", style="position:relative; left:19px; top:66px; float:right; width:24px; height:44px; margin-bottom:-46px; background-image:url('../images/next1.png'); cursor:pointer;", title="Next photo.", , onClick="next_picture();")
@@ -77,25 +77,12 @@ html.all(style="background-image:url('../images/bg1.png');")
 			table(style="margin-left:10px;")
 				- for (var i = 0; i < (recipe.ingredients).length; i++)
 					tr
-						td(style="height:20px; padding-left:10px; padding-left:10px; padding-right:2px; margin:3px; text-align:right;")
-							- if (recipe.ingredients[i].amount == .5)
-								| 1/2
-							- else if (recipe.ingredients[i].amount == .75)
-								| 3/4
-							- else if (recipe.ingredients[i].amount == .25)
-								| 1/4
-							- else if (recipe.ingredients[i].amount == .125)
-								| 1/8
-							- else if (recipe.ingredients[i].amount == .3333)
-								| 1/3
-							- else if (recipe.ingredients[i].amount == .6667)
-								| 2/3
-							- else
-								| #{recipe.ingredients[i].amount} 
+						td(id="ingredient_amount", style="height:20px; padding-left:10px; padding-left:10px; padding-right:2px; margin:3px; text-align:right; visibility:hidden")
+							| #{recipe.ingredients[i].amount} 
 						td(style="padding-right:4px;")
 							|  #{recipe.ingredients[i].unit_name} 
 							b(style="cursor:pointer;")
-								a(id="ingr#{recipe.ingredients[i].id}", href="", style="color:black; text-decoration:none;")
+								a(id="ingr_num#{recipe.ingredients[i].id}", href="", style="color:black; text-decoration:none;")
 									| #{recipe.ingredients[i].name}
 
 		//- Directions
@@ -291,6 +278,24 @@ html.all(style="background-image:url('../images/bg1.png');")
 			$("#comment_div0").hide();
 			$("[id^=reply]").hide();
 			$("[id^=edit]").hide();
+			// Setup correct ingredient fractions
+			$("[id^=ingredient_amount]").each(function(){
+				var number = $(this).text();
+				var integer = Math.floor(number);
+				var dec = (number - integer) * 100;
+				var gcf = FindGCF(100, dec);
+				var num = dec / gcf;
+				var den = 100 / gcf;
+				if (Math.round(dec) == 67) {num = 2; den = 3;}
+				if (Math.round(dec) == 33) {num = 1; den = 3;}
+				if (dec == 0)
+					$(this).text(integer);
+				else if (integer == 0)
+					$(this).text(num + '/' + den);
+				else
+					$(this).text(integer + ' ' + num + '/' + den);
+				$(this).css('visibility', 'visible');
+			});
 			$("#new_comment_button").click(function(){
 				$("#new_comment_button").hide();
 				$("#new_comment_text").val('');
@@ -341,7 +346,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 				$("#recipe_pic_next").hide();
 			}
 			// Ingredient hover stuff
-			$("[id^=ingr]").hover(function(e){
+			$("[id^=ingr_num]").hover(function(e){
 				var ingr_num = event.target.id.match(/[0-9]+/g);
 				var index = 0;
 				for (var i = 0; i < ingredients.length; i++)
@@ -417,6 +422,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			$("#new_reply_target_id").val(comment.attr('id').match(/[0-9]+/g));
 			$("#new_reply").css('margin-left', $(comment).css('margin-left'));
 			$("#new_reply").show();
+			$("#new_reply_text").focus();
 		}
 		function prev_picture()
 		{
@@ -529,6 +535,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			var comment = $("#comment_div" + $("#new_reply_target_id").val());
 			var comment_context = comment.find('#comment_context');
 			comment.find("#comment_date_edited").text('Edited ' + data.date);
+			comment.find("#comment_date_edited").css('visibility', 'visible');
 			comment_context.empty();
 			var lines = $("#new_reply_text").val().split('\n');
 			for (var i = 0; i < lines.length; i++)
@@ -627,6 +634,16 @@ html.all(style="background-image:url('../images/bg1.png');")
 					$("#recipe_rank").attr('title', (data.rank_avg / 2) + "/5 stars (" + data.rank_count + " ranks). Your rank: " + (data.rank / 2) + " stars.");
 				}
 				});
+		}
+		function FindGCF(a, b)
+		{
+		while (b != 0) 
+		{
+			var t = b;
+			b = a % b;
+			a = t;
+		}
+		return a;
 		}
 
 	include ../footer

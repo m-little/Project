@@ -33,9 +33,9 @@ div.header_dropdown(id="header_menu_login", style="position:fixed; top:-1000px; 
 		//- location argument allows us to return to the page we were on when we tried to logon.
 		input(id="header_menu_login_location", type="hidden", name="location")
 		
-		button.button2(style="float:left;", onClick="submit_drop_login();")
+		button.button2(style="float:right;", onClick="submit_drop_login();")
 			| Login
-		button.button2(style="float:right;", onClick="hide_drop_login();")
+		button.button2(style="float:left;", onClick="hide_drop_login();")
 			| Cancel
 
 div.header_dropdown(id="header_menu_settings", style="position:fixed; top:-1000px; right:10px; width:auto;")
