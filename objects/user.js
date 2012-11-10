@@ -2,11 +2,12 @@ var obj_dao = require('../objects/database');
 var obj_picture = require('../objects/picture');
 var obj_recipe = require('../objects/recipe');
 
-function User(user_id, user_group, user_fname, user_lname, callback)
+function User(user_id, user_group, user_fname, user_lname, user_points, callback)
 {
 	this.id = user_id;
 	this.group = user_group;
 	this.picture = undefined;
+	this.points = user_points;
 	this.recipes = [];
 	this.fname = user_fname;
 	this.lname = user_lname;
@@ -15,6 +16,18 @@ function User(user_id, user_group, user_fname, user_lname, callback)
 	this.following = [];
 	this.show_email = false;
 	this.email = '';
+
+	this.title = '';
+	if (user_points < 100)
+		this.title = CHEF_TITLES[0];
+	else if (user_points < 200)
+		this.title = CHEF_TITLES[1];
+	else if (user_points < 400)
+		this.title = CHEF_TITLES[2];
+	else if (user_points < 800)
+		this.title = CHEF_TITLES[3];
+	else
+		this.title = CHEF_TITLES[4];
 
 	var dao = new obj_dao.DAO();
 

@@ -3,6 +3,7 @@ MYSQL_VALS = {host: 'localhost', port: 3306, user: 'student', password: 'student
 // date values are for formatting dates in all files
 DATE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 DATE_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+CHEF_TITLES = ["Dish Washer", "Kitchen Assistant", "Chef de Partie", "Executive Chef", "Head Chef"];
 
 website_title = 'Website Name';
 

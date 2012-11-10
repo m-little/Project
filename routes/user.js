@@ -147,7 +147,7 @@ exports.show_profile = function(req, res)
 
 	var user = undefined;
 	var dao = new obj_dao.DAO();
-	dao.query("SELECT user_id, user_group, user_fname, user_lname, show_email, email, date_added FROM user WHERE user_id = '" + req.query.u + "'", output1);
+	dao.query("SELECT user_id, user_group, user_fname, user_lname, show_email, email, user_points, date_added FROM user WHERE user_id = '" + req.query.u + "'", output1);
 
 	function output1(success, result, fields)
 	{
@@ -166,7 +166,7 @@ exports.show_profile = function(req, res)
 		}
 
 		var row = result[0];
-		user = new obj_user.User(row.user_id, row.user_group, row.user_fname, row.user_lname, load_recipes);
+		user = new obj_user.User(row.user_id, row.user_group, row.user_fname, row.user_lname, row.user_points, load_recipes);
 		user.date_added = row.date_added;
 		user.show_email = row.show_email;
 		if (row.show_email)

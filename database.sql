@@ -15,6 +15,12 @@ DROP TRIGGER IF EXISTS tri_category_counter1;
 DROP TRIGGER IF EXISTS tri_category_counter2;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter1;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter2;
+DROP TRIGGER IF EXISTS tri_user_rank_counter1;
+DROP TRIGGER IF EXISTS tri_user_rank_counter2;
+DROP TRIGGER IF EXISTS tri_user_rank_counter3;
+DROP TRIGGER IF EXISTS tri_user_rank_counter4;
+DROP TRIGGER IF EXISTS tri_user_rank_counter5;
+DROP TRIGGER IF EXISTS tri_user_rank_counter6;
 
 DROP TABLE IF EXISTS recipe_ingredient;
 DROP TABLE IF EXISTS ingredient;
@@ -224,12 +230,18 @@ delimiter |
 CREATE TRIGGER tri_category_counter1 AFTER INSERT ON recipe
 	FOR EACH ROW BEGIN
 		UPDATE category SET use_count = use_count + 1 WHERE category_id = NEW.category_id;
+		IF NEW.public = 1 THEN
+			UPDATE user SET user_points = user_points + 10 WHERE user_id = NEW.owner_id;
+		END IF;
 	END;
 |
 
 CREATE TRIGGER tri_category_counter2 AFTER DELETE ON recipe
 	FOR EACH ROW BEGIN
 		UPDATE category SET use_count = use_count - 1 WHERE category_id = OLD.category_id;
+		IF OLD.public = 1 AND OLD.active = 1 THEN
+			UPDATE user SET user_points = user_points - 10 WHERE user_id = OLD.owner_id;
+		END IF;
 	END;
 |
 
@@ -244,6 +256,50 @@ CREATE TRIGGER tri_unit_ingr_counter2 AFTER DELETE ON recipe_ingredient
 	FOR EACH ROW BEGIN
 		UPDATE unit SET use_count = use_count - 1 WHERE unit_id = OLD.unit_id;
 		UPDATE ingredient SET use_count = use_count - 1 WHERE ingr_id = OLD.ingr_id;
+	END;
+|
+
+CREATE TRIGGER tri_user_rank_counter1 AFTER INSERT ON recipe_ranking
+	FOR EACH ROW BEGIN
+		UPDATE user SET user_points = user_points + (NEW.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = NEW.recipe_id LIMIT 1);
+	END;
+
+CREATE TRIGGER tri_user_rank_counter2 AFTER UPDATE ON recipe_ranking
+	FOR EACH ROW BEGIN
+		UPDATE user SET user_points = user_points + (NEW.rank * 3) - (OLD.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = NEW.recipe_id LIMIT 1);
+	END;
+
+CREATE TRIGGER tri_user_rank_counter3 AFTER DELETE ON recipe_ranking
+	FOR EACH ROW BEGIN
+		UPDATE user SET user_points = user_points - (OLD.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = OLD.recipe_id LIMIT 1);
+	END;
+
+CREATE TRIGGER tri_user_rank_counter4 AFTER INSERT ON user_connections
+	FOR EACH ROW BEGIN
+		IF NEW.accepted = 1 
+			THEN UPDATE user SET user_points = user_points + 1 WHERE user_id = NEW.user_id_2;
+		END IF;
+	END;
+
+CREATE TRIGGER tri_user_rank_counter5 AFTER UPDATE ON user_connections
+	FOR EACH ROW BEGIN
+		IF NEW.active = 0 AND OLD.accepted = 1 THEN 
+			UPDATE user SET user_points = user_points - 1 WHERE user_id = NEW.user_id_2;
+		END IF;
+		IF NEW.active = 1 AND NEW.accepted = 1 THEN 
+			UPDATE user SET user_points = user_points + 1 WHERE user_id = NEW.user_id_2;
+		END IF;
+	END;
+
+CREATE TRIGGER tri_user_rank_counter6 AFTER UPDATE ON recipe
+	FOR EACH ROW BEGIN
+		IF OLD.public = 1 AND OLD.active = 1 THEN
+			IF NEW.public = 0 OR NEW.active = 0 THEN
+				UPDATE user SET user_points = user_points - 10 WHERE user_id = NEW.owner_id;
+			END IF;
+		ELSEIF NEW.public = 1 AND NEW.active = 1 THEN
+			UPDATE user SET user_points = user_points + 10 WHERE user_id = NEW.owner_id;
+		END IF;
 	END;
 |
 
@@ -390,8 +446,7 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam',
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 1, 3, STR_TO_DATE('9,28,2012 17:43:34', '%m,%d,%Y %H:%i:%s')); -- 2
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike', 2, 10, STR_TO_DATE('9,30,2012 11:42:14', '%m,%d,%Y %H:%i:%s')); -- 3
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 2, 5, STR_TO_DATE('9,30,2012 15:23:45', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike', 4, 9, STR_TO_DATE('10,28,2012 12:18:02', '%m,%d,%Y %H:%i:%s')); -- 5
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 4, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curtis', 5, 6, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 6, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 

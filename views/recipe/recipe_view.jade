@@ -21,10 +21,14 @@ html.all(style="background-image:url('../images/bg1.png');")
 				| #{recipe.name}
 
 			//- Image
-			div(id="recipe_photo_div", style="width:100%; max-height:auto; min-height:160px; height:160px; overflow:hidden;")
-				img(id="recipe_photo", src="../images/user_images/#{recipe.get_picture(0).location}", style="width:100%; position:relative;", alt="#{recipe.get_picture(0).caption}", title="#{recipe.get_picture(0).caption}", onLoad="refresh_picture();")
+			- if (recipe.get_picture(0).location != 'unknown.png')
+				div(id="recipe_photo_div", style="width:100%; max-height:auto; min-height:160px; height:160px; overflow:hidden;")
+					img(id="recipe_photo", src="../images/user_images/#{recipe.get_picture(0).location}", style="width:100%; position:relative;", alt="#{recipe.get_picture(0).caption}", title="#{recipe.get_picture(0).caption}", onLoad="refresh_picture();")
+			- else
+				div(id="recipe_photo_div", style="width:100%; max-height:auto; height:70px; overflow:hidden;")
 
-			div(id="recipe_pic_drag", style="position:relative; right:8px; top:-24px; float:right; width:27px; height:14px; margin-bottom:-46px; background-image:url('../images/drag1.png'); cursor:s-resize; z-index:2;", title="Enlarge this photo. Double click to reset.", onClick="zoom_photo($('#recipe_pic_zoom').position());")
+			- if (recipe.get_picture(0).location != 'unknown.png')
+				div(id="recipe_pic_drag", style="position:relative; right:8px; top:-24px; float:right; width:27px; height:14px; margin-bottom:-46px; background-image:url('../images/drag1.png'); cursor:s-resize; z-index:2;", title="Enlarge this photo. Double click to reset.", onClick="zoom_photo($('#recipe_pic_zoom').position());")
 
 			//- Owner
 			div(id="recipe_owner", style="position:relative; left:10px; top:-26px; font-size:16px; float:left; clear:both; width:auto; height:auto; padding:4px; padding-left:16px; padding-right:16px; background-color:white; border-top-left-radius:.6em; border-top-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default;")
@@ -131,12 +135,16 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 						div(style="height:20px; margin-left:45px; margin-right:10px; position:relative; top:-20px; margin-bottom:-20px;")
 							div(id="comment_owner", style="color:gray; width:10px; overflow:show;")
-								- if (global.session.logged_in && comment.owner == global.session.user.id)
-									p(style="margin:0px; padding:0px;")
-										| You 
+								- if (global.session.logged_in && comment.owner.id == global.session.user.id)
+									a(href="/user/profile?u=#{comment.owner.id}", style="margin:0px; padding:0px; cursor:pointer; text-decoration:none; color:gray;")
+										| You
+									span(style="font-size:10px; margin-left:5px; vertical-align:middle;")
+										| #{comment.owner.points}
 								- else
-									a(href="/user/profile?u=#{comment.owner}", style="margin:0px; padding:0px; cursor:pointer; font-weight:bold; text-decoration:none; color:gray;")
-										| #{comment.owner} 
+									a(href="/user/profile?u=#{comment.owner.id}", style="margin:0px; padding:0px; cursor:pointer; text-decoration:none; color:gray;")
+										| #{comment.owner.id}
+									span(style="font-size:10px; margin-left:5px; vertical-align:middle;")
+										| #{comment.owner.points}
 
 							div(id="comment_date_added", style="font-size:12px; color:gray; float:right; position:relative; top:-16px;")
 								| Posted #{comment.date_added.toDateString()} at 
@@ -174,10 +182,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 										|  pm
 									- else
 										|  am
-							- else if (global.session.logged_in && comment.owner == global.session.user.id)
+							- else if (global.session.logged_in && comment.owner.id == global.session.user.id)
 								div(id="comment_date_edited", style="font-size:12px; color:gray; float:right; position:relative; top:-16px; right:20px; margin-left:25px; visibility:#{hidden};")
 
-							if (global.session.logged_in && comment.owner != global.session.user.id && global.session.user.id == recipe.owner && !comment.seen)
+							if (global.session.logged_in && comment.owner.id != global.session.user.id && global.session.user.id == recipe.owner && !comment.seen)
 								div(id="comment_new_note", style="float:right; font-size:12px; color:green; margin-bottom:-16px; position:relative; top:-16px; right:10px;")
 									| New
 
@@ -187,8 +195,8 @@ html.all(style="background-image:url('../images/bg1.png');")
 									| #{piece}
 
 						- if (global.session.logged_in)
-							- if (global.session.user.id != comment.owner)
-								div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Reply to #{comment.owner}'s comment.", id="reply#{comment.id}", onClick="reply_comment('#comment_div#{comment.id}');")
+							- if (global.session.user.id != comment.owner.id)
+								div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Reply to #{comment.owner.id}'s comment.", id="reply#{comment.id}", onClick="reply_comment('#comment_div#{comment.id}');")
 							- else
 								div(style="background-image:url('../images/edit1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Edit your comment.", id="edit#{comment.id}", onClick="edit_comment('#comment_div#{comment.id}');")
 
