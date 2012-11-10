@@ -1,0 +1,184 @@
+doctype 5
+html.all
+
+	include ../header
+
+	div.all(style="max-width:1000px; margin:auto;")
+
+		div(style="overflow:auto; font-size:16px; background-color:white;")
+
+			div(style="padding:10px; border:1px solid #c2c2c2; background-color:white; margin-bottom:10px; float:left;")
+				div(style="max-height:192px; max-width:400px; overflow:hidden;")
+					img(src="../images/user_images/#{user.picture.location}", alt="#{user.picture.caption}", title="#{user.picture.caption}", style="max-height:192px;")
+
+			div(style="padding:10px; background-color:white; margin-bottom:10px; margin-left:10px; float:left; clear:right; overflow:auto; position:relative; bottom:0px;")
+				div(style="font-size:24px; margin-bottom:2px;")
+					| #{user.id} 
+					span(style="font-size:12px; color:#999999; vertical-align:middle;")
+						| (#{user.group})
+				div(style="margin-bottom:10px;")
+					| #{user.fname} #{user.lname}
+
+				table(style="font-size:14px;")
+					tr
+						td(style="text-align:right;")
+							| Public Recipes:
+						td
+							| #{public_recipes.length}
+
+					tr
+						td(style="text-align:right;")
+							| Followers: 
+						td
+							| #{user.followers.length}
+
+					tr
+						td(style="text-align:right;")
+							| User Rank: 
+						td
+							| #{user.points}
+
+					tr
+						td(style="text-align:right;")
+							| User Title:
+						td
+							| #{user.title}
+
+					- if (user.show_email)
+						tr
+							td(style="text-align:right;")
+								| Contact:
+							td
+								a(href="mailto:#{user.email}", style="color:black; text-decoration:none; font-weight:bold;")
+									| #{user.email}
+
+				div(style="height:10px;")
+				- if (global.session.logged_in && global.session.user.id == user.id)
+					button.button1b
+						| Settings
+				-else if (global.session.logged_in)
+					- if (follows[0])
+						button.button1r(id="button_follow", onClick="prompt_update();")
+							| Stop Following
+					- else
+						button.button1b(id="button_follow", onClick="prompt_update();")
+							| Start Following
+
+					- var show_pending = 'hidden';
+					- if (follows[0] && !follows[1])
+						- show_pending = 'visible';
+					span(id="following_status", style="font-size:14px; color:gray; margin-left:10px; visibility:#{show_pending};", title="Waiting for #{user.id} to accept.")
+						| Following Status Pending
+
+			div(style="margin:10px; margin-top:14px; font-size:14px; float:right;")
+				p(style="margin:0px; text-align:center;")
+					| Date Joined
+				p(style="margin:0px;")
+					| #{DATE_DAYS[user.date_added.getDay()]}, #{DATE_MONTHS[user.date_added.getMonth()]} #{user.date_added.getDate()} #{user.date_added.getFullYear()}
+
+		div(style="padding:10px; border:1px solid #c2c2c2; background-color:white; margin-bottom:10px; clear:both; overflow:auto;")
+			div(style="font-size:24px; float:left;")
+				- if (global.session.logged_in && global.session.user.id == user.id)
+					| Your Public Recipes
+				- else
+					| #{user.id}'s Public Recipes
+
+			- if (global.session.logged_in && global.session.user.id == user.id)
+				button.button1g(style="float:right;", onClick="window.location.href='/recipe/create'")
+					| Create New
+
+			div(style="float:left; clear:left;")
+
+			div(style="font-size:14px; color:gray; margin:5px; margin-top:34px; border-top:1px solid #dbdbdb; padding-top:10px;")
+				- if (public_recipes.length == 0)
+					- if (global.session.logged_in && global.session.user.id == user.id)
+						| You have no recipes here...
+					- else
+						| #{user.id} has no recipes...
+
+				- for (var i in public_recipes)
+					- recipe_color = 'ffffff';
+					- if (public_recipes[i].unseen_comment_count != 0)
+						- recipe_color = '4564ff';
+
+					div(style="float:left; border-radius:.3em; margin:4px; padding:2px; background-color:##{recipe_color}; background-image:url('../images/stripes1.png'); cursor:pointer;", title="#{public_recipes[i].name}", onClick="window.location.href='/recipe/view?r_id=#{public_recipes[i].id}'")
+						div(style="width:110px; height:98px; overflow:hidden; margin-bottom:-98px;")
+							img(src="../images/user_images/#{public_recipes[i].get_picture(0).location}", style="float:left; min-height:100%; min-width:100%; max-height:150%; max-width:150%;")
+
+						div(style="float:left; width:110px; min-height:98px; border-radius:.3em;")
+
+							div(style="margin:2px; padding:2px; background-color:white; border-radius:.3em; opacity:.8; filter:alpha(opacity=80); text-align:center;")
+								a(href="/recipe/view?r_id=#{public_recipes[i].id}", style="text-decoration:none; color:black;")
+									| #{public_recipes[i].name}
+
+							div(style="color:black; margin:2px; padding:2px; background-color:white; border-radius:.3em; opacity:.8; filter:alpha(opacity=80); text-align:center;")
+								| #{public_recipes[i].rank / 2} / 5 
+								b
+									| &#9733
+								| 's
+
+							div(style="color:black; font-size:12px; margin:2px; padding:2px; background-color:white; border-radius:.3em; opacity:.8; filter:alpha(opacity=80); text-align:center;")
+								- if (public_recipes[i].unseen_comment_count == 0)
+									| No New Replies
+								-else
+									b
+										| #{public_recipes[i].unseen_comment_count} New Replies
+
+	script(src="../jquery.js")
+	script
+		var dialog_callback = undefined;
+		$(document).ready(function()
+		{
+		});
+		function show_dialog(text, callback)
+		{
+			$('<div></div>').attr({id: "dialog_bg_fade", style: "position:absolute; top:0px; bottom:0px; left:0px; right:0px; background-color:black; z-index:8; opacity:0.5; filter:alpha(opacity=50);", onClick: "unshow_dialog(0);"}).appendTo('body');
+			$('<div></div>').attr({id: "dialog_box_outline", style: "position:absolute; width:300px; height:100px; margin-top:-50px; margin-left:-150px; top:50%; left:50%; border-radius:.5em; border:2px solid white; z-index:9;"}).appendTo('body');
+			$('<div></div>').attr({id: "dialog_box", style: "background-color:white; border-radius:.5em; position:absolute; left:2px; right:2px; top:2px; bottom:2px; padding:10px; text-align:center;"}).appendTo('#dialog_box_outline');
+			$('#dialog_box').text(text);
+			$('<button>Confirm</button>').attr({id: "dialog_box_confirm", class: "button1b", style: "float:left; position:absolute; bottom:10px; left:10px;", onClick: "unshow_dialog(1);"}).appendTo('#dialog_box');
+			$('<button>Cancel</button>').attr({id: "dialog_box_cancel", class: "button1r", style: "float:right; position:absolute; bottom:10px; right:10px;", onClick: "unshow_dialog(0);"}).appendTo('#dialog_box');
+			$('<div></div>').attr({id: "dialog_box_close", style: "background-image:url('../images/delete.png'); background-size:100% 100%; width:28px; height:28px; z-index:10; position:absolute; right:-16px; top:-16px; cursor:pointer;", onClick: "unshow_dialog(0);"}).appendTo('#dialog_box');
+			dialog_callback = callback;
+		}
+		function unshow_dialog(val)
+		{
+			$("#dialog_bg_fade").remove();
+			$("#dialog_box_outline").remove();
+			if (val)
+				dialog_callback();
+		}
+		function prompt_update()
+		{
+			if ($("#button_follow").text() == 'Stop Following')
+			{
+				show_dialog("Are you sure you would like to stop following #{user.id}?", update_follow);
+			}
+			else
+				update_follow();
+		}
+		function update_follow()
+		{
+			$.ajax({
+				type: 'POST',
+				url: '/user/update_follow',
+				data: {user: '#{user.id}'}, 
+				dataType: 'json',
+				success: function(data){
+					if (data.status == 1)
+					{
+						$("#button_follow").text('Stop Following');
+						$("#button_follow").attr('class', 'button1r');
+						$("#following_status").css('visibility', 'visible');
+					}
+					else
+					{
+						$("#button_follow").text('Start Following');
+						$("#button_follow").attr('class', 'button1b');
+						$("#following_status").css('visibility', 'hidden');
+					}
+				}
+			});
+		}
+
+	include ../footer

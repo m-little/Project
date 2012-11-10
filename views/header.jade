@@ -33,16 +33,18 @@ div.header_dropdown(id="header_menu_login", style="position:fixed; top:-1000px; 
 		//- location argument allows us to return to the page we were on when we tried to logon.
 		input(id="header_menu_login_location", type="hidden", name="location")
 		
-		button.submit3(style="float:left;", onClick="submit_drop_login();")
+		button.button2(style="float:right;", onClick="submit_drop_login();")
 			| Login
-		button.submit3(style="float:right;", onClick="hide_drop_login();")
+		button.button2(style="float:left;", onClick="hide_drop_login();")
 			| Cancel
 
 div.header_dropdown(id="header_menu_settings", style="position:fixed; top:-1000px; right:10px; width:auto;")
 	div.header_dropdown_button
 		div.header_dropdown_button_icon
 			img(src="../images/icon_gear1.png", style="position:relative; left:-3px; top:-3px;")
-		| My Account
+		- if (global.session.logged_in)			
+			a(href="/user/profile?u=#{global.session.user.id}", style="text-decoration:none; color:#bababa;")
+				| My Account
 	div.header_dropdown_button(id="header_settings_logout", onClick="$('#logout_form').submit();", title="Click here to logout.")
 		div.header_dropdown_button_icon
 			img(src="../images/icon_exit1.png", style="position:relative; left:-2px; top:-2px; width:22px;")

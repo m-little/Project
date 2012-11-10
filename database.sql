@@ -15,6 +15,12 @@ DROP TRIGGER IF EXISTS tri_category_counter1;
 DROP TRIGGER IF EXISTS tri_category_counter2;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter1;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter2;
+DROP TRIGGER IF EXISTS tri_user_rank_counter1;
+DROP TRIGGER IF EXISTS tri_user_rank_counter2;
+DROP TRIGGER IF EXISTS tri_user_rank_counter3;
+DROP TRIGGER IF EXISTS tri_user_rank_counter4;
+DROP TRIGGER IF EXISTS tri_user_rank_counter5;
+DROP TRIGGER IF EXISTS tri_user_rank_counter6;
 
 DROP TABLE IF EXISTS recipe_ingredient;
 DROP TABLE IF EXISTS ingredient;
@@ -99,7 +105,8 @@ user_lname VARCHAR(40) NOT NULL,
 email VARCHAR(50) NOT NULL,
 date_added DATETIME NOT NULL,
 user_points INT UNSIGNED NOT NULL DEFAULT 0,
-active TINYINT(1) DEFAULT 0,
+active TINYINT(1) DEFAULT 1,
+show_email TINYINT(1) DEFAULT 0,
 validation_value VARCHAR(40) DEFAULT '',
 validation_date DATETIME NOT NULL DEFAULT 0,
 CONSTRAINT pk_user PRIMARY KEY(user_id),
@@ -111,10 +118,9 @@ CREATE TABLE user_connections
 (
 connection_id SERIAL,
 user_id_1 VARCHAR(40) NOT NULL,
-user_id_2 VARCHAR(40) NOT NULL, 
-relationship VARCHAR(12) NOT NULL DEFAULT 0,
-accepted INT(1) NOT NULL DEFAULT 0,
-active INT(1) NOT NULL DEFAULT 0,
+user_id_2 VARCHAR(40) NOT NULL,
+accepted TINYINT(1) NOT NULL DEFAULT 0,
+active TINYINT(1) NOT NULL DEFAULT 1,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
 CONSTRAINT fk_user_1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
 CONSTRAINT fk_user_2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
@@ -138,7 +144,7 @@ public TINYINT(1) NOT NULL DEFAULT 1,
 serving_size VARCHAR(10) DEFAULT '0-0',
 prep_time TIME DEFAULT 0,
 ready_time TIME DEFAULT 0,
-directions VARCHAR(5000) NOT NULL,
+directions TEXT NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
 active TINYINT(1) NOT NULL DEFAULT 1,
@@ -224,12 +230,18 @@ delimiter |
 CREATE TRIGGER tri_category_counter1 AFTER INSERT ON recipe
 	FOR EACH ROW BEGIN
 		UPDATE category SET use_count = use_count + 1 WHERE category_id = NEW.category_id;
+		IF NEW.public = 1 THEN
+			UPDATE user SET user_points = user_points + 10 WHERE user_id = NEW.owner_id;
+		END IF;
 	END;
 |
 
 CREATE TRIGGER tri_category_counter2 AFTER DELETE ON recipe
 	FOR EACH ROW BEGIN
 		UPDATE category SET use_count = use_count - 1 WHERE category_id = OLD.category_id;
+		IF OLD.public = 1 AND OLD.active = 1 THEN
+			UPDATE user SET user_points = user_points - 10 WHERE user_id = OLD.owner_id;
+		END IF;
 	END;
 |
 
@@ -244,6 +256,50 @@ CREATE TRIGGER tri_unit_ingr_counter2 AFTER DELETE ON recipe_ingredient
 	FOR EACH ROW BEGIN
 		UPDATE unit SET use_count = use_count - 1 WHERE unit_id = OLD.unit_id;
 		UPDATE ingredient SET use_count = use_count - 1 WHERE ingr_id = OLD.ingr_id;
+	END;
+|
+
+CREATE TRIGGER tri_user_rank_counter1 AFTER INSERT ON recipe_ranking
+	FOR EACH ROW BEGIN
+		UPDATE user SET user_points = user_points + (NEW.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = NEW.recipe_id LIMIT 1);
+	END;
+
+CREATE TRIGGER tri_user_rank_counter2 AFTER UPDATE ON recipe_ranking
+	FOR EACH ROW BEGIN
+		UPDATE user SET user_points = user_points + (NEW.rank * 3) - (OLD.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = NEW.recipe_id LIMIT 1);
+	END;
+
+CREATE TRIGGER tri_user_rank_counter3 AFTER DELETE ON recipe_ranking
+	FOR EACH ROW BEGIN
+		UPDATE user SET user_points = user_points - (OLD.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = OLD.recipe_id LIMIT 1);
+	END;
+
+CREATE TRIGGER tri_user_rank_counter4 AFTER INSERT ON user_connections
+	FOR EACH ROW BEGIN
+		IF NEW.accepted = 1 
+			THEN UPDATE user SET user_points = user_points + 1 WHERE user_id = NEW.user_id_2;
+		END IF;
+	END;
+
+CREATE TRIGGER tri_user_rank_counter5 AFTER UPDATE ON user_connections
+	FOR EACH ROW BEGIN
+		IF NEW.active = 0 AND OLD.accepted = 1 THEN 
+			UPDATE user SET user_points = user_points - 1 WHERE user_id = NEW.user_id_2;
+		END IF;
+		IF NEW.active = 1 AND NEW.accepted = 1 THEN 
+			UPDATE user SET user_points = user_points + 1 WHERE user_id = NEW.user_id_2;
+		END IF;
+	END;
+
+CREATE TRIGGER tri_user_rank_counter6 AFTER UPDATE ON recipe
+	FOR EACH ROW BEGIN
+		IF OLD.public = 1 AND OLD.active = 1 THEN
+			IF NEW.public = 0 OR NEW.active = 0 THEN
+				UPDATE user SET user_points = user_points - 10 WHERE user_id = NEW.owner_id;
+			END IF;
+		ELSEIF NEW.public = 1 AND NEW.active = 1 THEN
+			UPDATE user SET user_points = user_points + 10 WHERE user_id = NEW.owner_id;
+		END IF;
 	END;
 |
 
@@ -292,27 +348,28 @@ INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Julia', 'admin', 'Julia', 'Collins', 'jlcollins4@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Curtis', 6, 'admin', 'Curtis', 'Sydnor', 'casydnor1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mona', 7, 'admin', 'Mona', 'Lisa', 'mglisa@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('James', 8, 'admin', 'James', 'Ford', 'jsford@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Catherine', 9, 'admin', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('John', 10, 'admin', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Felicia', 11, 'admin', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mona', 7, 'user', 'Mona', 'Lisa', 'mglisa@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('James', 8, 'user', 'James', 'Ford', 'jsford@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Catherine', 9, 'user', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('John', 10, 'user', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Felicia', 11, 'user', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Julia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Curtis', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'John', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'James', 'Follow', 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Catherine', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'John', 'Follow', 0);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Julia', 'Mike', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Julia', 'Curtis', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Julia', 'Catherine', 'Follow', 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Mike', 'Curtis', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Mike', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Curtis', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Curtis', 'John', 'Friend', 0, 0);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Curtis', 'Mona', 'Follow', 1);
+-- Read as user_id_1 follows user_id_2...
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Julia', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Curtis', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Felicia', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'John', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Sam', 'James', 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Catherine', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Sam', 'John', 0);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Julia', 'Mike', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Julia', 'Curtis', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Julia', 'Catherine', 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Mike', 'Curtis', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Mike', 'Felicia', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Curtis', 'Felicia', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Curtis', 'John', 0, 0);
+INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Curtis', 'Mona', 1);
 
 INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs" 1
 INSERT INTO unit (unit_name, abrev) VALUES('Teaspoon', 'tsp');  -- 2
@@ -389,8 +446,7 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam',
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 1, 3, STR_TO_DATE('9,28,2012 17:43:34', '%m,%d,%Y %H:%i:%s')); -- 2
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike', 2, 10, STR_TO_DATE('9,30,2012 11:42:14', '%m,%d,%Y %H:%i:%s')); -- 3
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 2, 5, STR_TO_DATE('9,30,2012 15:23:45', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike', 4, 9, STR_TO_DATE('10,28,2012 12:18:02', '%m,%d,%Y %H:%i:%s')); -- 5
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 4, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curtis', 5, 6, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 6, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 

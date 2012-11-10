@@ -259,6 +259,114 @@ textarea.text_box {
     border-radius: 5px;
 }
 
+button.button1b
+{
+	font-size:14px;
+	padding:4px;
+	padding-left:8px;
+	padding-right:8px;
+	color:white;
+	background-color:#3d84ff;
+	background-image:url('../images/bg3.png'); background-repeat:repeat-x; background-size:100% 100%;
+	border:1px solid #c1c1c1;
+	border-radius:.3em;
+	cursor:pointer;
+}
+button.button1b:hover
+{
+	background-color:#5c98ff;
+	border:1px solid white;
+}
+button.button1b:active
+{
+	padding-top:5px;
+	padding-bottom:3px;
+	padding-left:8px;
+	padding-right:8px;
+}
+button.button1b:disabled
+{
+	color:#ebebeb;
+	background-color:#a2c1f2;
+	cursor:default;
+	border:1px solid #c1c1c1;
+	padding:4px;
+	padding-left:8px;
+	padding-right:8px;
+}
+
+button.button1r
+{
+	font-size:14px;
+	padding:4px;
+	padding-left:8px;
+	padding-right:8px;
+	color:white;
+	background-color:#ff3d3d;
+	background-image:url('../images/bg3.png'); background-repeat:repeat-x; background-size:100% 100%;
+	border:1px solid #c1c1c1;
+	border-radius:.3em;
+	cursor:pointer;
+}
+button.button1r:hover
+{
+	background-color:#ff5e5e;
+	border:1px solid white;
+}
+button.button1r:active
+{
+	padding-top:5px;
+	padding-bottom:3px;
+	padding-left:8px;
+	padding-right:8px;
+}
+button.button1r:disabled
+{
+	color:#ebebeb;
+	background-color:#f0a1a1;
+	cursor:default;
+	border:1px solid #c1c1c1;
+	padding:4px;
+	padding-left:8px;
+	padding-right:8px;
+}
+
+button.button1g
+{
+	font-size:14px;
+	padding:4px;
+	padding-left:8px;
+	padding-right:8px;
+	color:white;
+	background-color:#41b839;
+	background-image:url('../images/bg3.png'); background-repeat:repeat-x; background-size:100% 100%;
+	border:1px solid #c1c1c1;
+	border-radius:.3em;
+	cursor:pointer;
+}
+button.button1g:hover
+{
+	background-color:#70d666;
+	border:1px solid white;
+}
+button.button1g:active
+{
+	padding-top:5px;
+	padding-bottom:3px;
+	padding-left:8px;
+	padding-right:8px;
+}
+button.button1g:disabled
+{
+	color:#ebebeb;
+	background-color:#85d67e;
+	cursor:default;
+	border:1px solid #c1c1c1;
+	padding:4px;
+	padding-left:8px;
+	padding-right:8px;
+}
+
 button.submit1
 {
 	font-size:28px;
@@ -310,7 +418,7 @@ button.submit2:active
 	padding-bottom:4px;
 }
 
-button.submit3
+button.button2
 {
 	color:#9c9c8e;
 	font-weight:bold;
@@ -322,7 +430,7 @@ button.submit3
 	background-color:#292929;
 	cursor:pointer;
 }
-button.submit3:hover
+button.button2:hover
 {
 	background-color:#333233;
 }

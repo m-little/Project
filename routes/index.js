@@ -31,7 +31,7 @@ exports.login = function(req, res)
 				res.redirect(location);
 		}
 		else
-			res.render('login', { title: website_title, logged_in: success, v: req.query.v});
+			res.render('user/login', { title: website_title, logged_in: success, v: req.query.v});
 	}
 
 	if (req.body.username != undefined || req.body.password != undefined)
@@ -45,5 +45,10 @@ exports.login = function(req, res)
 
 exports.sign_up = function(req, res)
 {
-	res.render('sign_up', { title: website_title, miss: req.query.miss });
+	if (global.session.logged_in)
+	{
+		res.redirect('/');
+		return;
+	}
+	res.render('user/sign_up', { title: website_title, miss: req.query.miss });
 };

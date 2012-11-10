@@ -36,7 +36,7 @@ exports.check_credentials = function check_credentials(user, pass, callback, res
 		if (new_pass == row.pass)
 		{
 			logged_in = true;
-			global.session.user = new obj_user.User(user, row.user_group, user_created);
+			global.session.user = new obj_user.User(user, row.user_group, row.user_fname, row.user_lname, row.user_points, user_created);
 			dao.die();
 		}
 		else
@@ -45,15 +45,21 @@ exports.check_credentials = function check_credentials(user, pass, callback, res
 			dao.die();
 		}
 
-		function user_created()
+		function user_created(success)
 		{
+			if (!success)
+			{
+				res.redirect('/500error');
+				return;
+			}
+			
 			global.session.logged_in = 1;
 			callback(logged_in, user, row.user_group, vars.location);
 		}
 
 	}
 
-	dao.query("select p.user_id, pass, salt, user_group, active from passkeys p JOIN user u ON p.user_id = u.user_id WHERE p.user_id = '" + user + "' LIMIT 1", output, {res: res, location: location});
+	dao.query("select p.user_id, pass, salt, user_group, user_fname, user_lname, user_points active from passkeys p JOIN user u ON p.user_id = u.user_id WHERE p.user_id = '" + user + "' LIMIT 1", output, {res: res, location: location});
 
 	return logged_in;
 }
