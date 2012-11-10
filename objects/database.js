@@ -2,10 +2,10 @@ var _mysql = require('mysql');
 
 exports.DAO = function()
 {
-	this.client = _mysql.createClient({host: mysql_vals.host,	port: mysql_vals.port, user: mysql_vals.user, password: mysql_vals.password});
+	this.client = _mysql.createClient({host: MYSQL_VALS.host,	port: MYSQL_VALS.port, user: MYSQL_VALS.user, password: MYSQL_VALS.password});
 
 	// use the project database
-	this.client.query('use ' + mysql_vals.database);
+	this.client.query('use ' + MYSQL_VALS.database);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Generic query function

@@ -1,5 +1,9 @@
 // Global Vars
-mysql_vals = {host: 'localhost', port: 3306, user: 'student', password: 'student', database: 'project'};
+MYSQL_VALS = {host: 'localhost', port: 3306, user: 'student', password: 'student', database: 'project'};
+// date values are for formatting dates in all files
+DATE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+DATE_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
 website_title = 'Website Name';
 
 var express = require('express')
@@ -74,6 +78,8 @@ app.post('/login', routes.login);
 app.get('/sign_up', routes.sign_up);
 app.post('/user/new', user.create);
 app.get('/user/validate', user.validate);
+app.get('/user/profile', user.show_profile);
+app.post('/user/update_follow', user.update_follow);
 
 app.get('/recipe/create', recipe.display_create);
 app.post('/recipe/test', recipe.submit_recipe);

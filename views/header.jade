@@ -42,7 +42,9 @@ div.header_dropdown(id="header_menu_settings", style="position:fixed; top:-1000p
 	div.header_dropdown_button
 		div.header_dropdown_button_icon
 			img(src="../images/icon_gear1.png", style="position:relative; left:-3px; top:-3px;")
-		| My Account
+		- if (global.session.logged_in)			
+			a(href="/user/profile?u=#{global.session.user.id}", style="text-decoration:none; color:#bababa;")
+				| My Account
 	div.header_dropdown_button(id="header_settings_logout", onClick="$('#logout_form').submit();", title="Click here to logout.")
 		div.header_dropdown_button_icon
 			img(src="../images/icon_exit1.png", style="position:relative; left:-2px; top:-2px; width:22px;")

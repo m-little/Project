@@ -99,7 +99,8 @@ user_lname VARCHAR(40) NOT NULL,
 email VARCHAR(50) NOT NULL,
 date_added DATETIME NOT NULL,
 user_points INT UNSIGNED NOT NULL DEFAULT 0,
-active TINYINT(1) DEFAULT 0,
+active TINYINT(1) DEFAULT 1,
+show_email TINYINT(1) DEFAULT 0,
 validation_value VARCHAR(40) DEFAULT '',
 validation_date DATETIME NOT NULL DEFAULT 0,
 CONSTRAINT pk_user PRIMARY KEY(user_id),
@@ -111,10 +112,9 @@ CREATE TABLE user_connections
 (
 connection_id SERIAL,
 user_id_1 VARCHAR(40) NOT NULL,
-user_id_2 VARCHAR(40) NOT NULL, 
-relationship VARCHAR(12) NOT NULL DEFAULT 0,
-accepted INT(1) NOT NULL DEFAULT 0,
-active INT(1) NOT NULL DEFAULT 0,
+user_id_2 VARCHAR(40) NOT NULL,
+accepted TINYINT(1) NOT NULL DEFAULT 0,
+active TINYINT(1) NOT NULL DEFAULT 1,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
 CONSTRAINT fk_user_1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
 CONSTRAINT fk_user_2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
@@ -138,7 +138,7 @@ public TINYINT(1) NOT NULL DEFAULT 1,
 serving_size VARCHAR(10) DEFAULT '0-0',
 prep_time TIME DEFAULT 0,
 ready_time TIME DEFAULT 0,
-directions VARCHAR(5000) NOT NULL,
+directions TEXT NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
 active TINYINT(1) NOT NULL DEFAULT 1,
@@ -292,27 +292,28 @@ INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Julia', 'admin', 'Julia', 'Collins', 'jlcollins4@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Curtis', 6, 'admin', 'Curtis', 'Sydnor', 'casydnor1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mona', 7, 'admin', 'Mona', 'Lisa', 'mglisa@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('James', 8, 'admin', 'James', 'Ford', 'jsford@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Catherine', 9, 'admin', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('John', 10, 'admin', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Felicia', 11, 'admin', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mona', 7, 'user', 'Mona', 'Lisa', 'mglisa@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('James', 8, 'user', 'James', 'Ford', 'jsford@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Catherine', 9, 'user', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('John', 10, 'user', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Felicia', 11, 'user', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Julia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Curtis', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'John', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'James', 'Follow', 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Catherine', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'John', 'Follow', 0);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Julia', 'Mike', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Julia', 'Curtis', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Julia', 'Catherine', 'Follow', 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Mike', 'Curtis', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Mike', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Curtis', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Curtis', 'John', 'Friend', 0, 0);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Curtis', 'Mona', 'Follow', 1);
+-- Read as user_id_1 follows user_id_2...
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Julia', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Curtis', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Felicia', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'John', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Sam', 'James', 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Catherine', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Sam', 'John', 0);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Julia', 'Mike', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Julia', 'Curtis', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Julia', 'Catherine', 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Mike', 'Curtis', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Mike', 'Felicia', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Curtis', 'Felicia', 1, 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Curtis', 'John', 0, 0);
+INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Curtis', 'Mona', 1);
 
 INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs" 1
 INSERT INTO unit (unit_name, abrev) VALUES('Teaspoon', 'tsp');  -- 2
