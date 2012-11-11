@@ -15,6 +15,12 @@ DROP TRIGGER IF EXISTS tri_category_counter1;
 DROP TRIGGER IF EXISTS tri_category_counter2;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter1;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter2;
+DROP TRIGGER IF EXISTS tri_user_rank_counter1;
+DROP TRIGGER IF EXISTS tri_user_rank_counter2;
+DROP TRIGGER IF EXISTS tri_user_rank_counter3;
+DROP TRIGGER IF EXISTS tri_user_rank_counter4;
+DROP TRIGGER IF EXISTS tri_user_rank_counter5;
+DROP TRIGGER IF EXISTS tri_user_rank_counter6;
 
 DROP TABLE IF EXISTS recipe_ingredient;
 DROP TABLE IF EXISTS ingredient;
@@ -99,7 +105,8 @@ user_lname VARCHAR(40) NOT NULL,
 email VARCHAR(50) NOT NULL,
 date_added DATETIME NOT NULL,
 user_points INT UNSIGNED NOT NULL DEFAULT 0,
-active TINYINT(1) DEFAULT 0,
+active TINYINT(1) DEFAULT 1,
+show_email TINYINT(1) DEFAULT 0,
 validation_value VARCHAR(40) DEFAULT '',
 validation_date DATETIME NOT NULL DEFAULT 0,
 CONSTRAINT pk_user PRIMARY KEY(user_id),
@@ -111,10 +118,10 @@ CREATE TABLE user_connections
 (
 connection_id SERIAL,
 user_id_1 VARCHAR(40) NOT NULL,
-user_id_2 VARCHAR(40) NOT NULL, 
-relationship VARCHAR(12) NOT NULL DEFAULT 0,
-accepted INT(1) NOT NULL DEFAULT 0,
-active INT(1) NOT NULL DEFAULT 0,
+user_id_2 VARCHAR(40) NOT NULL,
+accepted TINYINT(1) NOT NULL DEFAULT 0,
+active TINYINT(1) NOT NULL DEFAULT 1,
+date_added DATETIME NOT NULL,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
 CONSTRAINT fk_user_1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
 CONSTRAINT fk_user_2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
@@ -138,7 +145,7 @@ public TINYINT(1) NOT NULL DEFAULT 1,
 serving_size VARCHAR(10) DEFAULT '0-0',
 prep_time TIME DEFAULT 0,
 ready_time TIME DEFAULT 0,
-directions VARCHAR(5000) NOT NULL,
+directions TEXT NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
 active TINYINT(1) NOT NULL DEFAULT 1,
@@ -224,12 +231,18 @@ delimiter |
 CREATE TRIGGER tri_category_counter1 AFTER INSERT ON recipe
 	FOR EACH ROW BEGIN
 		UPDATE category SET use_count = use_count + 1 WHERE category_id = NEW.category_id;
+		IF NEW.public = 1 THEN
+			UPDATE user SET user_points = user_points + 10 WHERE user_id = NEW.owner_id;
+		END IF;
 	END;
 |
 
 CREATE TRIGGER tri_category_counter2 AFTER DELETE ON recipe
 	FOR EACH ROW BEGIN
 		UPDATE category SET use_count = use_count - 1 WHERE category_id = OLD.category_id;
+		IF OLD.public = 1 AND OLD.active = 1 THEN
+			UPDATE user SET user_points = user_points - 10 WHERE user_id = OLD.owner_id;
+		END IF;
 	END;
 |
 
@@ -244,6 +257,50 @@ CREATE TRIGGER tri_unit_ingr_counter2 AFTER DELETE ON recipe_ingredient
 	FOR EACH ROW BEGIN
 		UPDATE unit SET use_count = use_count - 1 WHERE unit_id = OLD.unit_id;
 		UPDATE ingredient SET use_count = use_count - 1 WHERE ingr_id = OLD.ingr_id;
+	END;
+|
+
+CREATE TRIGGER tri_user_rank_counter1 AFTER INSERT ON recipe_ranking
+	FOR EACH ROW BEGIN
+		UPDATE user SET user_points = user_points + (NEW.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = NEW.recipe_id LIMIT 1);
+	END;
+
+CREATE TRIGGER tri_user_rank_counter2 AFTER UPDATE ON recipe_ranking
+	FOR EACH ROW BEGIN
+		UPDATE user SET user_points = user_points + (NEW.rank * 3) - (OLD.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = NEW.recipe_id LIMIT 1);
+	END;
+
+CREATE TRIGGER tri_user_rank_counter3 AFTER DELETE ON recipe_ranking
+	FOR EACH ROW BEGIN
+		UPDATE user SET user_points = user_points - (OLD.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = OLD.recipe_id LIMIT 1);
+	END;
+
+CREATE TRIGGER tri_user_rank_counter4 AFTER INSERT ON user_connections
+	FOR EACH ROW BEGIN
+		IF NEW.accepted = 1 
+			THEN UPDATE user SET user_points = user_points + 1 WHERE user_id = NEW.user_id_2;
+		END IF;
+	END;
+
+CREATE TRIGGER tri_user_rank_counter5 AFTER UPDATE ON user_connections
+	FOR EACH ROW BEGIN
+		IF NEW.active = 0 AND OLD.accepted = 1 THEN 
+			UPDATE user SET user_points = user_points - 1 WHERE user_id = NEW.user_id_2;
+		END IF;
+		IF NEW.active = 1 AND NEW.accepted = 1 THEN 
+			UPDATE user SET user_points = user_points + 1 WHERE user_id = NEW.user_id_2;
+		END IF;
+	END;
+
+CREATE TRIGGER tri_user_rank_counter6 AFTER UPDATE ON recipe
+	FOR EACH ROW BEGIN
+		IF OLD.public = 1 AND OLD.active = 1 THEN
+			IF NEW.public = 0 OR NEW.active = 0 THEN
+				UPDATE user SET user_points = user_points - 10 WHERE user_id = NEW.owner_id;
+			END IF;
+		ELSEIF NEW.public = 1 AND NEW.active = 1 THEN
+			UPDATE user SET user_points = user_points + 10 WHERE user_id = NEW.owner_id;
+		END IF;
 	END;
 |
 
@@ -292,27 +349,28 @@ INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Julia', 'admin', 'Julia', 'Collins', 'jlcollins4@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Curtis', 6, 'admin', 'Curtis', 'Sydnor', 'casydnor1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mona', 7, 'admin', 'Mona', 'Lisa', 'mglisa@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('James', 8, 'admin', 'James', 'Ford', 'jsford@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Catherine', 9, 'admin', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('John', 10, 'admin', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
-INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Felicia', 11, 'admin', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mona', 7, 'user', 'Mona', 'Lisa', 'mglisa@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('James', 8, 'user', 'James', 'Ford', 'jsford@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Catherine', 9, 'user', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('John', 10, 'user', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Felicia', 11, 'user', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Julia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Curtis', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'John', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'James', 'Follow', 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Sam', 'Catherine', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Sam', 'John', 'Follow', 0);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Julia', 'Mike', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Julia', 'Curtis', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Julia', 'Catherine', 'Follow', 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Mike', 'Curtis', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Mike', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Curtis', 'Felicia', 'Friend', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, accepted, active) VALUES('Curtis', 'John', 'Friend', 0, 0);
-INSERT INTO user_connections (user_id_1, user_id_2, relationship, active) VALUES('Curtis', 'Mona', 'Follow', 1);
+-- Read as user_id_1 follows user_id_2...
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Julia', 1, 1, STR_TO_DATE('9,19,2012 6:05', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Curtis', 1, 1, STR_TO_DATE('9,23,2012 13:30', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Felicia', 1, 1, STR_TO_DATE('9,30,2012 11:02', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'John', 1, 1, STR_TO_DATE('9,12,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Sam', 'James', 1, STR_TO_DATE('10,25,2012 19:20', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Catherine', 1, 1, STR_TO_DATE('10,16,2012 13:30', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Sam', 'John', 0, STR_TO_DATE('10,24,2012 17:50', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Julia', 'Mike', 1, 1, STR_TO_DATE('10,15,2012 10:07', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Julia', 'Curtis', 1, 1, STR_TO_DATE('10,04,2012 17:45', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Julia', 'Catherine', 1, STR_TO_DATE('10,13,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Mike', 'Curtis', 1, 1, STR_TO_DATE('10,28,2012 05:30', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Mike', 'Felicia', 1, 1, STR_TO_DATE('10,29,2012 10:03', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Curtis', 'Felicia', 1, 1, STR_TO_DATE('11,02,2012 13:50', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Curtis', 'John', 0, 0, STR_TO_DATE('11,04,2012 18:53', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Curtis', 'Mona', 1, STR_TO_DATE('11,07,2012 12:03', '%m,%d,%Y %H:%i'));
 
 INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs" 1
 INSERT INTO unit (unit_name, abrev) VALUES('Teaspoon', 'tsp');  -- 2
@@ -369,7 +427,6 @@ INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time,
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Curtis', 8, 'Oven-fried Pork Chops', '4', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:00', '%m,%d,%Y %H:%i')); -- 5
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added, public) VALUES ( 'Sam', 6, 'Ranch Burgers', '8', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:05', '%m,%d,%Y %H:%i'), 0); -- 6
 
-
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(1, 3);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(2, 4);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(2, 12);
@@ -389,11 +446,9 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam',
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 1, 3, STR_TO_DATE('9,28,2012 17:43:34', '%m,%d,%Y %H:%i:%s')); -- 2
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike', 2, 10, STR_TO_DATE('9,30,2012 11:42:14', '%m,%d,%Y %H:%i:%s')); -- 3
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 2, 5, STR_TO_DATE('9,30,2012 15:23:45', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
-INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike', 4, 9, STR_TO_DATE('10,28,2012 12:18:02', '%m,%d,%Y %H:%i:%s')); -- 5
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 4, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curtis', 5, 6, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
-INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 6, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
-
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
@@ -484,19 +539,24 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 
 
 -- Wiki data
-INSERT INTO video (name, caption, address) VALUES("Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video
+INSERT INTO video (name, caption, address) VALUES("Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video 1
+INSERT INTO video (name, caption, address) VALUES("Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- 2
 
 -- Wiki categories
 INSERT INTO wiki_category (category_name) VALUES ("Ingredients"); -- 1
 INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 2
 -- Wiki pages
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Common Ingredients",1);  -- Common Ingredients Page
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Poultry", 2);  -- Poultry Page
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Salt",1);  -- 1
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Sugar", 1); -- 2
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Pepper", 1); -- 3
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Butter", 1); -- 4
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Flour", 1); -- 5
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Chicken", 1);  -- 6
 
 -- Wiki content
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,19, "Salt", "Salt, also known as rock salt, is a crystalline mineral that is composed primarily of sodium chloride (NaCl), a chemical compound belonging to the larger class of ionic salts."); -- 1 
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,15, "Sugar", "Sugar is the generalised name for a class of sweet flavored substances used as food. They are carbohydrates and as this name implies, are composed of carbon, hydrogen and oxygen."); -- 2
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,25, "Pepper", "<a href='?w_id=1'>Black pepper</a> (Piper nigrum) is a flowering vine in the family Piperaceae, cultivated for its fruit, which is usually dried and used as a spice and seasoning. The fruit, known as a peppercorn when dried, is approximately 5 millimetres (0.20 in) in diameter, dark red when fully mature, and, like all drupes, contains a single seed"); -- 3
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,27, "Butter", "Butter is a dairy product made by churning fresh or fermented cream or milk. It is generally used as a spread and a condiment, as well as in cooking, such as baking, sauce making, and pan frying. Butter consists of butterfat, milk proteins and water."); -- 4
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,26, "Flour", "Flour is a <a href='?w_id=2'> powder</a> which is made by grinding cereal grains, other seeds or roots (like Cassava). It is the main ingredient of bread, which is a staple food for many cultures, making the availability of adequate supplies of flour a major economic and political issue at various times throughout history. Wheat flour is one of the most important foods in European, North American, Middle Eastern, Indian and North African cultures, and is the defining ingredient in most of their styles of breads and pastries. Maize flour has been important in Mesoamerican cuisine since ancient times, and remains a staple in much of Latin American cuisine.[citation needed] Rye flour is an important constituent of bread in much of central/northern Europe."); -- 5
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(2,28, "Chicken", "The chicken (Gallus gallus domesticus is a domesticated fowl, a subspecies of the Red Junglefowl. As one of the most common and widespread domestic animals, and with a population of more than 24 billion in 2003,[1] there are more chickens in the world than any other species of bird. Humans keep chickens primarily as a source of food, consuming both their meat and their eggs. The chicken's cultural and culinary dominance could be considered amazing to some in view of its believed domestic origin and purpose and it has inspired contributions to culture, art, cuisine, science and religion [2] from antiquity to the present."); -- 5
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(2,15, "Sugar", "Sugar is the generalised name for a class of sweet flavored substances used as food. They are carbohydrates and as this name implies, are composed of carbon, hydrogen and oxygen."); -- 2
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(3,25, "Pepper", "<a href='?w_id=1'>Black pepper</a> (Piper nigrum) is a flowering vine in the family Piperaceae, cultivated for its fruit, which is usually dried and used as a spice and seasoning. The fruit, known as a peppercorn when dried, is approximately 5 millimetres (0.20 in) in diameter, dark red when fully mature, and, like all drupes, contains a single seed"); -- 3
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(4,27, "Butter", "Butter is a dairy product made by churning fresh or fermented cream or milk. It is generally used as a spread and a condiment, as well as in cooking, such as baking, sauce making, and pan frying. Butter consists of butterfat, milk proteins and water."); -- 4
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(5,26, "Flour", "Flour is a powder which is made by grinding cereal grains, other seeds or roots (like Cassava). It is the main ingredient of bread, which is a staple food for many cultures, making the availability of adequate supplies of flour a major economic and political issue at various times throughout history. Wheat flour is one of the most important foods in European, North American, Middle Eastern, Indian and North African cultures, and is the defining ingredient in most of their styles of breads and pastries. Maize flour has been important in Mesoamerican cuisine since ancient times, and remains a staple in much of Latin American cuisine.[citation needed] Rye flour is an important constituent of bread in much of central/northern Europe."); -- 5
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(6,28, "Chicken", "The chicken (Gallus gallus domesticus is a domesticated fowl, a subspecies of the Red Junglefowl. As one of the most common and widespread domestic animals, and with a population of more than 24 billion in 2003,[1] there are more chickens in the world than any other species of bird. Humans keep chickens primarily as a source of food, consuming both their meat and their eggs. The chicken's cultural and culinary dominance could be considered amazing to some in view of its believed domestic origin and purpose and it has inspired contributions to culture, art, cuisine, science and religion [2] from antiquity to the present."); -- 5

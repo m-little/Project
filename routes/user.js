@@ -2,6 +2,7 @@ var crypto = require('crypto');
 var obj_system = require('../objects/system');
 var obj_dao = require('../objects/database');
 var obj_user = require('../objects/user');
+var obj_notify = require('../objects/notifications');
 
 exports.create = function(req, res)
 {
@@ -52,8 +53,8 @@ exports.create = function(req, res)
 			return;
 		}
 		else
-			dao.transaction(["INSERT INTO passkeys (user_id, pass, salt) VALUES ('" + user_data.user + "', '" + user_data.pass + "', '" + salt + "')",
-				"INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, validation_value, validation_date) VALUES ('" + user_data.user + "', 'user', '" + user_data.fname + "', '" + user_data.lname + "', '" + user_data.email + "', NOW(), '" + validation_value + "', STR_TO_DATE('" + validation_date + "', '%a %b %e %Y %H:%i:%s'))"], output, {val_value: validation_value, val_date: validation_date});
+			dao.transaction(["INSERT INTO passkeys (user_id, pass, salt) VALUES ('" + dao.safen(user_data.user) + "', '" + dao.safen(user_data.pass) + "', '" + salt + "')",
+				"INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, validation_value, validation_date) VALUES ('" + dao.safen(user_data.user) + "', 'user', '" + dao.safen(user_data.fname) + "', '" + dao.safen(user_data.lname) + "', '" + dao.safen(user_data.email) + "', NOW(), '" + validation_value + "', STR_TO_DATE('" + validation_date + "', '%a %b %e %Y %H:%i:%s'))"], output, {val_value: validation_value, val_date: validation_date});
 	}
 
 	function output(success, results, vals)
@@ -133,5 +134,190 @@ exports.validate = function(req, res)
 		}
 
 		res.redirect('/login?v=1');
+	}
+}
+
+exports.show_profile = function(req, res)
+{
+	if (req.query.u == undefined || req.query.u == '') // incorrect data received.
+	{
+		global.session.error_message.message = "User was undefined.";
+		res.redirect('/error');
+		return;
+	}
+
+	var user = undefined;
+	var dao = new obj_dao.DAO();
+	dao.query("SELECT user_id, user_group, user_fname, user_lname, show_email, email, user_points, date_added FROM user WHERE user_id = '" + dao.safen(req.query.u) + "'", output1);
+
+	function output1(success, result, fields)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			dao.die();
+			return;
+		}
+		if (result.length != 1)
+		{
+			global.session.error_message.message = "Could not find user " + req.query.u + ".";
+			dao.die();
+			res.redirect('/error');
+			return;
+		}
+
+		var row = result[0];
+		user = new obj_user.User(row.user_id, row.user_group, row.user_fname, row.user_lname, row.user_points, load_recipes);
+		user.date_added = row.date_added;
+		user.show_email = row.show_email;
+		if (row.show_email)
+			user.email = row.email;
+	}
+
+	function load_recipes()
+	{
+		var load_recipes = obj_user.load_recipes.bind(user);
+		load_recipes(finished);
+
+		function finished(success)
+		{
+			if (!success)
+			{
+				dao.die();
+				res.redirect('/500error');
+				return;
+			}
+
+			var public_recipes = [];
+			var private_recipes = [];
+			for (var i in user.recipes)
+			{
+				if (user.recipes[i].public == 1)
+					public_recipes.push(user.recipes[i]);
+			}
+			complete(public_recipes);
+		}
+	}
+
+	function complete(public_recipes)
+	{
+		var follows = [false, false]; //follows and accepted
+
+		if (global.session.logged_in)
+		{
+			for (var n in global.session.user.following)
+			{
+				if (global.session.user.following[n] != null && global.session.user.following[n].id == user.id)
+				{
+					follows = [true, global.session.user.following[n].accepted];
+					break;
+				}
+			}
+		}
+		res.render('user/profile', { title: website_title, user: user, public_recipes: public_recipes, follows: follows });
+	}
+}
+
+exports.update_follow = function(req, res)
+{
+	if (req.body.user == undefined || req.body.user == '') // incorrect data received.
+	{
+		global.session.error_message.message = "User was undefined.";
+		res.redirect('/error');
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+
+	// Check for status
+	dao.query("SELECT accepted, active FROM user_connections WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "'", output1);
+
+	function output1(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		if (result.length == 0)
+		{
+			// Create new entry
+			dao.query("INSERT INTO user_connections(user_id_1, user_id_2, date_added) VALUES ('" + dao.safen(global.session.user.id) + "', '" + dao.safen(req.body.user) + "', NOW())", complete1, 1);
+		}
+		else
+		{
+			var row = result[0];
+
+			if (row.active == 1)
+			{
+				// "Remove" entry by setting active = 0
+				dao.query("UPDATE user_connections SET active = 0 WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 2);
+			}
+			else
+			{
+				// "Create" new entry from undoing active = 0
+				dao.query("UPDATE user_connections SET active = 1, accepted = 0, date_created = NOW() WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 1);
+			}
+		}
+	}
+
+	function complete1(success, result, fields, status)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		if (status == 2) // Removed
+		{
+			for (var n in global.session.user.following)
+			{
+				if (global.session.user.following[n] != null && global.session.user.following[n].id == req.body.user)
+				{
+					delete global.session.user.following[n];
+					break;
+				}
+			}
+		}
+		else
+		{
+			var i = global.session.user.following.indexOf(null);
+			if (i != -1)
+			{
+				global.session.user.following[i] = {id: req.body.user, accepted: false};
+			}
+			else
+			{
+				global.session.user.following.push({id: req.body.user, accepted: false});
+			}
+		}
+
+		dao.die();
+		res.send({status: status});
+	}
+}
+
+exports.update_notifications = function(req, res)
+{
+	if (!global.session.logged_in)
+	{
+		res.redirect('/500error');
+		return;
+	}
+	var check_all = obj_notify.check_all.bind(global.session.notifications);
+	check_all(callback);
+
+	function callback(success)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+		res.send(global.session.notifications);
 	}
 }

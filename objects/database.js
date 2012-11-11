@@ -2,10 +2,10 @@ var _mysql = require('mysql');
 
 exports.DAO = function()
 {
-	this.client = _mysql.createClient({host: mysql_vals.host,	port: mysql_vals.port, user: mysql_vals.user, password: mysql_vals.password});
+	this.client = _mysql.createClient({host: MYSQL_VALS.host,	port: MYSQL_VALS.port, user: MYSQL_VALS.user, password: MYSQL_VALS.password});
 
 	// use the project database
-	this.client.query('use ' + mysql_vals.database);
+	this.client.query('use ' + MYSQL_VALS.database);
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Generic query function
@@ -84,6 +84,36 @@ exports.DAO = function()
 	this.die = function()
 	{
 		this.client.end();
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Used to safen all strings for use in mysql calls
+	this.safen = function(text)
+	{
+		text = text.toString();
+		return text.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return "\\"+char; // prepends a backslash to backslash, percent,
+                                  // and double/single quotes
+        }
+    });
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

@@ -2,12 +2,32 @@ var obj_dao = require('../objects/database');
 var obj_picture = require('../objects/picture');
 var obj_recipe = require('../objects/recipe');
 
-function User(user_id, user_group, callback)
+function User(user_id, user_group, user_fname, user_lname, user_points, callback)
 {
 	this.id = user_id;
 	this.group = user_group;
 	this.picture = undefined;
+	this.points = user_points;
 	this.recipes = [];
+	this.fname = user_fname;
+	this.lname = user_lname;
+	this.date_added = undefined;
+	this.followers = [];
+	this.following = [];
+	this.show_email = false;
+	this.email = '';
+
+	this.title = '';
+	if (user_points < 100)
+		this.title = CHEF_TITLES[0];
+	else if (user_points < 200)
+		this.title = CHEF_TITLES[1];
+	else if (user_points < 400)
+		this.title = CHEF_TITLES[2];
+	else if (user_points < 800)
+		this.title = CHEF_TITLES[3];
+	else
+		this.title = CHEF_TITLES[4];
 
 	var dao = new obj_dao.DAO();
 
@@ -16,16 +36,44 @@ function User(user_id, user_group, callback)
 		this.picture = new_picture;
 	}
 
-	load_picture = function(success, result, fields, vars)
+	load_followers = function(success, result, fields, vars)
 	{
-		var row = result[0];
-		vars.user.set_picture(new obj_picture.Picture(row.picture_id, row.caption, row.location));
+		if (!success)
+		{
+			vars.dao.die();
+			vars.callback(0);
+			return;
+		}
+
+		for (var i in result)
+		{
+			var row = result[i];
+			if (row.user_id_1 == vars.user.id) // this follows
+				vars.user.following.push({id: row.user_id_2, accepted: row.accepted});
+			else // this has follower
+				vars.user.followers.push({id: row.user_id_1, accepted: row.accepted});
+		}
+
 		vars.dao.die();
 		vars.callback(success);
 	}
 
-	dao.query("SELECT u.picture_id, caption, location FROM picture p JOIN user u ON p.picture_id = u.picture_id WHERE u.user_id = '"+this.id+"' LIMIT 1", load_picture, {dao:dao, user:this, callback:callback});
+	load_picture = function(success, result, fields, vars)
+	{
+		if (!success)
+		{
+			vars.dao.die();
+			vars.callback(0);
+			return;
+		}
 
+		var row = result[0];
+		vars.user.set_picture(new obj_picture.Picture(row.picture_id, row.caption, row.location));
+		
+		dao.query("SELECT user_id_1, user_id_2, accepted FROM user_connections WHERE active = 1 and (user_id_1 = '"+dao.safen(vars.user.id)+"' or user_id_2 = '"+dao.safen(vars.user.id)+"')", load_followers, vars);
+	}
+
+	dao.query("SELECT u.picture_id, caption, location FROM picture p JOIN user u ON p.picture_id = u.picture_id WHERE u.user_id = '"+dao.safen(this.id)+"' LIMIT 1", load_picture, {dao:dao, user:this, callback:callback});
 }
 
 exports.load_recipes = function(callback)
@@ -33,7 +81,7 @@ exports.load_recipes = function(callback)
 	var dao = new obj_dao.DAO();
 	this.recipes = [];
 
-	dao.query("SELECT r.recipe_id, recipe_name, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE owner_id = '" + this.id + "'", output1, {callback: callback, user: this});
+	dao.query("SELECT r.recipe_id, recipe_name, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE owner_id = '" + dao.safen(this.id) + "'", output1, {callback: callback, user: this});
 
 	function output1(success, result, fields, vars)
 	{
@@ -83,7 +131,7 @@ exports.load_recipes = function(callback)
 		else
 		{
 			vars.i = 0;
-			dao.query("SELECT COUNT(seen) as unseen_count FROM recipe_comment WHERE recipe_id = " + vars.user.recipes[vars.i].id + " AND seen = 0", output3, vars);
+			dao.query("SELECT COUNT(seen) as unseen_count FROM recipe_comment WHERE recipe_id = " + vars.user.recipes[vars.i].id + " AND seen = 0 AND NOT owner_id = '" + dao.safen(vars.user.id) + "'", output3, vars);
 		}
 	}
 
@@ -104,11 +152,11 @@ exports.load_recipes = function(callback)
 
 		vars.i++;
 		if (vars.i < vars.user.recipes.length)
-			dao.query("SELECT COUNT(seen) as unseen_count FROM recipe_comment WHERE recipe_id = " + vars.user.recipes[vars.i].id + " AND seen = 0", output3, vars);
+			dao.query("SELECT COUNT(seen) as unseen_count FROM recipe_comment WHERE recipe_id = " + dao.safen(vars.user.recipes[vars.i].id) + " AND seen = 0", output3, vars);
 		else
 		{
 			vars.i = 0;
-			dao.query("SELECT AVG(rank) as avg, COUNT(rank) as count FROM recipe_ranking WHERE recipe_id = " + vars.user.recipes[vars.i].id, output4, vars);
+			dao.query("SELECT AVG(rank) as avg, COUNT(rank) as count FROM recipe_ranking WHERE recipe_id = " + dao.safen(vars.user.recipes[vars.i].id), output4, vars);
 		}
 	}
 
@@ -126,7 +174,7 @@ exports.load_recipes = function(callback)
 
 		vars.i++;
 		if (vars.i < vars.user.recipes.length)
-			dao.query("SELECT AVG(rank) as avg, COUNT(rank) as count FROM recipe_ranking WHERE recipe_id = " + vars.user.recipes[vars.i].id, output4, vars);		
+			dao.query("SELECT AVG(rank) as avg, COUNT(rank) as count FROM recipe_ranking WHERE recipe_id = " + dao.safen(vars.user.recipes[vars.i].id), output4, vars);		
 		else
 		{
 			dao.die();

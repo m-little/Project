@@ -10,17 +10,18 @@ div.header
 	div(style="float:left; position:fixed; left:160px; top:9px;")
 		input.input_text(style="background-color:#616158; float:left; color:#bababa; margin-bottom:5px; height:14px;", value="Search", id="header_search_bar", onClick="clear_search_bar();")
 
-	#userinfo
-		if global.session.logged_in != 0
-			div.userinfo_settings(onClick="show_drop_settings();", id="header_button_settings")
-				| Hello #{global.session.user.id}
-			div.userinfo_button(onClick="show_drop_recipes()")
-				| Recipes
-		else
-			div.userinfo_button(onClick="show_drop_login();", id="header_button_login")
-				| Login
-			div.userinfo_button(onClick="window.location.href='/sign_up'")
-				| Sign Up!
+	if global.session.logged_in != 0
+		div.userinfo_settings(onClick="show_drop_settings();", id="header_button_settings")
+			| Hello #{global.session.user.id}
+		div.userinfo_button(onClick="show_drop_recipes()")
+			| Recipes
+		div.userinfo_button(onClick="show_drop_notifications()", id="notifications_count")
+			| #{global.session.notifications.actual_count}
+	else
+		div.userinfo_button(onClick="show_drop_login();", id="header_button_login")
+			| Login
+		div.userinfo_button(onClick="window.location.href='/sign_up'")
+			| Sign Up!
 
 //- Start drop down boxes
 
@@ -42,7 +43,9 @@ div.header_dropdown(id="header_menu_settings", style="position:fixed; top:-1000p
 	div.header_dropdown_button
 		div.header_dropdown_button_icon
 			img(src="../images/icon_gear1.png", style="position:relative; left:-3px; top:-3px;")
-		| My Account
+		- if (global.session.logged_in)			
+			a(href="/user/profile?u=#{global.session.user.id}", style="text-decoration:none; color:#bababa;")
+				| My Account
 	div.header_dropdown_button(id="header_settings_logout", onClick="$('#logout_form').submit();", title="Click here to logout.")
 		div.header_dropdown_button_icon
 			img(src="../images/icon_exit1.png", style="position:relative; left:-2px; top:-2px; width:22px;")
@@ -59,11 +62,6 @@ div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px
 			| My Recipes
 	div.header_dropdown_button
 		div.header_dropdown_button_icon
-			img(src="../images/icon_recipe2.png", style="position:relative; left:-2px; top:-1px; width:22px; height:20px;")
-		a(href="", style="text-decoration:none; color:#bababa;")
-			| My Friend's Recipes
-	div.header_dropdown_button
-		div.header_dropdown_button_icon
 			img(src="../images/icon_recipe3.png", style="position:relative; left:-2px; top:-1px; width:22px; height:20px;")
 		a(href="", style="text-decoration:none; color:#bababa;")
 			| Followed Recipes
@@ -72,5 +70,14 @@ div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px
 			img(src="../images/icon_book1.png", style="position:relative; left:-2px; top:-1px; width:22px; height:20px;")
 		a(href="", style="text-decoration:none; color:#bababa;")
 			| Lookup Recipes
+
+div.header_dropdown(id="header_menu_notifications", style="position:fixed; top:-1000px; right:10px; width:auto; font-size:14px; min-width:260px;")
+	- if (global.session.logged_in)
+	//- The rest of the drawing happens clientside (footer.jade)
+		div.header_dropdown_button(style="cursor:default;")
+			div.header_dropdown_button_icon
+				img(src="../images/icon_alert1.png", style="position:relative; left:-2px; top:-2px; width:22px;")
+			div(style="width:180px;")
+				| No new notifications.
 
 body.body

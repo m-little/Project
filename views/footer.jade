@@ -5,6 +5,27 @@ div.footer
 
 script(src="../jquery.js")
 script
+	function poll_notifications(){
+		setTimeout(function(){
+			$.ajax({
+				type: 'POST',
+				url: '/user/update_notifications', 
+				dataType: 'json',
+				success: update_notifications});
+		}, 10000);
+	};
+	var notification_data = undefined;
+	DATE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	DATE_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+	if (#{global.session.logged_in})
+	{
+		// Start the chain of pollings
+		$.ajax({
+				type: 'POST',
+				url: '/user/update_notifications', 
+				dataType: 'json',
+				success: update_notifications});
+	}
 	$(document).ready(function()
 	{
 		// hide boxes and place them correctly.  removes the ghost of a box on slow loading.
@@ -14,6 +35,8 @@ script
 		$("#header_menu_settings").css('top', '48px');
 		$("#header_menu_recipes").hide();
 		$("#header_menu_recipes").css('top', '48px');
+		$("#header_menu_notifications").hide();
+		$("#header_menu_notifications").css('top', '48px');
 		// Update location for logging out
 		var location = window.location.href;
 		location = location.substring(location.indexOf(window.location.pathname));
@@ -37,6 +60,9 @@ script
 			div = $("#header_menu_recipes");
 			if (div.is(':visible') && div.has(e.target).length === 0)
 				hide_drop_recipes();
+			div = $("#header_menu_notifications");
+			if (div.is(':visible') && div.has(e.target).length === 0)
+				hide_drop_notifications();
 		});
 		$("#header_search_bar").focusout(function()
 		{
@@ -106,4 +132,72 @@ script
 	function hide_drop_recipes()
 	{
 		$("#header_menu_recipes").slideUp(100);
+	}
+	// Notifications
+	function show_drop_notifications()
+	{
+		$("#header_menu_notifications").slideDown(100);
+	}
+	function hide_drop_notifications()
+	{
+		$("#header_menu_notifications").slideUp(100);
+	}
+	function update_notifications(data)
+	{
+		notification_data = data;
+		redraw_notifications();
+		poll_notifications();
+	}
+	function redraw_notifications()
+	{
+		$("#header_menu_notifications").empty();
+		$("#notifications_count").text(notification_data.new_items.length);
+		if (notification_data.new_items.length == 0)
+		{
+			$("#header_menu_notifications").css('right', 90);
+			var row = $("<div></div>").attr({class: 'header_dropdown_button', style: "cursor:default;"}).appendTo("#header_menu_notifications");
+			var button = $("<div></div>").attr('class', 'header_dropdown_button_icon').appendTo(row);
+			$("<img/>").attr({src: "../images/icon_alert1.png", style:"position:relative; left:-2px; top:-2px; width:22px;"}).appendTo(button);
+			$("<div>No new notifications.</div>").attr({style: "width:180px;"}).appendTo(row);
+		}
+		else
+		{
+			$("#header_menu_notifications").css('right', 10);
+			for (var i in notification_data.new_items)
+			{
+				var item = notification_data.new_items[i];
+				if (item != null)
+				{
+					if (item.type == 0)
+					{
+						var row = $("<div></div>").attr({class: 'header_dropdown_button', onClick: "window.location.href='recipe/view?r_id=" + item.recipe_id + "'"}).appendTo("#header_menu_notifications");
+						var button = $("<div></div>").attr('class', 'header_dropdown_button_icon').appendTo(row);
+						$("<img/>").attr({src: "../images/icon_comment1.png", style:"position:relative; left:-2px; top:-2px; width:22px;"}).appendTo(button);
+						// 
+						var a = $("<a></a>").attr({href:"/recipe/view?r_id=" + item.recipe_id, style:"text-decoration:none; color:#bababa;"}).appendTo(row);
+						//
+						$("<span>" + item.comment_owner + " commented or replied in </span>").appendTo(a);
+						$("<span>" + item.recipe_name + "</span>").attr({style: "font-weight:bold;"}).appendTo(a);
+						$("<div>\"</div>").attr({style: "margin-bottom:-16px; position:absolute; top:18px; left:30px; font-size:24px;"}).appendTo(a);
+						$("<div>\"</div>").attr({style: "margin-bottom:-16px; position:absolute; top:18px; right:6px; font-size:24px;"}).appendTo(a);
+						$("<div>" + item.content + "</div>").attr({style: "background-color:#424242; margin-left:38px; margin-top:6px; margin-bottom:20px; padding:2px; border-radius:.2em;"}).appendTo(a);
+						var date = new Date(item.date);
+						$("<div>" + DATE_DAYS[date.getDay()] + ", " + DATE_MONTHS[date.getMonth()] + " " + date.getDate() + " " + date.getFullYear() + " at " + date.toLocaleTimeString() + ".</div>").attr({style: "position:absolute; bottom:4px; right:10px; margin-top:6px; margin-bottom:0px; padding:2px; font-size:12px;"}).appendTo(a);
+					}
+					else if (item.type == 1)
+					{
+						var row = $("<div></div>").attr({class: 'header_dropdown_button', onClick: ""}).appendTo("#header_menu_notifications");
+						var button = $("<div></div>").attr('class', 'header_dropdown_button_icon').appendTo(row);
+						$("<img/>").attr({src: "../images/icon_person1.png", style:"position:relative; left:-2px; top:-2px; width:22px;"}).appendTo(button);
+						// 
+						var a = $("<a></a>").attr({href:"", style:"text-decoration:none; color:#bababa;"}).appendTo(row);
+						//
+						$("<span>" + item.follower + " wants to follow you. </span>").appendTo(a);
+						$("<div></div>").attr({style: "margin-bottom:20px;"}).appendTo(a);
+						var date = new Date(item.date);
+						$("<div>" + DATE_DAYS[date.getDay()] + ", " + DATE_MONTHS[date.getMonth()] + " " + date.getDate() + " " + date.getFullYear() + " at " + date.toLocaleTimeString() + ".</div>").attr({style: "position:absolute; bottom:4px; right:10px; margin-top:5px; margin-bottom:0px; padding:2px; font-size:12px;"}).appendTo(a);
+					}
+				}
+			}
+		}
 	}
