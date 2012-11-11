@@ -1,15 +1,30 @@
 doctype 5
-html.all
+html.all(style="background-image:url('../images/bg1.png');")
 
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
-		h1= wiki.title
+		div
+			h1= wiki.title
+			
 		- for(var i in wiki.content)
-			p= wiki.content[i].content
+			div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
+				
+				div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
+					| #{wiki.content[i].title}
 
-		<iframe width="560" height="315" src="#{wiki.video.address}" frameborder="0" allowfullscreen></iframe>
+				- if(wiki.content[i].picture.id != 1)
+					div(style="float:right; position:relative; top: -28px; height: 80px; width: 80px; margin-bottom:-28px; margin-left:8px;")
+						img(src= "../images/user_images/#{wiki.content[i].picture.location}", style= "max-width:100%;")
 
+				div(style="padding-left:10px;")
+					- for content in wiki.content[i].content.split('\n')
+						div(style="margin-top:6px; min-height:19px;")
+							p!= content
+		
 
+		- if (wiki.video.id != 1)
+			div
+				<iframe width="560" height="315" src="#{wiki.video.address}?wmode=transparent" frameborder="0" 	allowfullscreen></iframe>
 	
 	include ../footer

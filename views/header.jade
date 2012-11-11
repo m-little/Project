@@ -24,7 +24,7 @@ div.header
 
 //- Start drop down boxes
 
-div.header_dropdown(id="header_menu_login", style="position:fixed; top:48px; right:10px; width:188px;")
+div.header_dropdown(id="header_menu_login", style="position:fixed; top:-1000px; right:10px; width:188px;")
 	form(style="margin:0px; padding:0px;", method='post', action='/login', id='header_login_form')
 		| Username
 		input.input_text(type="text", name="username", id="header_login_username", style="background-color:#616158; color:white; margin-bottom:5px;", required="required")
@@ -33,12 +33,12 @@ div.header_dropdown(id="header_menu_login", style="position:fixed; top:48px; rig
 		//- location argument allows us to return to the page we were on when we tried to logon.
 		input(id="header_menu_login_location", type="hidden", name="location")
 		
-		button.submit3(style="float:left;", onClick="submit_drop_login();")
+		button.button2(style="float:right;", onClick="submit_drop_login();")
 			| Login
-		button.submit3(style="float:right;", onClick="hide_drop_login();")
+		button.button2(style="float:left;", onClick="hide_drop_login();")
 			| Cancel
 
-div.header_dropdown(id="header_menu_settings", style="position:fixed; top:48px; right:10px; width:auto;")
+div.header_dropdown(id="header_menu_settings", style="position:fixed; top:-1000px; right:10px; width:auto;")
 	div.header_dropdown_button
 		div.header_dropdown_button_icon
 			img(src="../images/icon_gear1.png", style="position:relative; left:-3px; top:-3px;")
@@ -51,7 +51,7 @@ div.header_dropdown(id="header_menu_settings", style="position:fixed; top:48px; 
 			input(type="hidden", name="logout", value="1")
 		| Log Out
 
-div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:48px; right:10px; width:auto;")
+div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px; right:10px; width:auto;")
 	div.header_dropdown_button
 		div.header_dropdown_button_icon
 			img(src="../images/icon_recipe1.png", style="position:relative; left:-2px; top:-2px; width:22px;")
