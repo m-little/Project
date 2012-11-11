@@ -12,10 +12,20 @@ script
 				url: '/user/update_notifications', 
 				dataType: 'json',
 				success: update_notifications});
-		}, 30000);
+		}, 10000);
 	};
+	var notification_data = undefined;
+	DATE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+	DATE_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 	if (#{global.session.logged_in})
-		poll_notifications();
+	{
+		// Start the chain of pollings
+		$.ajax({
+				type: 'POST',
+				url: '/user/update_notifications', 
+				dataType: 'json',
+				success: update_notifications});
+	}
 	$(document).ready(function()
 	{
 		// hide boxes and place them correctly.  removes the ghost of a box on slow loading.
@@ -134,28 +144,60 @@ script
 	}
 	function update_notifications(data)
 	{
+		notification_data = data;
+		redraw_notifications();
+		poll_notifications();
+	}
+	function redraw_notifications()
+	{
 		$("#header_menu_notifications").empty();
-		$("#notifications_count").text(data.new_items.length);
-		for (var i in data.new_items)
+		$("#notifications_count").text(notification_data.new_items.length);
+		if (notification_data.new_items.length == 0)
 		{
-			var item = data.new_items[i];
-			if (item != null)
+			$("#header_menu_notifications").css('right', 90);
+			var row = $("<div></div>").attr({class: 'header_dropdown_button', style: "cursor:default;"}).appendTo("#header_menu_notifications");
+			var button = $("<div></div>").attr('class', 'header_dropdown_button_icon').appendTo(row);
+			$("<img/>").attr({src: "../images/icon_alert1.png", style:"position:relative; left:-2px; top:-2px; width:22px;"}).appendTo(button);
+			$("<div>No new notifications.</div>").attr({style: "width:180px;"}).appendTo(row);
+		}
+		else
+		{
+			$("#header_menu_notifications").css('right', 10);
+			for (var i in notification_data.new_items)
 			{
-				var row = $("<div></div>").attr({class: 'header_dropdown_button', onClick: "window.location.href='recipe/view?r_id=" + item.recipe_id + "'"}).appendTo("#header_menu_notifications");
-				if (item.type == 0)
+				var item = notification_data.new_items[i];
+				if (item != null)
 				{
-					var button = $("<div></div>").attr('class', 'header_dropdown_button_icon').appendTo(row);
-					$("<img/>").attr({src: "../images/icon_recipe1.png", style:"position:relative; left:-2px; top:-2px; width:22px;"}).appendTo(button);
-					// 
-					var a = $("<a></a>").attr({href:"/recipe/view?r_id=" + item.recipe_id, style:"text-decoration:none; color:#bababa;"}).appendTo(row);
-					//
-					$("<span>" + item.comment_owner + " commented or replied in </span>").appendTo(a);
-					$("<span>" + item.recipe_name + "</span>").attr({style: "font-weight:bold;"}).appendTo(a);
-					$("<div>\"</div>").attr({style: "margin-bottom:-16px; position:absolute; top:18px; left:30px; font-size:24px;"}).appendTo(a);
-					$("<div>\"</div>").attr({style: "margin-bottom:-16px; position:absolute; top:18px; right:6px; font-size:24px;"}).appendTo(a);
-					$("<div>" + item.content + "</div>").attr({style: "background-color:#424242; margin-left:38px; margin-top:6px; margin-bottom:0px; padding:2px; border-radius:.2em;"}).appendTo(a);
+					if (item.type == 0)
+					{
+						var row = $("<div></div>").attr({class: 'header_dropdown_button', onClick: "window.location.href='recipe/view?r_id=" + item.recipe_id + "'"}).appendTo("#header_menu_notifications");
+						var button = $("<div></div>").attr('class', 'header_dropdown_button_icon').appendTo(row);
+						$("<img/>").attr({src: "../images/icon_comment1.png", style:"position:relative; left:-2px; top:-2px; width:22px;"}).appendTo(button);
+						// 
+						var a = $("<a></a>").attr({href:"/recipe/view?r_id=" + item.recipe_id, style:"text-decoration:none; color:#bababa;"}).appendTo(row);
+						//
+						$("<span>" + item.comment_owner + " commented or replied in </span>").appendTo(a);
+						$("<span>" + item.recipe_name + "</span>").attr({style: "font-weight:bold;"}).appendTo(a);
+						$("<div>\"</div>").attr({style: "margin-bottom:-16px; position:absolute; top:18px; left:30px; font-size:24px;"}).appendTo(a);
+						$("<div>\"</div>").attr({style: "margin-bottom:-16px; position:absolute; top:18px; right:6px; font-size:24px;"}).appendTo(a);
+						$("<div>" + item.content + "</div>").attr({style: "background-color:#424242; margin-left:38px; margin-top:6px; margin-bottom:20px; padding:2px; border-radius:.2em;"}).appendTo(a);
+						var date = new Date(item.date);
+						$("<div>" + DATE_DAYS[date.getDay()] + ", " + DATE_MONTHS[date.getMonth()] + " " + date.getDate() + " " + date.getFullYear() + " at " + date.toLocaleTimeString() + ".</div>").attr({style: "position:absolute; bottom:4px; right:10px; margin-top:6px; margin-bottom:0px; padding:2px; font-size:12px;"}).appendTo(a);
+					}
+					else if (item.type == 1)
+					{
+						var row = $("<div></div>").attr({class: 'header_dropdown_button', onClick: ""}).appendTo("#header_menu_notifications");
+						var button = $("<div></div>").attr('class', 'header_dropdown_button_icon').appendTo(row);
+						$("<img/>").attr({src: "../images/icon_person1.png", style:"position:relative; left:-2px; top:-2px; width:22px;"}).appendTo(button);
+						// 
+						var a = $("<a></a>").attr({href:"", style:"text-decoration:none; color:#bababa;"}).appendTo(row);
+						//
+						$("<span>" + item.follower + " wants to follow you. </span>").appendTo(a);
+						$("<div></div>").attr({style: "margin-bottom:20px;"}).appendTo(a);
+						var date = new Date(item.date);
+						$("<div>" + DATE_DAYS[date.getDay()] + ", " + DATE_MONTHS[date.getMonth()] + " " + date.getDate() + " " + date.getFullYear() + " at " + date.toLocaleTimeString() + ".</div>").attr({style: "position:absolute; bottom:4px; right:10px; margin-top:5px; margin-bottom:0px; padding:2px; font-size:12px;"}).appendTo(a);
+					}
 				}
 			}
 		}
-		poll_notifications();
 	}

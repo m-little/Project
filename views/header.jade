@@ -62,11 +62,6 @@ div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px
 			| My Recipes
 	div.header_dropdown_button
 		div.header_dropdown_button_icon
-			img(src="../images/icon_recipe2.png", style="position:relative; left:-2px; top:-1px; width:22px; height:20px;")
-		a(href="", style="text-decoration:none; color:#bababa;")
-			| My Friend's Recipes
-	div.header_dropdown_button
-		div.header_dropdown_button_icon
 			img(src="../images/icon_recipe3.png", style="position:relative; left:-2px; top:-1px; width:22px; height:20px;")
 		a(href="", style="text-decoration:none; color:#bababa;")
 			| Followed Recipes
@@ -76,25 +71,13 @@ div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px
 		a(href="", style="text-decoration:none; color:#bababa;")
 			| Lookup Recipes
 
-div.header_dropdown(id="header_menu_notifications", style="position:fixed; top:20px; right:10px; width:auto; font-size:14px;")
+div.header_dropdown(id="header_menu_notifications", style="position:fixed; top:-1000px; right:10px; width:auto; font-size:14px; min-width:260px;")
 	- if (global.session.logged_in)
-		- for (var i in global.session.notifications.new_items)
-			- var item = global.session.notifications.new_items[i];
-			- if (item != null)
-				div.header_dropdown_button(onClick="window.location.href='recipe/view?r_id=#{item.recipe_id}'")
-					- if (item.type == 0) // recipe comment
-						div.header_dropdown_button_icon
-							img(src="../images/icon_recipe1.png", style="position:relative; left:-2px; top:-2px; width:22px;")
-						a(href="/recipe/view?r_id=#{item.recipe_id}", style="text-decoration:none; color:#bababa;")
-							span(style="")
-								| #{item.comment_owner} commented or replied in 
-							span(style="font-weight:bold;")
-								| #{item.recipe_name}
-							div(style="margin-bottom:-16px; position:absolute; top:18px; left:30px; font-size:24px;")
-								| "
-							div(style="margin-bottom:-16px; position:absolute; top:18px; right:6px; font-size:24px;")
-								| "
-							div(style="background-color:#424242; margin-left:38px; margin-top:6px; margin-bottom:0px; padding:2px; border-radius:.2em;")
-								| #{item.content}
+	//- The rest of the drawing happens clientside (footer.jade)
+		div.header_dropdown_button(style="cursor:default;")
+			div.header_dropdown_button_icon
+				img(src="../images/icon_alert1.png", style="position:relative; left:-2px; top:-2px; width:22px;")
+			div(style="width:180px;")
+				| No new notifications.
 
 body.body

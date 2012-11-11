@@ -539,6 +539,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			new_comment.insertBefore($("#new_reply"));
 			new_comment.slideDown();
 			show_buttons = true;
+			$("#new_comment_button").show();
 			$("#new_reply").hide();
 		}
 		function new_edit(data, success)
@@ -555,6 +556,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 				comment_context.append('<div>' + lines[i] + '</div>');
 			}
 			comment.show();
+			$("#new_comment_button").show();
 			$("#new_reply").hide();
 		}
 		function new_comment(data, success)
