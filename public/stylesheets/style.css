@@ -33,7 +33,8 @@ div.header_dropdown
 div.header_dropdown_button
 {
 	text-align:left;
-	height:20px;
+	position:relative;
+	height:auto;
 	margin-top:6px;
 	margin-bottom:6px;
 	padding-top:4px;

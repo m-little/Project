@@ -2,6 +2,7 @@ var crypto = require('crypto');
 var obj_system = require('../objects/system');
 var obj_dao = require('../objects/database');
 var obj_user = require('../objects/user');
+var obj_notify = require('../objects/notifications');
 
 exports.create = function(req, res)
 {
@@ -52,8 +53,8 @@ exports.create = function(req, res)
 			return;
 		}
 		else
-			dao.transaction(["INSERT INTO passkeys (user_id, pass, salt) VALUES ('" + user_data.user + "', '" + user_data.pass + "', '" + salt + "')",
-				"INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, validation_value, validation_date) VALUES ('" + user_data.user + "', 'user', '" + user_data.fname + "', '" + user_data.lname + "', '" + user_data.email + "', NOW(), '" + validation_value + "', STR_TO_DATE('" + validation_date + "', '%a %b %e %Y %H:%i:%s'))"], output, {val_value: validation_value, val_date: validation_date});
+			dao.transaction(["INSERT INTO passkeys (user_id, pass, salt) VALUES ('" + dao.safen(user_data.user) + "', '" + dao.safen(user_data.pass) + "', '" + salt + "')",
+				"INSERT INTO user (user_id, user_group, user_fname, user_lname, email, date_added, validation_value, validation_date) VALUES ('" + dao.safen(user_data.user) + "', 'user', '" + dao.safen(user_data.fname) + "', '" + dao.safen(user_data.lname) + "', '" + dao.safen(user_data.email) + "', NOW(), '" + validation_value + "', STR_TO_DATE('" + validation_date + "', '%a %b %e %Y %H:%i:%s'))"], output, {val_value: validation_value, val_date: validation_date});
 	}
 
 	function output(success, results, vals)
@@ -147,7 +148,7 @@ exports.show_profile = function(req, res)
 
 	var user = undefined;
 	var dao = new obj_dao.DAO();
-	dao.query("SELECT user_id, user_group, user_fname, user_lname, show_email, email, user_points, date_added FROM user WHERE user_id = '" + req.query.u + "'", output1);
+	dao.query("SELECT user_id, user_group, user_fname, user_lname, show_email, email, user_points, date_added FROM user WHERE user_id = '" + dao.safen(req.query.u) + "'", output1);
 
 	function output1(success, result, fields)
 	{
@@ -229,7 +230,7 @@ exports.update_follow = function(req, res)
 	var dao = new obj_dao.DAO();
 
 	// Check for status
-	dao.query("SELECT accepted, active FROM user_connections WHERE user_id_1 = '" + global.session.user.id + "' and user_id_2 = '" + req.body.user + "'", output1);
+	dao.query("SELECT accepted, active FROM user_connections WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "'", output1);
 
 	function output1(success, result, fields)
 	{
@@ -243,7 +244,7 @@ exports.update_follow = function(req, res)
 		if (result.length == 0)
 		{
 			// Create new entry
-			dao.query("INSERT INTO user_connections(user_id_1, user_id_2) VALUES ('" + global.session.user.id + "', '" + req.body.user + "')", complete1, 1);
+			dao.query("INSERT INTO user_connections(user_id_1, user_id_2) VALUES ('" + dao.safen(global.session.user.id) + "', '" + dao.safen(req.body.user) + "')", complete1, 1);
 		}
 		else
 		{
@@ -252,12 +253,12 @@ exports.update_follow = function(req, res)
 			if (row.active == 1)
 			{
 				// "Remove" entry by setting active = 0
-				dao.query("UPDATE user_connections SET active = 0 WHERE user_id_1 = '" + global.session.user.id + "' and user_id_2 = '" + req.body.user + "' LIMIT 1", complete1, 2);
+				dao.query("UPDATE user_connections SET active = 0 WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 2);
 			}
 			else
 			{
 				// "Create" new entry from undoing active = 0
-				dao.query("UPDATE user_connections SET active = 1, accepted = 0 WHERE user_id_1 = '" + global.session.user.id + "' and user_id_2 = '" + req.body.user + "' LIMIT 1", complete1, 1);
+				dao.query("UPDATE user_connections SET active = 1, accepted = 0 WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 1);
 			}
 		}
 	}
@@ -297,5 +298,26 @@ exports.update_follow = function(req, res)
 
 		dao.die();
 		res.send({status: status});
+	}
+}
+
+exports.update_notifications = function(req, res)
+{
+	if (!global.session.logged_in)
+	{
+		res.redirect('/500error');
+		return;
+	}
+	var check_all = obj_notify.check_all.bind(global.session.notifications);
+	check_all(callback);
+
+	function callback(success)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+		res.send(global.session.notifications);
 	}
 }

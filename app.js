@@ -81,6 +81,7 @@ app.post('/user/new', user.create);
 app.get('/user/validate', user.validate);
 app.get('/user/profile', user.show_profile);
 app.post('/user/update_follow', user.update_follow);
+app.post('/user/update_notifications', user.update_notifications);
 
 app.get('/recipe/create', recipe.display_create);
 app.post('/recipe/test', recipe.submit_recipe);

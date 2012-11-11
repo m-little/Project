@@ -175,7 +175,15 @@ exports.display_view = function(req, res)
 			return;
 		}
 
-
+		for (var i in global.session.notifications.new_items)
+		{
+			var item = global.session.notifications.new_items[i];
+			if (item.type == 0 && item.recipe_id == new_recipe.id)
+			{
+				delete global.session.notifications.new_items[i];
+				global.session.notifications.actual_count -= 1;
+			}
+		}
 		dao.query("SELECT AVG(rank) as avg, COUNT(rank) as count FROM recipe_ranking WHERE recipe_id = " + req.query.r_id, output6, new_recipe);
 	}
 
@@ -254,7 +262,7 @@ exports.comment_on = function(req, res)
 
 	var dao = new obj_dao.DAO();
 
-	dao.query("INSERT INTO recipe_comment(owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('" + global.session.user.id + "', " + req.body.recipe_id + ", " + req.body.reply_comment + ", '" + req.body.comment_content + "', NOW())", output);
+	dao.query("INSERT INTO recipe_comment(owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('" + dao.safen(global.session.user.id) + "', " + req.body.recipe_id + ", " + req.body.reply_comment + ", '" + dao.safen(req.body.comment_content) + "', NOW())", output);
 
 	function output(success, result, fields)
 	{
@@ -285,7 +293,7 @@ exports.edit_comment = function(req, res)
 
 	var dao = new obj_dao.DAO();
 
-	dao.query("UPDATE recipe_comment SET content = '" + req.body.comment_content + "', date_edited = NOW() WHERE comment_id = " + req.body.edit_comment, output);
+	dao.query("UPDATE recipe_comment SET content = '" + dao.safen(req.body.comment_content) + "', date_edited = NOW() WHERE comment_id = " + req.body.edit_comment, output);
 
 	function output(success, result, fields)
 	{

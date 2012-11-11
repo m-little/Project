@@ -10,17 +10,18 @@ div.header
 	div(style="float:left; position:fixed; left:160px; top:9px;")
 		input.input_text(style="background-color:#616158; float:left; color:#bababa; margin-bottom:5px; height:14px;", value="Search", id="header_search_bar", onClick="clear_search_bar();")
 
-	#userinfo
-		if global.session.logged_in != 0
-			div.userinfo_settings(onClick="show_drop_settings();", id="header_button_settings")
-				| Hello #{global.session.user.id}
-			div.userinfo_button(onClick="show_drop_recipes()")
-				| Recipes
-		else
-			div.userinfo_button(onClick="show_drop_login();", id="header_button_login")
-				| Login
-			div.userinfo_button(onClick="window.location.href='/sign_up'")
-				| Sign Up!
+	if global.session.logged_in != 0
+		div.userinfo_settings(onClick="show_drop_settings();", id="header_button_settings")
+			| Hello #{global.session.user.id}
+		div.userinfo_button(onClick="show_drop_recipes()")
+			| Recipes
+		div.userinfo_button(onClick="show_drop_notifications()", id="notifications_count")
+			| #{global.session.notifications.actual_count}
+	else
+		div.userinfo_button(onClick="show_drop_login();", id="header_button_login")
+			| Login
+		div.userinfo_button(onClick="window.location.href='/sign_up'")
+			| Sign Up!
 
 //- Start drop down boxes
 
@@ -74,5 +75,26 @@ div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px
 			img(src="../images/icon_book1.png", style="position:relative; left:-2px; top:-1px; width:22px; height:20px;")
 		a(href="", style="text-decoration:none; color:#bababa;")
 			| Lookup Recipes
+
+div.header_dropdown(id="header_menu_notifications", style="position:fixed; top:20px; right:10px; width:auto; font-size:14px;")
+	- if (global.session.logged_in)
+		- for (var i in global.session.notifications.new_items)
+			- var item = global.session.notifications.new_items[i];
+			- if (item != null)
+				div.header_dropdown_button(onClick="window.location.href='recipe/view?r_id=#{item.recipe_id}'")
+					- if (item.type == 0) // recipe comment
+						div.header_dropdown_button_icon
+							img(src="../images/icon_recipe1.png", style="position:relative; left:-2px; top:-2px; width:22px;")
+						a(href="/recipe/view?r_id=#{item.recipe_id}", style="text-decoration:none; color:#bababa;")
+							span(style="")
+								| #{item.comment_owner} commented or replied in 
+							span(style="font-weight:bold;")
+								| #{item.recipe_name}
+							div(style="margin-bottom:-16px; position:absolute; top:18px; left:30px; font-size:24px;")
+								| "
+							div(style="margin-bottom:-16px; position:absolute; top:18px; right:6px; font-size:24px;")
+								| "
+							div(style="background-color:#424242; margin-left:38px; margin-top:6px; margin-bottom:0px; padding:2px; border-radius:.2em;")
+								| #{item.content}
 
 body.body

@@ -40,7 +40,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						| #{recipe.owner}
 
 			style(type="text/css")
-				div.star_power{width:#{recipe.rank / 10 * 160}px; height:100%; background-color:#ffbf00;}
+				div.star_power{width:#{recipe.rank / 10 * 160}px; height:100%; background-color:#ffbf00; visibility:hidden;}
 				div.star_outline{width:162px; height:34px; margin:auto; position:relative; top:4px; margin-bottom:-32px; background-image:url('../images/star_hollow1.png'); background-size:100% 100%; cursor:pointer;}
 
 			//- Rating
@@ -277,6 +277,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 		var show_buttons = true;
 		var new_rank = 0;
 		var recipe_my_rank = #{global.session.user_recipe_rank};
+		$(window).load(function()
+		{
+			$('#stars_power').css('visibility', 'visible'); // this keeps the background from appearing before the stars.
+		});
 		$(document).ready(function()
 		{
 			$("#new_comment").hide();
