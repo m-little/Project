@@ -1,5 +1,5 @@
 doctype 5
-html.all(style="background-image:url('../images/bg1.png');")
+html.all(style="background-image:url('/images/bg1.png');")
 
 	include ../header
 
@@ -15,7 +15,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 				- if(wiki.content[i].picture.id != 1)
 					div(style="float:right; position:relative; top: -28px; height: 80px; width: 80px; margin-bottom:-28px; margin-left:8px;")
-						img(src= "../images/user_images/#{wiki.content[i].picture.location}", style= "max-width:100%;")
+						img(src= "/images/user_images/#{wiki.content[i].picture.location}", style= "max-width:100%;")
 
 				div(style="padding-left:10px;")
 					- for content in wiki.content[i].content.split('\n')

@@ -15,7 +15,7 @@ div.header
 			| Hello #{global.session.user.id}
 		div.userinfo_button(onClick="show_drop_recipes()")
 			| Recipes
-		div.userinfo_button(onClick="show_drop_notifications()", id="notifications_count")
+		div.userinfo_button(onClick="show_drop_notifications()", id="notifications_count", title="Your notifications.")
 			| #{global.session.notifications.actual_count}
 	else
 		div.userinfo_button(onClick="show_drop_login();", id="header_button_login")

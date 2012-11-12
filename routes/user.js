@@ -258,7 +258,7 @@ exports.update_follow = function(req, res)
 			else
 			{
 				// "Create" new entry from undoing active = 0
-				dao.query("UPDATE user_connections SET active = 1, accepted = 0, date_created = NOW() WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 1);
+				dao.query("UPDATE user_connections SET active = 1, accepted = 0, date_added = NOW() WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 1);
 			}
 		}
 	}

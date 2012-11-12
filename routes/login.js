@@ -14,6 +14,12 @@ exports.check_credentials = function check_credentials(user, pass, callback, res
 
 	function output(success, result, fields, vars)
 	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
 		if (result.length == 0)
 		{
 			callback(0, '', '');
@@ -72,7 +78,7 @@ exports.check_credentials = function check_credentials(user, pass, callback, res
 
 	}
 
-	dao.query("select p.user_id, pass, salt, user_group, user_fname, user_lname, user_points active from passkeys p JOIN user u ON p.user_id = u.user_id WHERE p.user_id = '" + dao.safen(user) + "' LIMIT 1", output, {res: res, location: location});
+	dao.query("select p.user_id, pass, salt, user_group, user_fname, user_lname, user_points active from passkeys p JOIN user u ON p.user_id = u.user_id WHERE BINARY p.user_id = '" + dao.safen(user) + "' LIMIT 1", output, {res: res, location: location});
 
 	return logged_in;
 }
