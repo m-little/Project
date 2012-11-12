@@ -606,9 +606,9 @@ html.all(style="background-image:url('/images/bg1.png');")
 				container.appendTo('body');
 				var stars = $("<div></div>").attr({id: "new_rank_stars",class: "star_outline", style: "margin-top:4px; width:190px; height:38px; background-repeat:no-repeat;", onClick: "submit_rank(new_rank);"});
 				stars.appendTo(container);
-				var your_back = $("<div></div>").attr({id: "old_rank_power", class: "star_power", style: "height:35px; width:0px; margin-left:15px; margin-bottom:-35px; background-color:#00a6ff;"});
+				var your_back = $("<div></div>").attr({id: "old_rank_power", class: "star_power", style: "height:35px; width:0px; margin-left:15px; margin-bottom:-35px; background-color:#00a6ff; visibility:visible;"});
 				your_back.appendTo(container);
-				var back = $("<div></div>").attr({id: "new_rank_power", class: "star_power", style: "height:35px; margin-left:15px;"});
+				var back = $("<div></div>").attr({id: "new_rank_power", class: "star_power", style: "height:35px; margin-left:15px; visibility:visible;"});
 				back.appendTo(container);
 				var details = $("<div>Rank This Recipe</div>").attr({style: "color: gray; font-size:24px; text-align:center; margin-top:8px;"});
 				details.appendTo(container);
