@@ -20,6 +20,21 @@ if [ $# -gt 2 ]; then
 	exit 1
 fi
 
+# Clean up logs
+if [ ! -e /usr/local/node/docs/project/logs ]; then
+	mkdir /usr/local/node/docs/project/logs
+fi
+
+if [ -e /usr/local/node/docs/project/logs/StdOut.log ]; then
+	stdout=`tail -n 2000 /usr/local/node/docs/project/logs/StdOut.log`
+	echo "$stdout" > /usr/local/node/docs/project/logs/StdOut.log
+fi
+
+if [ -e ./logs/StdErr.log ]; then
+	stderr=`tail -n 2000 /usr/local/node/docs/project/logs/StdErr.log`
+	echo "$stderr" > /usr/local/node/docs/project/logs/StdErr.log
+fi
+
 update=0
 if [[ $2 =~ ^("update"|"UPDATE"|"u"|"U")$ ]]; then # Start the node process
 	update=1
@@ -43,8 +58,8 @@ if [[ $1 =~ ^("start"|"START")$ ]]; then # Start the node process
 	fi
 	if [ $? -eq 0 ]; then
 		echo "Starting Node Process"
-		echo "node $main_javascript_file &" 
-		/usr/local/node/bin/node $main_javascript_file &
+		echo "node $main_javascript_file 1>> ./logs/StdOut.log 2>> ./logs/StdErr.log &" 
+		/usr/local/node/bin/node $main_javascript_file 1>> ./logs/StdOut.log 2>> ./logs/StdErr.log &
 	fi
 
 elif [[ $1 =~ ^("restart"|"RESTART"|"bounce"|"BOUNCE")$ ]]; then # Restart the node process
@@ -66,8 +81,8 @@ elif [[ $1 =~ ^("restart"|"RESTART"|"bounce"|"BOUNCE")$ ]]; then # Restart the n
 	fi
 	if [ $? -eq 0 ]; then
 		echo "Starting Node Process"
-		echo "node $main_javascript_file &" 
-		/usr/local/node/bin/node $main_javascript_file &
+		echo "node $main_javascript_file 1>> ./logs/StdOut.log 2>> ./logs/StdErr.log &" 
+		/usr/local/node/bin/node $main_javascript_file 1>> ./logs/StdOut.log 2>> ./logs/StdErr.log &
 	fi
 
 elif [[ $1 =~ ^("kill"|"KILL"|"stop"|"STOP")$ ]]; then # Kill the node process
