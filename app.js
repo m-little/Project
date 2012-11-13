@@ -91,6 +91,7 @@ app.post('/recipe/edit_comment', recipe.edit_comment);
 app.get('/recipe/my', recipe.my);
 
 app.get('/wiki/view', wiki.display_view);
+app.get('/wiki/home', wiki.home_view);
 
 app.get('/error', function(req, res){
 	res.render('error', { title: website_title, error: global.session.error_message });

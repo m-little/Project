@@ -3,6 +3,45 @@ var obj_wiki = require('../objects/wiki');
 var obj_video = require('../objects/video');
 var obj_picture = require('../objects/picture');
 var obj_content = require('../objects/wiki_content')
+var obj_preview = require('../objects/wiki_preview')
+
+exports.home_view = function(req, res)
+{
+	// initalize data base access object
+	var dao = new obj_dao.DAO
+
+	dao.query("SELECT * FROM wiki", output1);
+
+	function output1(success, result, fields)
+	{
+		// if there are no results redirect to the home page
+		if (result.length == 0) 
+		{
+			res.redirect('/');
+			return;
+		}
+
+		
+
+		// get the first row (should be the only row) from the results returned by the database
+		var row = result[0];
+		var new_prev = new obj_preview.preview(1,"Title", "Content", "Picture");
+		console.log(new_prev);
+		finished();
+	}
+
+	function output2(success, result, fields, new_wiki)
+	{
+
+	}
+
+
+	function finished() 
+	{
+		res.render('wiki/wiki_home', { title: website_title});
+	}
+
+}
 
 exports.display_view = function(req, res)
 {
