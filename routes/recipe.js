@@ -226,7 +226,7 @@ exports.display_view = function(req, res)
 		global.session.user_recipe_rank = -1;
 		if (global.session.logged_in)
 		{
-			dao.query("SELECT rank FROM recipe_ranking WHERE recipe_id = " + req.query.r_id + " AND owner_id = '" + global.session.user.id + "'", output7, new_recipe);
+			dao.query("SELECT rank FROM recipe_ranking WHERE recipe_id = " + req.query.r_id + " AND BINARY owner_id = '" + global.session.user.id + "'", output7, new_recipe);
 		}
 		else
 		{
@@ -371,7 +371,7 @@ exports.set_rank = function(req, res)
 	var dao = new obj_dao.DAO();
 
 	// make sure theres no funny business of ranking your own recipe
-	dao.query("SELECT recipe_id FROM recipe WHERE owner_id = '" + global.session.user.id + "' AND recipe_id = " + req.body.recipe_id, output1);
+	dao.query("SELECT recipe_id FROM recipe WHERE BINARY owner_id = '" + global.session.user.id + "' AND recipe_id = " + req.body.recipe_id, output1);
 
 	function output1(success, result, fields)
 	{
@@ -392,7 +392,7 @@ exports.set_rank = function(req, res)
 			}
 			// Set or update ranking
 			if (global.session.user_recipe_rank != -1)
-				dao.query("UPDATE recipe_ranking SET rank = " + req.body.rank + " WHERE owner_id = '" + global.session.user.id + "' AND recipe_id = " + req.body.recipe_id, output2);
+				dao.query("UPDATE recipe_ranking SET rank = " + req.body.rank + " WHERE BINARY owner_id = '" + global.session.user.id + "' AND recipe_id = " + req.body.recipe_id, output2);
 			else
 				dao.query("INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES ('" + global.session.user.id + "', " + req.body.recipe_id + ", " + req.body.rank + ", NOW())", output2);
 		}

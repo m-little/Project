@@ -34,14 +34,14 @@ app.configure(function(){
 	// plenty of room for expansion.
 	// 500 Page
 	app.use(function(err, req, res, next){
-		console.error("\033[31m###############################################################\n" + (new Date()).toLocaleString() + "\n" + err.stack + "\033[0m");
+		console.error("###############################################################\033[31m\n" + (new Date()).toLocaleString() + "\n" + err.stack + "\033[0m");
 		res.render('500error', { title: website_title, error: 500, location: req.url });
 		});
 
 	// 404 Page
 	app.use(function(req, res, next){
 		res.render('400error', { title: website_title, error: 404, location: req.headers.host + req.url });
-		console.error("\033[31m###############################################################\n" + (new Date()).toLocaleString() + "\nCould not handle request to " + req.url + "\033[0m");
+		console.error("###############################################################\033[31m\n" + (new Date()).toLocaleString() + "\nCould not handle request to " + req.url + "\033[0m");
 		});
 });
 
@@ -104,5 +104,5 @@ app.get('/500error', function(req, res){
 
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
-	console.error("\033[33m###############################################################\n" + "Non-Error: Express server listening on port " + app.get('port') + "\033[0m");
+	console.error("###############################################################\n" + "Non-Error: Express server listening on port " + app.get('port'));
 });

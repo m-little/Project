@@ -97,7 +97,7 @@ exports.validate = function(req, res)
 	var val_value = req.query.v.match(/[a-z0-9]+/gi)[0];
 
 	var dao = new obj_dao.DAO();
-	dao.query("SELECT user_id, validation_date FROM user WHERE validation_value = '" + val_value + "' LIMIT 1", output1);
+	dao.query("SELECT user_id, validation_date FROM user WHERE BINARY validation_value = '" + val_value + "' LIMIT 1", output1);
 
 	function output1(success, result, fields)
 	{
@@ -121,7 +121,7 @@ exports.validate = function(req, res)
 				return;
 			}
 
-			dao.query("UPDATE user SET active = 1 WHERE user_id = '" + row.user_id + "' LIMIT 1", output2);
+			dao.query("UPDATE user SET active = 1 WHERE BINARY user_id = '" + row.user_id + "' LIMIT 1", output2);
 		}
 	}
 
@@ -230,7 +230,7 @@ exports.update_follow = function(req, res)
 	var dao = new obj_dao.DAO();
 
 	// Check for status
-	dao.query("SELECT accepted, active FROM user_connections WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "'", output1);
+	dao.query("SELECT accepted, active FROM user_connections WHERE BINARY user_id_1 = '" + dao.safen(global.session.user.id) + "' and BINARY user_id_2 = '" + dao.safen(req.body.user) + "'", output1);
 
 	function output1(success, result, fields)
 	{
@@ -253,12 +253,12 @@ exports.update_follow = function(req, res)
 			if (row.active == 1)
 			{
 				// "Remove" entry by setting active = 0
-				dao.query("UPDATE user_connections SET active = 0 WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 2);
+				dao.query("UPDATE user_connections SET active = 0 WHERE BINARY user_id_1 = '" + dao.safen(global.session.user.id) + "' and BINARY user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 2);
 			}
 			else
 			{
 				// "Create" new entry from undoing active = 0
-				dao.query("UPDATE user_connections SET active = 1, accepted = 0, date_added = NOW() WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 1);
+				dao.query("UPDATE user_connections SET active = 1, accepted = 0, date_added = NOW() WHERE BINARY user_id_1 = '" + dao.safen(global.session.user.id) + "' and BINARY user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 1);
 			}
 		}
 	}
