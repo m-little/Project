@@ -676,11 +676,10 @@ exports.load_pictures = function(req, res)
 							return;
 						}
 						else {
-							var picture_name = set_picture_name();
 							var picture_caption = set_picture_caption();
 
 							//After the picture is stored in the user_images file, get recipe id.  
-							dao.query("INSERT INTO picture(name, caption, location) VALUES( '" + picture_name + "', '" + picture_caption + "', '" + req.files.recipe_pictures.name + "')", output);
+							dao.query("INSERT INTO picture(caption, location) VALUES('" + picture_caption + "', '" + req.files.recipe_pictures.name + "')", output);
 						}
 					});
 				});
@@ -724,19 +723,6 @@ exports.load_pictures = function(req, res)
 					dao.die();
 					res.redirect('/recipe/view?r_id=' + recipe_id)
 				}
-		    }
-
-		    function set_picture_name() {
-		    	var pic_name = "";
-
-				if(req.body.picture_name == "") {
-					pic_name = "unknown";
-				}
-				else {
-					pic_name = req.body.picture_name;
-				}
-
-				return pic_name;
 		    }
 
 		    function set_picture_caption() {
