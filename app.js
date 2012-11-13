@@ -81,9 +81,11 @@ app.post('/user/new', user.create);
 app.get('/user/validate', user.validate);
 app.get('/user/profile', user.show_profile);
 app.post('/user/update_follow', user.update_follow);
+app.post('/user/update_notifications', user.update_notifications);
 
 app.get('/recipe/create', recipe.display_create);
-app.post('/recipe/test', recipe.submit_recipe);
+app.post('/recipe/submit', recipe.submit_recipe);
+app.post('/recipe/pictures', recipe.load_pictures);
 app.get('/recipe/view', recipe.display_view);
 app.post('/recipe/comment_on', recipe.comment_on);
 app.post('/recipe/set_rank', recipe.set_rank);

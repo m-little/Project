@@ -121,6 +121,7 @@ user_id_1 VARCHAR(40) NOT NULL,
 user_id_2 VARCHAR(40) NOT NULL,
 accepted TINYINT(1) NOT NULL DEFAULT 0,
 active TINYINT(1) NOT NULL DEFAULT 1,
+date_added DATETIME NOT NULL,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
 CONSTRAINT fk_user_1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
 CONSTRAINT fk_user_2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
@@ -355,21 +356,21 @@ INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Felicia', 11, 'user', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 
 -- Read as user_id_1 follows user_id_2...
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Julia', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Curtis', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Felicia', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'John', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Sam', 'James', 1);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Sam', 'Catherine', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Sam', 'John', 0);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Julia', 'Mike', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Julia', 'Curtis', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Julia', 'Catherine', 1);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Mike', 'Curtis', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Mike', 'Felicia', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Curtis', 'Felicia', 1, 1);
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active) VALUES('Curtis', 'John', 0, 0);
-INSERT INTO user_connections (user_id_1, user_id_2, active) VALUES('Curtis', 'Mona', 1);
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Julia', 1, 1, STR_TO_DATE('9,19,2012 6:05', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Curtis', 1, 1, STR_TO_DATE('9,23,2012 13:30', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Felicia', 1, 1, STR_TO_DATE('9,30,2012 11:02', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'John', 1, 1, STR_TO_DATE('9,12,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Sam', 'James', 1, STR_TO_DATE('10,25,2012 19:20', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Catherine', 1, 1, STR_TO_DATE('10,16,2012 13:30', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Sam', 'John', 0, STR_TO_DATE('10,24,2012 17:50', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Julia', 'Mike', 1, 1, STR_TO_DATE('10,15,2012 10:07', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Julia', 'Curtis', 1, 1, STR_TO_DATE('10,04,2012 17:45', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Julia', 'Catherine', 1, STR_TO_DATE('10,13,2012 15:00', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Mike', 'Curtis', 1, 1, STR_TO_DATE('10,28,2012 05:30', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Mike', 'Felicia', 1, 1, STR_TO_DATE('10,29,2012 10:03', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Curtis', 'Felicia', 1, 1, STR_TO_DATE('11,02,2012 13:50', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Curtis', 'John', 0, 0, STR_TO_DATE('11,04,2012 18:53', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Curtis', 'Mona', 1, STR_TO_DATE('11,07,2012 12:03', '%m,%d,%Y %H:%i'));
 
 INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs" 1
 INSERT INTO unit (unit_name, abrev) VALUES('Teaspoon', 'tsp');  -- 2
@@ -426,7 +427,6 @@ INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time,
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Curtis', 8, 'Oven-fried Pork Chops', '4', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:00', '%m,%d,%Y %H:%i')); -- 5
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added, public) VALUES ( 'Sam', 6, 'Ranch Burgers', '8', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:05', '%m,%d,%Y %H:%i'), 0); -- 6
 
-
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(1, 3);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(2, 4);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(2, 12);
@@ -448,8 +448,7 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Mike'
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia', 2, 5, STR_TO_DATE('9,30,2012 15:23:45', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 4, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curtis', 5, 6, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
-INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 6, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
-
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2

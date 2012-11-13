@@ -72,17 +72,5 @@ html.all(style="background-image:url('../images/bg1.png');")
 									a(href="/recipe/view?r_id=#{private_recipes[i].id}", style="text-decoration:none; color:black;")
 										| #{private_recipes[i].name}
 
-								div(style="color:black; margin:2px; padding:2px; background-color:white; border-radius:.3em; opacity:.8; filter:alpha(opacity=80); text-align:center;")
-									| #{private_recipes[i].rank / 2} / 5 
-									b
-										| &#9733
-									| 's
-
-								div(style="color:black; font-size:12px; margin:2px; padding:2px; background-color:white; border-radius:.3em; opacity:.8; filter:alpha(opacity=80); text-align:center;")
-									- if (private_recipes[i].unseen_comment_count == 0)
-										| No New Replies
-									-else
-										b
-											| #{private_recipes[i].unseen_comment_count} New Replies
 
 	include ../footer

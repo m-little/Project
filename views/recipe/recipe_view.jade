@@ -1,5 +1,5 @@
 doctype 5
-html.all(style="background-image:url('../images/bg1.png');")
+html.all(style="background-image:url('/images/bg1.png');")
 
 	include ../header
 
@@ -7,10 +7,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 		div(style="padding-bottom:40px; background-color:white; margin-bottom:10px; border:1px solid #c2c2c2;")
 
 			- if (recipe.public == '0')
-				div(style="float:left; clear:both; height:73px; width:86px; position:relative; top:-28px; left:-36px; margin-bottom:-140px; background-image:url('../images/private.png'); background-repeat:no-repeat; z-index:3;")
+				div(style="float:left; clear:both; height:73px; width:86px; position:relative; top:-28px; left:-36px; margin-bottom:-140px; background-image:url('/images/private.png'); background-repeat:no-repeat; z-index:3;")
 
-			div(id="recipe_pic_prev", style="position:relative; left:-18px; top:66px; width:24px; height:44px; margin-bottom:-46px; background-image:url('../images/prev1.png'); cursor:pointer;", title="Previous photo.", onClick="prev_picture();")
-			div(id="recipe_pic_next", style="position:relative; left:19px; top:66px; float:right; width:24px; height:44px; margin-bottom:-46px; background-image:url('../images/next1.png'); cursor:pointer;", title="Next photo.", , onClick="next_picture();")
+			div(id="recipe_pic_prev", style="position:relative; left:-18px; top:66px; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/prev1.png'); cursor:pointer;", title="Previous photo.", onClick="prev_picture();")
+			div(id="recipe_pic_next", style="position:relative; left:19px; top:66px; float:right; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/next1.png'); cursor:pointer;", title="Next photo.", , onClick="next_picture();")
 
 			//- Recipe Category
 			div(style="position:relative; right:10px; top:1px; margin-top:-2px; font-size:28px; float:right; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default; z-index:2;", title="Category")
@@ -23,12 +23,12 @@ html.all(style="background-image:url('../images/bg1.png');")
 			//- Image
 			- if (recipe.get_picture(0).location != 'unknown.png')
 				div(id="recipe_photo_div", style="width:100%; max-height:auto; min-height:160px; height:160px; overflow:hidden;")
-					img(id="recipe_photo", src="../images/user_images/#{recipe.get_picture(0).location}", style="width:100%; position:relative;", alt="#{recipe.get_picture(0).caption}", title="#{recipe.get_picture(0).caption}", onLoad="refresh_picture();")
+					img(id="recipe_photo", src="/images/user_images/#{recipe.get_picture(0).location}", style="width:100%; position:relative;", alt="#{recipe.get_picture(0).caption}", title="#{recipe.get_picture(0).caption}", onLoad="refresh_picture();")
 			- else
 				div(id="recipe_photo_div", style="width:100%; max-height:auto; height:70px; overflow:hidden;")
 
 			- if (recipe.get_picture(0).location != 'unknown.png')
-				div(id="recipe_pic_drag", style="position:relative; right:8px; top:-24px; float:right; width:27px; height:14px; margin-bottom:-46px; background-image:url('../images/drag1.png'); cursor:s-resize; z-index:2;", title="Enlarge this photo. Double click to reset.", onClick="zoom_photo($('#recipe_pic_zoom').position());")
+				div(id="recipe_pic_drag", style="position:relative; right:8px; top:-24px; float:right; width:27px; height:14px; margin-bottom:-46px; background-image:url('/images/drag1.png'); cursor:s-resize; z-index:2;", title="Enlarge this photo. Double click to reset.", onClick="zoom_photo($('#recipe_pic_zoom').position());")
 
 			//- Owner
 			div(id="recipe_owner", style="position:relative; left:10px; top:-26px; font-size:16px; float:left; clear:both; width:auto; height:auto; padding:4px; padding-left:16px; padding-right:16px; background-color:white; border-top-left-radius:.6em; border-top-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default;")
@@ -40,8 +40,8 @@ html.all(style="background-image:url('../images/bg1.png');")
 						| #{recipe.owner}
 
 			style(type="text/css")
-				div.star_power{width:#{recipe.rank / 10 * 160}px; height:100%; background-color:#ffbf00;}
-				div.star_outline{width:162px; height:34px; margin:auto; position:relative; top:4px; margin-bottom:-32px; background-image:url('../images/star_hollow1.png'); background-size:100% 100%; cursor:pointer;}
+				div.star_power{width:#{recipe.rank / 10 * 160}px; height:100%; background-color:#ffbf00; visibility:hidden;}
+				div.star_outline{width:162px; height:34px; margin:auto; position:relative; top:4px; margin-bottom:-32px; background-image:url('/images/star_hollow1.png'); background-size:100% 100%; cursor:pointer;}
 
 			//- Rating
 			div(style="width:168px; height:30px; margin:auto; position:relative; left:5px; top:6px; margin-bottom:-32px; padding-bottom:3px;")
@@ -54,7 +54,9 @@ html.all(style="background-image:url('../images/bg1.png');")
 				- var text = (global.session.user_recipe_rank == -1 ? "" : " Your rank: " + (global.session.user_recipe_rank / 2) + " stars.");
 				div.star_outline(id="recipe_rank", title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks).#{text}", onClick="show_rank();")
 
-			div(style="float:right; position:relative; top:22px; right:10px; font-size:12px; color:gray;")
+			div(id="recipe_rank_text", style="float:right; position:relative; top:6px; right:10px; font-size:12px; color:gray;")
+				| #{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks)
+			div(style="float:right; clear:right; position:relative; top:8px; right:10px; font-size:12px; color:gray;")
 				| Created on #{recipe.date_added.toDateString()}
 
 		// Ingredients
@@ -117,7 +119,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						- comment = recipe.flat_comments[i];
 						- hidden = 'visible';
 					- var comment_color = '';
-					- if (recipe.owner == comment.owner)
+					- if (recipe.owner == comment.owner.id)
 						- comment_color = 'e8f0ff';
 					- else
 						- comment_color = 'ffffff';
@@ -125,13 +127,13 @@ html.all(style="background-image:url('../images/bg1.png');")
 					div.comment(style="margin-left:#{comment.indent * 50 + 30}px; background-color:##{comment_color}; visibility:#{hidden};", id="comment_div#{comment.id}", onmouseout="$('#reply#{comment.id}').hide(); $('#edit#{comment.id}').hide();", onmouseover="if (show_buttons) {$('#reply#{comment.id}').show(); $('#edit#{comment.id}').show();}")
 
 						//- User stuff
-						div(id="comment_up", style="width:13px; height:9px; background-image:url('../images/up1.png'); background-size:100% 100%; z-index:2; position:relative; left:50px; top:-14px; margin-bottom:-16px; background-color:##{comment_color};")
+						div(id="comment_up", style="width:13px; height:9px; background-image:url('/images/up1.png'); background-size:100% 100%; z-index:2; position:relative; left:50px; top:-14px; margin-bottom:-16px; background-color:##{comment_color};")
 
 						div(style="position:relative; top:-25px; margin:-6px; margin-left:-10px; margin-bottom:-36px; padding:5px;")
 							
 							div(id="comment_image_box", style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-32px; top:14px; margin-bottom:-24px; margin-right:-24px; border:1px solid gray; border-radius:.3em; width:64px; background-color:##{comment_color};")
 								div(style="width:64px; height:64px; overflow:hidden;")
-									img(id="comment_image", style="width:100%;", src="../images/user_images/#{comment.picture.location}", alt="#{comment.picture.caption}", title="#{comment.picture.caption}")
+									img(id="comment_image", style="width:100%;", src="/images/user_images/#{comment.picture.location}", alt="#{comment.picture.caption}", title="#{comment.picture.caption}")
 
 						div(style="height:20px; margin-left:45px; margin-right:10px; position:relative; top:-20px; margin-bottom:-20px;")
 							div(id="comment_owner", style="color:gray; width:10px; overflow:show;")
@@ -196,9 +198,9 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 						- if (global.session.logged_in)
 							- if (global.session.user.id != comment.owner.id)
-								div(style="background-image:url('../images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Reply to #{comment.owner.id}'s comment.", id="reply#{comment.id}", onClick="reply_comment('#comment_div#{comment.id}');")
+								div(style="background-image:url('/images/reply1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Reply to #{comment.owner.id}'s comment.", id="reply#{comment.id}", onClick="reply_comment('#comment_div#{comment.id}');")
 							- else
-								div(style="background-image:url('../images/edit1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Edit your comment.", id="edit#{comment.id}", onClick="edit_comment('#comment_div#{comment.id}');")
+								div(style="background-image:url('/images/edit1.png'); width:59px; height:24px; margin-left:auto; cursor:pointer; position:relative; top:-1px; margin-bottom:-24px; z-index:1;", title="Edit your comment.", id="edit#{comment.id}", onClick="edit_comment('#comment_div#{comment.id}');")
 
 				- if (global.session.logged_in)
 					// New comment box (hides on load)			
@@ -212,7 +214,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						//- User stuff
 						div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-36px; top:-12px; margin-bottom:-24px; margin-right:-24px; border:1px solid gray; border-radius:.6em; width:64px; background-color:##{comment_color};")
 								div(style="width:64px; height:64px; overflow:hidden;")
-									img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
+									img(style="width:100%;", src="/images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
 
 						div(style="font-size:12px; color:gray; position:relative; left:46px; top:-50px; margin-bottom:-16px; width:260px;")
 
@@ -244,7 +246,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						//- User stuff
 						div(style="padding:5px; margin-right:10px; text-align:center; position:relative; left:-36px; top:-12px; margin-bottom:-24px; margin-right:-24px; border:1px solid gray; border-radius:.6em; width:64px; background-color:##{comment_color};")
 								div(style="width:64px; height:64px; overflow:hidden;")
-									img(style="width:100%;", src="../images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
+									img(style="width:100%;", src="/images/user_images/#{global.session.user.picture.location}", alt="#{global.session.user.picture.caption}", title="#{global.session.user.picture.caption}")
 
 						div(style="color:gray; position:relative; top:-50px; left:50px; margin-bottom:-50px; width:200px;")
 							| What will you say?
@@ -265,9 +267,9 @@ html.all(style="background-image:url('../images/bg1.png');")
 								| Cancel
 
 		- if (global.session.logged_in)
-			div(style="background-image:url('../images/comment1.png'); width:120px; height:26px; margin:auto; cursor:pointer; position:relative; top:-5px;", title="Comment on this recipe.", id="new_comment_button")
+			div(style="background-image:url('/images/comment1.png'); width:120px; height:26px; margin:auto; cursor:pointer; position:relative; top:-5px;", title="Comment on this recipe.", id="new_comment_button")
 
-	script(src="../jquery.js")
+	script(src="/jquery.js")
 	script
 		var hide_rank_submit = true;
 		var resizing_image = false;
@@ -277,6 +279,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 		var show_buttons = true;
 		var new_rank = 0;
 		var recipe_my_rank = #{global.session.user_recipe_rank};
+		$(window).load(function()
+		{
+			$('#stars_power').css('visibility', 'visible'); // this keeps the background from appearing before the stars.
+		});
 		$(document).ready(function()
 		{
 			$("#new_comment").hide();
@@ -364,7 +370,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 				}
 				$("<div></div>").attr({id:'ingr_float', style:'float:left; position:absolute; left:'+(e.pageX + 16)+'px; top:'+e.pageY+'px; min-width:180px; background-color:white; border:1px solid #c2c2c2; z-index:2;'}).appendTo('body');
 				$("<div></div>").attr({id:'ingr_float_image_div', style: "overflow:hidden; width:48px; height:48px; margin:4px; float:left;"}).appendTo('#ingr_float');
-				$("<img>").attr({src: "../images/user_images/" + ingredients[index].picture_location, style: "width:100%;"}).appendTo("#ingr_float_image_div");
+				$("<img>").attr({src: "/images/user_images/" + ingredients[index].picture_location, style: "width:100%;"}).appendTo("#ingr_float_image_div");
 				$("<div>" + ingredients[index].name + "</div>").attr({style: "white-space:nowrap; float:left; margin:4px; margin-right:10px;"}).appendTo("#ingr_float");
 				$("<div>" + ingredients[index].use_count + "</div>").attr({style: "color:blue; font-size:10px; float:right; clear:both; margin:4px; margin-right:14px; margin-top:-18px; position:relative; top:-14px;"}).appendTo("#ingr_float");
 				$("<div>Click to learn more.</div>").attr({style: "white-space:nowrap; color:gray; font-size:12px; float:right; clear:both; margin:4px; margin-right:10px; margin-top:-18px;"}).appendTo("#ingr_float");
@@ -439,7 +445,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 					image_index -= 1;
 					if (image_index < 0)
 						image_index = images.length - 1;
-					$("#recipe_photo").attr('src', "../images/user_images/" + images[image_index].location);
+					$("#recipe_photo").attr('src', "/images/user_images/" + images[image_index].location);
 					$("#recipe_photo").attr('title', images[image_index].caption);
 					$("#recipe_photo").fadeIn(200);
 					// refresh_picture gets called when the image has loaded... see image declaration above
@@ -452,7 +458,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 					image_index += 1;
 					if (image_index >= images.length)
 						image_index = 0;
-					$("#recipe_photo").attr('src', "../images/user_images/" + images[image_index].location);
+					$("#recipe_photo").attr('src', "/images/user_images/" + images[image_index].location);
 					$("#recipe_photo").attr('title', images[image_index].caption);
 					$("#recipe_photo").fadeIn(200);
 					// refresh_picture gets called when the image has loaded... see image declaration above
@@ -512,7 +518,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			new_comment.find('#comment_date_added').text('Posted ' + data.date);
 			var new_edit_button = new_comment.find("[id^=reply]");
 			new_edit_button.attr({id: 'edit' + data.new_id, title: 'Edit your comment.', onClick: "edit_comment('#comment_div" + data.new_id + "');"});
-			new_edit_button.css('background-image', "url('../images/edit1.png')");
+			new_edit_button.css('background-image', "url('/images/edit1.png')");
 			new_comment.find("#comment_new_note").remove();
 			new_comment.find("#comment_date_edited").text('');
 			var comment_context = new_comment.find('#comment_context');
@@ -525,7 +531,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			}
 			// Update the image
 			var image = new_comment.find("#comment_image");
-			image.attr({src: "../images/user_images/" + data.user_pic.location, alt: data.user_pic.caption, title: data.user_pic.caption});
+			image.attr({src: "/images/user_images/" + data.user_pic.location, alt: data.user_pic.caption, title: data.user_pic.caption});
 			if ($("#recipe_owner").text() == "Owned by You")
 			{
 				new_comment.css('background-color', '#e8f0ff');
@@ -535,6 +541,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			new_comment.insertBefore($("#new_reply"));
 			new_comment.slideDown();
 			show_buttons = true;
+			$("#new_comment_button").show();
 			$("#new_reply").hide();
 		}
 		function new_edit(data, success)
@@ -551,6 +558,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 				comment_context.append('<div>' + lines[i] + '</div>');
 			}
 			comment.show();
+			$("#new_comment_button").show();
 			$("#new_reply").hide();
 		}
 		function new_comment(data, success)
@@ -565,7 +573,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			new_comment.find('#comment_date_added').text('Posted ' + data.date);
 			var new_edit_button = new_comment.find("[id^=reply]");
 			new_edit_button.attr({id: 'edit' + data.new_id, title: 'Edit your comment.', onClick: "edit_comment('#comment_div" + data.new_id + "');"});
-			new_edit_button.css('background-image', "url('../images/edit1.png')");
+			new_edit_button.css('background-image', "url('/images/edit1.png')");
 			new_comment.find("#comment_new_note").remove();
 			var comment_context = new_comment.find('#comment_context');
 			// remove the new comment's content
@@ -577,7 +585,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			}
 			// Update the image
 			var image = new_comment.find("#comment_image");
-			image.attr({src: "../images/user_images/" + data.user_pic.location, alt: data.user_pic.caption, title: data.user_pic.caption});
+			image.attr({src: "/images/user_images/" + data.user_pic.location, alt: data.user_pic.caption, title: data.user_pic.caption});
 			if ($("#recipe_owner").text() == "Owned by You")
 			{
 				new_comment.css('background-color', '#e8f0ff');
@@ -598,9 +606,9 @@ html.all(style="background-image:url('../images/bg1.png');")
 				container.appendTo('body');
 				var stars = $("<div></div>").attr({id: "new_rank_stars",class: "star_outline", style: "margin-top:4px; width:190px; height:38px; background-repeat:no-repeat;", onClick: "submit_rank(new_rank);"});
 				stars.appendTo(container);
-				var your_back = $("<div></div>").attr({id: "old_rank_power", class: "star_power", style: "height:35px; width:0px; margin-left:15px; margin-bottom:-35px; background-color:#00a6ff;"});
+				var your_back = $("<div></div>").attr({id: "old_rank_power", class: "star_power", style: "height:35px; width:0px; margin-left:15px; margin-bottom:-35px; background-color:#00a6ff; visibility:visible;"});
 				your_back.appendTo(container);
-				var back = $("<div></div>").attr({id: "new_rank_power", class: "star_power", style: "height:35px; margin-left:15px;"});
+				var back = $("<div></div>").attr({id: "new_rank_power", class: "star_power", style: "height:35px; margin-left:15px; visibility:visible;"});
 				back.appendTo(container);
 				var details = $("<div>Rank This Recipe</div>").attr({style: "color: gray; font-size:24px; text-align:center; margin-top:8px;"});
 				details.appendTo(container);
@@ -640,6 +648,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 					$("#old_rank_power").css('width', width);
 					$("#stars_power").css('width', data.rank_avg / 10 * 160);
 					$("#recipe_rank").attr('title', (data.rank_avg / 2) + "/5 stars (" + data.rank_count + " ranks). Your rank: " + (data.rank / 2) + " stars.");
+					$("#recipe_rank_text").text((data.rank_avg / 2) + "/5 stars (" + data.rank_count + " ranks).");
 				}
 				});
 		}
