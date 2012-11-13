@@ -540,11 +540,14 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 
 -- Wiki data
 INSERT INTO video (name, caption, address) VALUES("Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video 1
-INSERT INTO video (name, caption, address) VALUES("Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- 2
+INSERT INTO video (name, caption, address) VALUES("Test Video", "How To Grill", "http://www.youtube.com/embed/h82C-FCq2dI"); -- Grilling 1
+
 
 -- Wiki categories
 INSERT INTO wiki_category (category_name) VALUES ("Ingredients"); -- 1
 INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 2
+INSERT INTO wiki_category (category_name) VALUES ("Cooking Techniques"); -- 3
+
 -- Wiki pages
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Salt",1);  -- 1
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Sugar", 1); -- 2
@@ -552,6 +555,7 @@ INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Pepper", 1); -- 
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Butter", 1); -- 4
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Flour", 1); -- 5
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Chicken", 1);  -- 6
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Griling", 3);  -- 6
 
 -- Wiki content
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,19, "Salt", "Salt, also known as rock salt, is a crystalline mineral that is composed primarily of sodium chloride (NaCl), a chemical compound belonging to the larger class of ionic salts."); -- 1 
@@ -560,3 +564,4 @@ INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(3,25, "Pep
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(4,27, "Butter", "Butter is a dairy product made by churning fresh or fermented cream or milk. It is generally used as a spread and a condiment, as well as in cooking, such as baking, sauce making, and pan frying. Butter consists of butterfat, milk proteins and water."); -- 4
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(5,26, "Flour", "Flour is a powder which is made by grinding cereal grains, other seeds or roots (like Cassava). It is the main ingredient of bread, which is a staple food for many cultures, making the availability of adequate supplies of flour a major economic and political issue at various times throughout history. Wheat flour is one of the most important foods in European, North American, Middle Eastern, Indian and North African cultures, and is the defining ingredient in most of their styles of breads and pastries. Maize flour has been important in Mesoamerican cuisine since ancient times, and remains a staple in much of Latin American cuisine.[citation needed] Rye flour is an important constituent of bread in much of central/northern Europe."); -- 5
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(6,28, "Chicken", "The chicken (Gallus gallus domesticus is a domesticated fowl, a subspecies of the Red Junglefowl. As one of the most common and widespread domestic animals, and with a population of more than 24 billion in 2003,[1] there are more chickens in the world than any other species of bird. Humans keep chickens primarily as a source of food, consuming both their meat and their eggs. The chicken's cultural and culinary dominance could be considered amazing to some in view of its believed domestic origin and purpose and it has inspired contributions to culture, art, cuisine, science and religion [2] from antiquity to the present."); -- 5
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(7,)
