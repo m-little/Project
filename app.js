@@ -9,7 +9,7 @@ website_title = 'Website Name';
 
 // Turn on debug mode if you want to view:
 //      - amount of database connections left open
-debug_mode = true;
+debug_mode = false;
 
 database_connections = 0;
 
