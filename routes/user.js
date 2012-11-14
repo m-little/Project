@@ -4,11 +4,49 @@ var obj_dao = require('../objects/database');
 var obj_user = require('../objects/user');
 var obj_notify = require('../objects/notifications');
 
+exports.lookup = function(req, res)
+{
+	// Returns 1 if username is not used
+	if (req.body.username == undefined || req.body.username == '')
+	{
+		res.send({result: 0});
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+	dao.query("SELECT user_id FROM user WHERE BINARY user_id = '" + dao.safen(req.body.username) + "' LIMIT 1", output1);
+
+	function output1(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.send({result: 0});
+			return;
+		}
+
+		dao.die();
+		res.send({result: (result.length == 0)});
+	}
+}
+
 exports.create = function(req, res)
 {
 	if (req.body.username == undefined || req.body.username == '') // incorrect post data received. redirect. should never happen
 	{
 		res.redirect('/');
+		return;
+	}
+
+	if (req.body.username.length < 2)
+	{
+		res.redirect('/sign_up?miss=3');
+		return;
+	}
+
+	if (req.body.username.length > 40)
+	{
+		res.redirect('/sign_up?miss=4');
 		return;
 	}
 

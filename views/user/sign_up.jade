@@ -11,6 +11,12 @@ html.all
 			if (miss == '2')
 				div.notify1_bad
 					| Your username is already in use.
+			if (miss == '3')
+				div.notify1_bad
+					| Your username must be longer than 1 characters.
+			if (miss == '4')
+				div.notify1_bad
+					| Your username must be shorter than 40 characters.
 
 		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; margin-bottom:40px;")
 			| &#9733 Great Choice Signing Up &#9733
@@ -73,8 +79,7 @@ html.all
 					button.button1g(id="complete_button", type="submit", style="font-size:34px;")
 						| Continue
 
-	include ../footer
-
+	script(src="/jquery.js")
 	script
 		var user_id_pass = false;
 		var user_pass_pass = false;
@@ -88,7 +93,6 @@ html.all
 			$("#not_email").css('visiblility', 'visible');
 			$("#mismatch_passwords").hide();
 			$("#mismatch_passwords").css('visiblility', 'visible');
-			// $("#invalid_id").hide();
 			$("#username").bind('keyup change', function()
 			{
 				check_username();
@@ -129,8 +133,42 @@ html.all
 		});
 		function check_username()
 		{
-			// Need to check for username use
-			user_id_pass = true;
+			var name = $("#username").val();
+			if (name.length < 2)
+			{
+				$("#invalid_id").text("Your username must be longer than 1 characters.");
+				$("#invalid_id").show();
+				user_id_pass = 0;
+			}
+			else if (name.length > 40)
+			{
+				$("#invalid_id").text("Your username must be shorter than 40 characters.");
+				$("#invalid_id").show();
+				user_id_pass = 0;
+			}
+			else
+			{
+				$.ajax({
+					type: 'POST',
+					url: '/user/lookup',
+					data: {username: name}, 
+					dataType: 'json',
+					success: function(data){
+						if (!data.result && name != '')
+						{
+							user_id_pass = false;
+							$("#invalid_id").text("This username is in use, please choose another.");
+							$("#invalid_id").show();
+						}
+						else
+						{
+							user_id_pass = true;
+							$("#invalid_id").hide();
+						}
+						check_passes();
+					}
+				});
+			}
 			check_passes();
 		}
 		function show_not_email()
@@ -161,8 +199,11 @@ html.all
 		}
 		function check_passes()
 		{
+			console.log(user_id_pass + " " + user_pass_pass + " " + user_email_pass)
 			if (user_id_pass && user_pass_pass && user_email_pass)
 				$("#complete_button").removeAttr('disabled');
 			else
 				$("#complete_button").attr('disabled', 'disabled');
 		}
+
+	include ../footer

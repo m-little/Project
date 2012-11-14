@@ -3,3 +3,5 @@
 *.jade~
 *.css~
 *.json~
+*.log
+*.log~

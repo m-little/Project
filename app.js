@@ -7,6 +7,12 @@ CHEF_TITLES = ["Dish Washer", "Kitchen Assistant", "Chef de Partie", "Executive 
 
 website_title = 'Website Name';
 
+// Turn on debug mode if you want to view:
+//      - amount of database connections left open
+debug_mode = true;
+
+database_connections = 0;
+
 var express = require('express')
 	, routes = require('./routes')
 	, http = require('http')
@@ -78,6 +84,7 @@ app.post('/login', routes.login);
 
 app.get('/sign_up', routes.sign_up);
 app.post('/user/new', user.create);
+app.post('/user/lookup', user.lookup);
 app.get('/user/validate', user.validate);
 app.get('/user/profile', user.show_profile);
 app.post('/user/update_follow', user.update_follow);
