@@ -47,15 +47,15 @@ html.all(style="background-image:url('/images/bg1.png');")
 			div(style="width:168px; height:30px; margin:auto; position:relative; left:5px; top:6px; margin-bottom:-32px; padding-bottom:3px;")
 				div.star_power(id="stars_power")
 			- if (!global.session.logged_in)
-				div.star_outline(id="recipe_rank", title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks). Please login to rate.", style="cursor:default")
+				div.star_outline(id="recipe_rank", title="#{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks). Please login to rate.", style="cursor:default")
 			- else if (global.session.logged_in && recipe.owner == global.session.user.id)
-				div.star_outline(id="recipe_rank", title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks).", style="cursor:default")
+				div.star_outline(id="recipe_rank", title="#{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks).", style="cursor:default")
 			- else
 				- var text = (global.session.user_recipe_rank == -1 ? "" : " Your rank: " + (global.session.user_recipe_rank / 2) + " stars.");
-				div.star_outline(id="recipe_rank", title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks).#{text}", onClick="show_rank();")
+				div.star_outline(id="recipe_rank", title="#{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks).#{text}", onClick="show_rank();")
 
 			div(id="recipe_rank_text", style="float:right; position:relative; top:6px; right:10px; font-size:12px; color:gray;")
-				| #{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks)
+				| #{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks)
 			div(style="float:right; clear:right; position:relative; top:8px; right:10px; font-size:12px; color:gray;")
 				| Created on #{recipe.date_added.toDateString()}
 
@@ -143,7 +143,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 									span(style="font-size:10px; margin-left:5px; vertical-align:middle;")
 										| #{comment.owner.points}
 								- else
-									a(href="/user/profile?u=#{comment.owner.id}", style="margin:0px; padding:0px; cursor:pointer; text-decoration:none; color:gray;")
+									a(href="/user/profile?u=#{comment.owner.id}", style="margin:0px; padding:0px; cursor:pointer; text-decoration:none; color:gray; white-space:nowrap;")
 										| #{comment.owner.id}
 									span(style="font-size:10px; margin-left:5px; vertical-align:middle;")
 										| #{comment.owner.points}
@@ -308,6 +308,8 @@ html.all(style="background-image:url('/images/bg1.png');")
 					$(this).text(num + '/' + den);
 				else
 					$(this).text(integer + ' ' + num + '/' + den);
+				if (integer == 0 && num == 0)
+					$(this).text('');
 				$(this).css('visibility', 'visible');
 			});
 			$("#new_comment_button").click(function(){
@@ -647,8 +649,8 @@ html.all(style="background-image:url('/images/bg1.png');")
 						width -= 2;
 					$("#old_rank_power").css('width', width);
 					$("#stars_power").css('width', data.rank_avg / 10 * 160);
-					$("#recipe_rank").attr('title', (data.rank_avg / 2) + "/5 stars (" + data.rank_count + " ranks). Your rank: " + (data.rank / 2) + " stars.");
-					$("#recipe_rank_text").text((data.rank_avg / 2) + "/5 stars (" + data.rank_count + " ranks).");
+					$("#recipe_rank").attr('title', Math.round(data.rank_avg / 2 * 100) / 100 + "/5 stars (" + data.rank_count + " ranks). Your rank: " + (data.rank / 2) + " stars.");
+					$("#recipe_rank_text").text(Math.round(data.rank_avg / 2 * 100) / 100 + "/5 stars (" + data.rank_count + " ranks).");
 				}
 				});
 		}

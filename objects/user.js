@@ -13,6 +13,7 @@ function User(user_id, user_group, user_fname, user_lname, user_points, callback
 	this.lname = user_lname;
 	this.date_added = undefined;
 	this.followers = [];
+	this.confirmed_followers = 0;
 	this.following = [];
 	this.show_email = false;
 	this.email = '';
@@ -51,7 +52,11 @@ function User(user_id, user_group, user_fname, user_lname, user_points, callback
 			if (row.user_id_1 == vars.user.id) // this follows
 				vars.user.following.push({id: row.user_id_2, accepted: row.accepted});
 			else // this has follower
+			{
 				vars.user.followers.push({id: row.user_id_1, accepted: row.accepted});
+				if (row.accepted)
+					vars.user.confirmed_followers += 1;
+			}
 		}
 
 		vars.dao.die();

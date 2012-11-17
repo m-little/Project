@@ -41,7 +41,7 @@ DROP TABLE IF EXISTS video;
 
 CREATE TABLE passkeys
 (
-user_id VARCHAR(40) NOT NULL,
+user_id VARCHAR(40) BINARY NOT NULL,
 pass VARCHAR(40) NOT NULL,
 salt VARCHAR(40) NOT NULL,
 CONSTRAINT pk_passkeys PRIMARY KEY(user_id)
@@ -96,7 +96,7 @@ CONSTRAINT fk_cont_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id
 
 CREATE TABLE user
 (
-user_id VARCHAR(40) NOT NULL UNIQUE,
+user_id VARCHAR(40) BINARY NOT NULL UNIQUE,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 user_group VARCHAR(20) NOT NULL,
 user_fname VARCHAR(40) NOT NULL,
@@ -116,8 +116,8 @@ CONSTRAINT fk_user_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id
 CREATE TABLE user_connections
 (
 connection_id SERIAL,
-user_id_1 VARCHAR(40) NOT NULL,
-user_id_2 VARCHAR(40) NOT NULL,
+user_id_1 VARCHAR(40) BINARY NOT NULL,
+user_id_2 VARCHAR(40) BINARY NOT NULL,
 accepted TINYINT(1) NOT NULL DEFAULT 0,
 active TINYINT(1) NOT NULL DEFAULT 1,
 date_added DATETIME NOT NULL,
@@ -137,9 +137,9 @@ CONSTRAINT pk_category PRIMARY KEY(category_id)
 CREATE TABLE recipe
 (
 recipe_id SERIAL,
-owner_id VARCHAR(40) NOT NULL,
+owner_id VARCHAR(40) BINARY NOT NULL,
 category_id SMALLINT UNSIGNED NOT NULL,
-recipe_name VARCHAR(40) NOT NULL,
+recipe_name VARCHAR(60) NOT NULL,
 public TINYINT(1) NOT NULL DEFAULT 1,
 serving_size VARCHAR(10) DEFAULT '0-0',
 prep_time TIME DEFAULT 0,
@@ -166,7 +166,7 @@ CONSTRAINT fk_recipe_picture_picture FOREIGN KEY(picture_id) REFERENCES picture(
 CREATE TABLE recipe_comment
 (
 comment_id SERIAL,
-owner_id VARCHAR(40) NOT NULL,
+owner_id VARCHAR(40) BINARY NOT NULL,
 recipe_id BIGINT UNSIGNED NOT NULL,
 reply_comment_id BIGINT UNSIGNED DEFAULT 0,
 content VARCHAR(500) NOT NULL,
@@ -181,7 +181,7 @@ CONSTRAINT fk_recipe_comment_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(rec
 CREATE TABLE recipe_ranking
 (
 rank_id SERIAL,
-owner_id VARCHAR(40) NOT NULL,
+owner_id VARCHAR(40) BINARY NOT NULL,
 recipe_id BIGINT UNSIGNED NOT NULL,
 rank TINYINT UNSIGNED DEFAULT 0,
 date_added DATETIME NOT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE ingredient
 (
 ingr_id SERIAL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
-ingr_name VARCHAR(40) NOT NULL,
+ingr_name VARCHAR(60) NOT NULL,
 use_count INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_ingredient PRIMARY KEY(ingr_id),
 CONSTRAINT fk_ingredient_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
@@ -345,6 +345,13 @@ INSERT INTO picture (caption, location) VALUES('butter','butter.jpg'); -- 27
 INSERT INTO picture (caption, location) VALUES('chicken','chicken.jpg'); -- 28
 INSERT INTO picture (caption, location) VALUES('Julia','julia.jpg'); -- 29
 INSERT INTO picture (caption, location) VALUES('Mike','mike.jpg'); -- 30
+INSERT INTO picture (caption, location) VALUES('Ground Beef','ground_beef.jpg'); -- 31
+INSERT INTO picture (caption, location) VALUES('All Purpose Flour','flour.jpg'); -- 32
+INSERT INTO picture (caption, location) VALUES('Brown Sugar','brown_sugar.jpg'); -- 33
+INSERT INTO picture (caption, location) VALUES('Lemon Juice','lemon_juice.jpg'); -- 34
+INSERT INTO picture (caption, location) VALUES('Butter','butter.jpg'); -- 35
+INSERT INTO picture (caption, location) VALUES('Milk','milk.jpg'); -- 36
+INSERT INTO picture (caption, location) VALUES('Vanilla Extract','van_ext.jpg'); -- 37
 
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Sam', 2, 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 30, 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
@@ -428,6 +435,9 @@ INSERT INTO category (category_name) VALUES('Desserts'); -- 15
 INSERT INTO category (category_name) VALUES('Drinks'); -- 16
 INSERT INTO category (category_name) VALUES('Holiday'); -- 17
 INSERT INTO category (category_name) VALUES('Other'); -- 18
+INSERT INTO category (category_name) VALUES('Ham'); -- 19
+INSERT INTO category (category_name) VALUES('Bread'); -- 20
+INSERT INTO category (category_name) VALUES('Vegetables'); -- 21
 
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Curtis', 11, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), '1. Do this\n2. Do that\n3. Maybe your done?', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Sam', 15, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('00:10', '%H:%i'), STR_TO_DATE('02:00', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
@@ -465,10 +475,10 @@ INSERT INTO ingredient (ingr_name) VALUES('Mayonnaise');  -- 3
 INSERT INTO ingredient (ingr_name) VALUES('Chopped Green Onions');  -- 4
 INSERT INTO ingredient (ingr_name) VALUES('Chopped Fresh Dill');  -- 5
 INSERT INTO ingredient (ingr_name) VALUES('Dijon Mustard');  -- 6
-INSERT INTO ingredient (ingr_name) VALUES('Lemon Juice');  -- 7
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Lemon Juice', 34);  -- 7
 INSERT INTO ingredient (ingr_name) VALUES('Pepper');  -- 8
 INSERT INTO ingredient (ingr_name, picture_id) VALUES('Unbaked Pie Shells', 18);  -- 9
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Sugar', 15);  -- 10
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('White Sugar', 15);  -- 10
 INSERT INTO ingredient (ingr_name, picture_id) VALUES('Salt', 19);  -- 11
 INSERT INTO ingredient (ingr_name, picture_id) VALUES('Cinnamon', 20);  -- 12
 INSERT INTO ingredient (ingr_name, picture_id) VALUES('Ginger', 13);  -- 13
@@ -476,8 +486,8 @@ INSERT INTO ingredient (ingr_name, picture_id) VALUES('Nutmeg', 21);  -- 14
 INSERT INTO ingredient (ingr_name, picture_id) VALUES('Eggs', 14);  -- 15
 INSERT INTO ingredient (ingr_name, picture_id) VALUES('Solid Pack Pumpkin', 17);  -- 16
 INSERT INTO ingredient (ingr_name, picture_id) VALUES('Evaporated Milk', 16);  -- 17
-INSERT INTO ingredient (ingr_name) VALUES('All Purpose Flour');  -- 18
-INSERT INTO ingredient (ingr_name) VALUES('Brown Sugar');  -- 19
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('All Purpose Flour', 32);  -- 18
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Brown Sugar', 33);  -- 19
 INSERT INTO ingredient (ingr_name) VALUES('Finely Chopped Sliced Almonds');  -- 20
 INSERT INTO ingredient (ingr_name) VALUES('Butter Flavored Shortening');  -- 21
 INSERT INTO ingredient (ingr_name) VALUES('Softened Cream Cheese');  -- 22
@@ -486,13 +496,13 @@ INSERT INTO ingredient (ingr_name) VALUES('Almond Extract');  -- 24
 INSERT INTO ingredient (ingr_name) VALUES('Seedless Raspberry Preserves');  -- 25
 INSERT INTO ingredient (ingr_name) VALUES('Flaked Coconut');  -- 26
 INSERT INTO ingredient (ingr_name) VALUES('Sliced Almonds');  -- 27
-INSERT INTO ingredient (ingr_name) VALUES('Butter'); -- 28
-INSERT INTO ingredient (ingr_name) VALUES('Vanilla Extract'); -- 29
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Butter', 35); -- 28
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Vanilla Extract', 37); -- 29
 INSERT INTO ingredient (ingr_name) VALUES('Baking Powder'); -- 30
-INSERT INTO ingredient (ingr_name) VALUES('Milk'); -- 31
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Milk', 36); -- 31
 INSERT INTO ingredient (ingr_name) VALUES('Pork Chops'); -- 32
 INSERT INTO ingredient (ingr_name) VALUES('Seasoned dry stuffing'); -- 33
-INSERT INTO ingredient (ingr_name) VALUES('Ground Beef'); -- 34
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Ground Beef', 31); -- 34
 INSERT INTO ingredient (ingr_name) VALUES('1 ounce Package of Ranch Dressing Mix'); -- 35
 INSERT INTO ingredient (ingr_name) VALUES('Crushed Saltine Crackers'); -- 36
 INSERT INTO ingredient (ingr_name) VALUES('Chopped Onion'); -- 37
