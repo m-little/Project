@@ -285,7 +285,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 		var show_buttons = true;
 		var new_rank = 0;
 		var recipe_my_rank = #{global.session.user_recipe_rank};
-		var servings = #{recipe.serving_size.match(/[0-9]?/)};
+		var servings = #{recipe.serving_size.match(/[0-9]+/)};
 		$(window).load(function()
 		{
 			$('#stars_power').css('visibility', 'visible'); // this keeps the background from appearing before the stars.
