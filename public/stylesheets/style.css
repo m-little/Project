@@ -272,6 +272,7 @@ button.button1b
 	border:1px solid #c1c1c1;
 	border-radius:.3em;
 	cursor:pointer;
+	vertical-align:middle;
 }
 button.button1b:hover
 {
@@ -282,8 +283,6 @@ button.button1b:active
 {
 	padding-top:5px;
 	padding-bottom:3px;
-	padding-left:8px;
-	padding-right:8px;
 }
 button.button1b:disabled
 {
@@ -308,6 +307,7 @@ button.button1r
 	border:1px solid #c1c1c1;
 	border-radius:.3em;
 	cursor:pointer;
+	vertical-align:middle;
 }
 button.button1r:hover
 {
@@ -318,8 +318,6 @@ button.button1r:active
 {
 	padding-top:5px;
 	padding-bottom:3px;
-	padding-left:8px;
-	padding-right:8px;
 }
 button.button1r:disabled
 {
@@ -344,6 +342,7 @@ button.button1g
 	border:1px solid #c1c1c1;
 	border-radius:.3em;
 	cursor:pointer;
+	vertical-align:middle;
 }
 button.button1g:hover
 {
@@ -354,8 +353,6 @@ button.button1g:active
 {
 	padding-top:5px;
 	padding-bottom:3px;
-	padding-left:8px;
-	padding-right:8px;
 }
 button.button1g:disabled
 {
