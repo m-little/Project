@@ -64,6 +64,8 @@ html.all(style="background-image:url('/images/bg1.png');")
 
 			div(style="border-radius:.6em; float:right; position:relative; padding:6px; margin:6px;")
 				div(style="font-size:14px; float:right; clear:both; text-align:center; width:100%;")
+					span(id="orig_serving_size", style="position:absolute; top:-8px; text-align:center; width:72px; font-size:12px; color:gray; visibility:hidden;")
+						| Original
 					| Serving Size
 				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%; margin-bottom:6px;")
 					| #{recipe.serving_size}
@@ -286,6 +288,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 		var new_rank = 0;
 		var recipe_my_rank = #{global.session.user_recipe_rank};
 		var servings = #{recipe.serving_size.match(/[0-9]+/)};
+		var new_servings = servings;
 		$(window).load(function()
 		{
 			$('#stars_power').css('visibility', 'visible'); // this keeps the background from appearing before the stars.
@@ -660,7 +663,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 			$("#ingr_alter_button").attr('onClick', 'hide_ingr_alter();');
 			$("#ingr_alter_button").html('&#9650; <span style="color:gray">Cancel</span>');
 			$("<div>Desired Serving Size:</div>").attr({id: 'ingr_alter_div', style: "visiblitly:hidden; width:390px; padding-top:10px; margin:auto;"}).appendTo($('#ingr_alter'));
-			$("<input></input>").attr({id: "ingr_alter_value", type: 'number', min: '0', max: '200', value: servings, class: 'input_text', style: "height:15px; margin-left:10px;"}).appendTo($("#ingr_alter_div"));
+			$("<input></input>").attr({id: "ingr_alter_value", type: 'number', min: '0', max: '200', value: new_servings, class: 'input_text', style: "height:15px; margin-left:10px;"}).appendTo($("#ingr_alter_div"));
 			$("<button>Update</button>").attr({id: "ingr_alter_submit", class: 'button1b', style: "margin-left:10px;", onClick: "update_ingrs(0);"}).appendTo($("#ingr_alter_div"));
 			$("<button>Reset</button>").attr({class: 'button1b', style: "margin-left:10px;", onClick: "update_ingrs(1); $('#ingr_alter_value').val(servings);"}).appendTo($("#ingr_alter_div"));
 			$("#ingr_alter_div").hide();
@@ -675,8 +678,8 @@ html.all(style="background-image:url('/images/bg1.png');")
 		}
 		function fix_num(ingr, m)
 		{
-			// alert(ingredients.length + " " + ingr);
 			var number = ingredients[ingr].amount * m;
+			if (number == 0) return '-';
 			number = shoot_for_1(ingr, number);
 			return prettify_fraction(number);
 		}
@@ -693,14 +696,14 @@ html.all(style="background-image:url('/images/bg1.png');")
 				return integer.toString();
 			else if (integer == 0)
 			{
-				if (num <= 1000)
+				if (num <= 1000 && num != 0)
 					return (num + '/' + den).toString();
 				else
 					return (Math.round(number * 100)/100).toString();
 			}
 			else
 			{
-				if (num <= 1000)
+				if (num <= 1000 && num != 0)
 					return (integer + ' ' + num + '/' + den).toString();
 				else
 					return (Math.round(number * 100)/100).toString();
@@ -712,9 +715,17 @@ html.all(style="background-image:url('/images/bg1.png');")
 		{
 			$("[id^=ingredient_amount]").each(function(){
 				if (reset)
+				{
 					$(this).text(fix_num($(this).attr('id').match(/[0-9]+/), 1));
+					new_servings = servings;
+					$("#orig_serving_size").css('visibility', 'hidden');
+				}
 				else
-					$(this).text(fix_num($(this).attr('id').match(/[0-9]+/), $("#ingr_alter_value").val() / servings));
+				{
+					new_servings = $("#ingr_alter_value").val();
+					$(this).text(fix_num($(this).attr('id').match(/[0-9]+/), new_servings / servings));
+					$("#orig_serving_size").css('visibility', 'visible');
+				}
 			});
 		}
 		function shoot_for_1(ingr, number)
@@ -729,9 +740,10 @@ html.all(style="background-image:url('/images/bg1.png');")
 			{
 				var value = convert(old_unit, number, list[i]);
 				var fraction = prettify_fraction(value);
+				if (fraction == 0) continue;
 				var den = fraction.match(/\/[0-9]+/);
 				if (den == null) den = 0;
-				if (Math.abs(1 - value) < Math.abs(1 - number) && fraction.indexOf('.') == -1 && den < 4)
+				if (Math.abs(1 - value) < Math.abs(1 - number) && fraction.indexOf('.') == -1 && den <= 4)
 				{
 					$("#ingredient_unit_name" + ingr.toString()).text(list[i].charAt(0).toLowerCase() + list[i].substr(1));
 					return value;
