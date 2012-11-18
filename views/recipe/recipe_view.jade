@@ -723,11 +723,15 @@ html.all(style="background-image:url('/images/bg1.png');")
 			if (old_unit == '') return number;
 			old_unit = (old_unit.match(/[a-zA-Z]+/)).toString();
 			old_unit = old_unit.charAt(0).toUpperCase() + old_unit.substr(1);
-			var list = ['Teaspoon', 'Tablespoon', 'Cup', 'Quart', 'Gallon'];
+			// var list = ['Teaspoon', 'Tablespoon', 'Cup', 'Quart', 'Gallon'];
+			var list = ['Gallon', 'Quart', 'Cup', 'Tablespoon', 'Teaspoon'];
 			for (var i in list)
 			{
 				var value = convert(old_unit, number, list[i]);
-				if (Math.abs(1 - value) < Math.abs(1 - number) && prettify_fraction(value).indexOf('.') == -1)
+				var fraction = prettify_fraction(value);
+				var den = fraction.match(/\/[0-9]+/);
+				if (den == null) den = 0;
+				if (Math.abs(1 - value) < Math.abs(1 - number) && fraction.indexOf('.') == -1 && den < 4)
 				{
 					$("#ingredient_unit_name" + ingr.toString()).text(list[i].charAt(0).toLowerCase() + list[i].substr(1));
 					return value;
