@@ -120,6 +120,7 @@ user_id_1 VARCHAR(40) BINARY NOT NULL,
 user_id_2 VARCHAR(40) BINARY NOT NULL,
 accepted TINYINT(1) NOT NULL DEFAULT 0,
 active TINYINT(1) NOT NULL DEFAULT 1,
+seen TINYINT(1) NOT NULL DEFAULT 0,
 date_added DATETIME NOT NULL,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
 CONSTRAINT fk_user_1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
@@ -370,14 +371,13 @@ INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'John', 1, 1, STR_TO_DATE('9,12,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Sam', 'James', 1, STR_TO_DATE('10,25,2012 19:20', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Catherine', 1, 1, STR_TO_DATE('10,16,2012 13:30', '%m,%d,%Y %H:%i'));
-INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Sam', 'John', 0, STR_TO_DATE('10,24,2012 17:50', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Julia', 'Mike', 1, 1, STR_TO_DATE('10,15,2012 10:07', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Julia', 'Curtis', 1, 1, STR_TO_DATE('10,04,2012 17:45', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Julia', 'Catherine', 1, STR_TO_DATE('10,13,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Mike', 'Curtis', 1, 1, STR_TO_DATE('10,28,2012 05:30', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Mike', 'Felicia', 1, 1, STR_TO_DATE('10,29,2012 10:03', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Curtis', 'Felicia', 1, 1, STR_TO_DATE('11,02,2012 13:50', '%m,%d,%Y %H:%i'));
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Curtis', 'John', 0, 0, STR_TO_DATE('11,04,2012 18:53', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Curtis', 'John', 0, 1, STR_TO_DATE('11,04,2012 18:53', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Curtis', 'Mona', 1, STR_TO_DATE('11,07,2012 12:03', '%m,%d,%Y %H:%i'));
 
 INSERT INTO unit (unit_name) VALUES(''); -- used for no unit ex: "4 eggs" 1

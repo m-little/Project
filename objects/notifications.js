@@ -39,7 +39,7 @@ var check_all = function(callback)
 			obj.new_replies.push({type: 0, recipe_id: row.recipe_id, recipe_name: row.recipe_name, comment_owner: row.owner_id, content: content, date: new Date(row.date_added)});
 		}
 
-		dao.query("SELECT user_id_1, date_added FROM user_connections WHERE BINARY user_id_2 = '" + dao.safen(obj.user_id) + "' AND accepted = 0", followers_output, obj);
+		dao.query("SELECT user_id_1, date_added FROM user_connections WHERE BINARY user_id_2 = '" + dao.safen(obj.user_id) + "' AND accepted = 0 AND seen = 0", followers_output, obj);
 	}
 
 	function followers_output(success, result, fields, obj)

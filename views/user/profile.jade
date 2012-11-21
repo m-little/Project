@@ -58,6 +58,8 @@ html.all(style="background-image:url('../images/bg1.png');")
 						- if (global.session.logged_in && global.session.user.id == user.id)
 							button.button1b
 								| Settings
+							button.button1b(onClick="window.location.href='/recipe/my'")
+								| My Recipes
 						-else if (global.session.logged_in)
 							- if (follows[0])
 								button.button1r(id="button_follow", onClick="prompt_update();")
@@ -76,6 +78,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 						p(style="margin:0px; text-align:center;")
 							| Date Joined
 						p(style="margin:0px;")
+							- user.date_added = new Date(user.date_added)
 							| #{DATE_DAYS[user.date_added.getDay()]}, #{DATE_MONTHS[user.date_added.getMonth()]} #{user.date_added.getDate()} #{user.date_added.getFullYear()}
 
 		div(style="padding:10px; border:1px solid #c2c2c2; background-color:white; margin-bottom:10px; clear:both; overflow:auto;")
@@ -127,11 +130,146 @@ html.all(style="background-image:url('../images/bg1.png');")
 										b
 											| #{public_recipes[i].unseen_comment_count} New Replies
 
+		- if (global.session.logged_in && global.session.user.id == user.id)
+			div(style="padding:10px; border:1px solid #c2c2c2; background-color:white; margin-bottom:10px; clear:both; overflow:auto;")
+				- if (user.confirmed_followers != user.followers.length)
+					span(id="follower_notyet")
+						div(style="font-size:18px; float:left;")
+							| Your Wanna-be Followers
+							span(style="font-size:12px; color:gray; margin-left:10px;")
+								| [ Pending Acceptance ]
+
+						div(style="float:left; clear:left;")
+
+						div(id="follower_notyet_div", style="font-size:14px; color:gray; margin:5px; margin-top:34px; border-top:1px solid #dbdbdb; padding-top:10px; overflow:auto;")
+							- for (var i in user.followers)
+								- var person = user.followers[i]
+
+								- if (!person.accepted)
+									div(id="follower_notyetdiv_#{person.id}", name="notyet", style="float:left; position:relative; border-radius:.3em; margin:4px; padding:2px; width:96px; height:96px; cursor:pointer; overflow:hidden;", title="#{person.id}", onClick="window.location.href='/user/profile?u=#{person.id}'")
+										div(id="follower_notyetremove_#{person.id}", style="position:absolute; right:-2px; top:-2px; background-color:white; padding-left:4px; padding-right:4px; border-radius:.4em; text-align:center; font-size:16px; visibility:hidden; color:red;", title="Stop #{person.id} from following you.")
+											| &#8855
+										div(id="follower_add_#{person.id}", style="position:absolute; left:-2px; bottom:-2px; background-color:white; padding-left:4px; padding-right:4px; border-radius:.4em; text-align:center; font-size:16px; visibility:hidden; color:green;", title="Allow #{person.id} to follow you.")
+											| &#x2713
+										img(id="follower_remove_#{person.id}", src="../images/user_images/#{person.picture.location}", style="width:100%;")
+
+				div(style="font-size:24px; float:left;")
+					| Your Followers
+
+				div(style="float:left; clear:left;")
+
+				div(id="followers", style="font-size:14px; color:gray; margin:5px; margin-top:34px; border-top:1px solid #dbdbdb; padding-top:10px;")
+					- if (user.followers.length == 0)
+						| You have no followers &#9785
+
+					- for (var i in user.followers)
+						- var person = user.followers[i]
+
+						- if (person.accepted)
+							div(id="follower_div_#{person.id}", style="float:left; position:relative; border-radius:.3em; margin:4px; padding:2px; width:96px; height:96px; cursor:pointer; overflow:hidden; ", title="#{person.id}", onClick="window.location.href='/user/profile?u=#{person.id}'")
+								div(id="follower_remove_#{person.id}", style="position:absolute; right:-2px; top:-2px; background-color:white; padding-left:4px; padding-right:4px; border-radius:.4em; text-align:center; font-size:16px; visibility:hidden; color:red;", title="Stop #{person.id} from following you.")
+									| &#8855
+								img(id="follower_image_#{person.id}", src="../images/user_images/#{person.picture.location}", style="width:100%;")
+
+			div(style="padding:10px; border:1px solid #c2c2c2; background-color:white; margin-bottom:10px; clear:both; overflow:auto;")
+				div(style="font-size:24px; float:left;")
+					| You Are Following
+
+				div(style="float:left; clear:left;")
+
+				- var flag = false
+				div(style="font-size:14px; color:gray; margin:5px; margin-top:34px; border-top:1px solid #dbdbdb; padding-top:10px; overflow:auto;")
+					- if (user.following.length == 0)
+						| No one &#9785
+
+					- for (var i in user.following)
+						- var person = user.following[i]
+
+						- if (person.accepted)
+							div(id="following_div_#{person.id}", style="float:left; position:relative; border-radius:.3em; margin:4px; padding:2px; width:96px; height:96px; cursor:pointer; overflow:hidden;", title="#{person.id}", onClick="window.location.href='/user/profile?u=#{person.id}'")
+								div(id="following_remove_#{person.id}", style="position:absolute; right:-2px; top:-2px; background-color:white; padding-left:4px; padding-right:4px; border-radius:.4em; text-align:center; font-size:16px; visibility:hidden; color:red;", title="Stop following #{person.id}.")
+									| &#8855
+								img(id="following_image_#{person.id}", src="../images/user_images/#{person.picture.location}", style="width:100%;")
+						- else
+							- flag = true
+
+				- if (flag)
+					span(id="following_notyet")
+						div(style="font-size:18px; float:left;")
+							| And Trying to Follow 
+							span(style="font-size:12px; color:gray; margin-left:10px;")
+								| [ Pending Acceptance ]
+
+						div(style="float:left; clear:left;")
+
+						div(id="following_notyet_div", style="font-size:14px; color:gray; margin:5px; margin-top:34px; border-top:1px solid #dbdbdb; padding-top:10px; overflow:auto;")
+							- for (var i in user.following)
+								- var person = user.following[i]
+
+								- if (!person.accepted)
+									div(id="following_div_#{person.id}", style="float:left; position:relative; border-radius:.3em; margin:4px; padding:2px; width:96px; height:96px; cursor:pointer; overflow:hidden;", title="#{person.id}", onClick="window.location.href='/user/profile?u=#{person.id}'")
+										div(id="following_remove_#{person.id}", style="position:absolute; right:-2px; top:-2px; background-color:white; padding-left:4px; padding-right:4px; border-radius:.4em; text-align:center; font-size:16px; visibility:hidden; color:red;", title="Stop following #{person.id}.")
+											| &#8855
+										img(id="following_image_#{person.id}", src="../images/user_images/#{person.picture.location}", style="width:100%;")
+							
+
 	script(src="/jquery.js")
 	script
 		var dialog_callback = undefined;
+		var change_type = 0;
+		var change_user = undefined;
 		$(document).ready(function()
 		{
+			$("[id^=follower_div_]").hover(function(){
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				$("#follower_remove_" + u).css('visibility', 'visible');
+			}, function(){
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				$("#follower_remove_" + u).css('visibility', 'hidden');
+			});
+			$("[id^=follower_notyetdiv_]").hover(function(){
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				$("#follower_notyetremove_" + u).css('visibility', 'visible');
+				$("#follower_add_" + u).css('visibility', 'visible');
+			}, function(){
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				$("#follower_notyetremove_" + u).css('visibility', 'hidden');
+				$("#follower_add_" + u).css('visibility', 'hidden');
+			});
+			$("[id^=following_div_notyet_]").hover(function(){
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				$("#following_remove_" + u).css('visibility', 'visible');
+			}, function(){
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				$("#following_remove_" + u).css('visibility', 'hidden');
+			});
+			$("[id^=follower_remove_]").click(function(e){
+				e.stopPropagation();
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				change_type = 1;
+				change_user = u;
+				show_dialog('Are you sure you would like to stop '+u+' from following you?', remove_follower);
+			});
+			$("[id^=follower_notyetremove_]").click(function(e){
+				e.stopPropagation();
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				change_type = 1;
+				change_user = u;
+				show_dialog('Are you sure you would like to decline '+u+' from following you?', remove_follower);
+			});
+			$("[id^=follower_add_]").click(function(e){
+				e.stopPropagation();
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				change_user = u;
+				confirm_follower();
+			});
+			$("[id^=following_remove_]").click(function(e){
+				e.stopPropagation();
+				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+				change_type = 0;
+				change_user = u;
+				show_dialog('Are you sure you would like to stop following '+u+'?', remove_follower);
+			});
 		});
 		function show_dialog(text, callback)
 		{
@@ -139,8 +277,8 @@ html.all(style="background-image:url('../images/bg1.png');")
 			$('<div></div>').attr({id: "dialog_box_outline", style: "position:absolute; width:300px; height:100px; margin-top:-50px; margin-left:-150px; top:50%; left:50%; border-radius:.5em; border:2px solid white; z-index:9;"}).appendTo('body');
 			$('<div></div>').attr({id: "dialog_box", style: "background-color:white; border-radius:.5em; position:absolute; left:2px; right:2px; top:2px; bottom:2px; padding:10px; text-align:center;"}).appendTo('#dialog_box_outline');
 			$('#dialog_box').text(text);
-			$('<button>Confirm</button>').attr({id: "dialog_box_confirm", class: "button1b", style: "float:left; position:absolute; bottom:10px; left:10px;", onClick: "unshow_dialog(1);"}).appendTo('#dialog_box');
-			$('<button>Cancel</button>').attr({id: "dialog_box_cancel", class: "button1r", style: "float:right; position:absolute; bottom:10px; right:10px;", onClick: "unshow_dialog(0);"}).appendTo('#dialog_box');
+			$('<button>Confirm</button>').attr({id: "dialog_box_confirm", class: "button1b", style: "float:left; position:absolute; bottom:10px; left:10px;", onClick: "unshow_dialog(true);"}).appendTo('#dialog_box');
+			$('<button>Cancel</button>').attr({id: "dialog_box_cancel", class: "button1r", style: "float:right; position:absolute; bottom:10px; right:10px;", onClick: "unshow_dialog(false);"}).appendTo('#dialog_box');
 			$('<div></div>').attr({id: "dialog_box_close", style: "background-image:url('../images/delete.png'); background-size:100% 100%; width:28px; height:28px; z-index:10; position:absolute; right:-16px; top:-16px; cursor:pointer;", onClick: "unshow_dialog(0);"}).appendTo('#dialog_box');
 			dialog_callback = callback;
 		}
@@ -165,7 +303,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			$.ajax({
 				type: 'POST',
 				url: '/user/update_follow',
-				data: {user: '#{user.id}'}, 
+				data: {user: '#{user.id}', type: 0}, 
 				dataType: 'json',
 				success: function(data){
 					if (data.status == 1)
@@ -179,6 +317,99 @@ html.all(style="background-image:url('../images/bg1.png');")
 						$("#button_follow").text('Start Following');
 						$("#button_follow").attr('class', 'button1b');
 						$("#following_status").css('visibility', 'hidden');
+					}
+				}
+			});
+		}
+		function remove_follower()
+		{
+			$.ajax({
+				type: 'POST',
+				url: '/user/update_follow',
+				data: {user: change_user, type: change_type}, 
+				dataType: 'json',
+				success: function(data){
+					if (data.type == 0)
+					{
+						var p = $("#following_div_" + data.user).parent();
+						if (p.attr('id') == 'following_notyet_div')
+						{
+							$("#following_div_" + data.user).remove();
+							if ($("#following_notyet_div").children().length == 0)
+							{
+								$("#following_notyet").remove();
+							}
+						}
+						else
+						{
+							$("#following_div_" + data.user).remove();
+							if (p.children().length == 0)
+							{
+								p.html('No one &#9785');
+							}
+						}
+					}
+					else
+					{
+						if ($("#follower_div_" + data.user).attr('id') == undefined)
+						{
+							$("#follower_notyetdiv_" + data.user).remove();
+							if ($("#follower_notyet_div").children().length == 0)
+							{
+								$("#follower_notyet").remove();
+							}
+						}
+						else
+						{
+							var p = $("#follower_div_" + data.user).parent();
+							$("#follower_div_" + data.user).remove();
+							if (p.children().length == 0)
+							{
+								p.html('You have no followers &#9785');
+							}
+						}
+					}
+				}
+			});
+		}
+		function confirm_follower()
+		{
+			$.ajax({
+				type: 'POST',
+				url: '/user/update_follow',
+				data: {user: change_user, type: 3}, 
+				dataType: 'json',
+				success: function(data){
+					$("#follower_add_" + data.user).remove();
+					var rem = $("#follower_notyetremove_" + data.user).attr('id', 'follower_remove_' + data.user);
+					rem.css('visibility', 'hidden');
+					rem.attr('onClick', "var e = arguments[0] || window.event; e.stopPropagation();	var u = event.target.id.match(/[a-zA-Z0-9]+$/);	change_type = 1; change_user = u; show_dialog('Are you sure you would like to stop '+u+' from following you?', remove_follower);");
+					var div = $("#follower_notyetdiv_" + data.user).clone();
+					div.attr('id', "follower_div_" + data.user);
+					div.appendTo("#followers");
+					$(document).ready(function()
+					{
+						div.hover(function(){
+							var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+							$("#follower_remove_" + u).css('visibility', 'visible');
+						}, function(){
+							var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+							$("#follower_remove_" + u).css('visibility', 'hidden');
+						});
+						rem.click(function(e){
+							// var e = arguments[0] || window.event;
+							// e.stopPropagation();
+							// var u = event.target.id.match(/[a-zA-Z0-9]+$/);
+							// change_type = 1;
+							// change_user = u;
+							// show_dialog('Are you sure you would like to stop '+u+' from following you?', remove_follower);
+						});
+					});
+					//
+					$("#follower_notyetdiv_" + data.user).remove();
+					if ($("#follower_notyet_div").children().length == 0)
+					{
+						$("#follower_notyet").remove();
 					}
 				}
 			});

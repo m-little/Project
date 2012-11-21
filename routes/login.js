@@ -44,6 +44,8 @@ exports.check_credentials = function check_credentials(user, pass, callback, res
 		{
 			logged_in = true;
 			global.session.user = new obj_user.User(user, row.user_group, row.user_fname, row.user_lname, row.user_points, user_created);
+			global.session.user.date_added = row.date_added;
+			global.session.user.show_email = row.show_email;
 			global.session.notifications = new obj_notify.Notifications(user);
 			dao.die();
 		}
@@ -78,7 +80,7 @@ exports.check_credentials = function check_credentials(user, pass, callback, res
 
 	}
 
-	dao.query("select p.user_id, pass, salt, user_group, user_fname, user_lname, user_points active from passkeys p JOIN user u ON p.user_id = u.user_id WHERE BINARY p.user_id = '" + dao.safen(user) + "' LIMIT 1", output, {res: res, location: location});
+	dao.query("select p.user_id, pass, salt, user_group, user_fname, user_lname, user_points, date_added, show_email from passkeys p JOIN user u ON p.user_id = u.user_id WHERE BINARY p.user_id = '" + dao.safen(user) + "' AND active = 1 LIMIT 1", output, {res: res, location: location});
 
 	return logged_in;
 }
