@@ -10,7 +10,7 @@ exports.home_view = function(req, res)
 	// initalize data base access object
 	var dao = new obj_dao.DAO
 
-	dao.query("SELECT * FROM wiki", output1);
+	dao.query("SELECT w.wiki_id, w.wiki_title, p.picture_id, w.description, p.location, p.caption FROM wiki w JOIN picture p  WHERE w.picture_id = p.picture_id ORDER BY wiki_id DESC LIMIT 5", output1);
 
 	function output1(success, result, fields)
 	{
@@ -23,11 +23,23 @@ exports.home_view = function(req, res)
 
 		
 
+		var preview_array = new Array();
+
+
 		// get the first row (should be the only row) from the results returned by the database
-		var row = result[0];
-		var new_prev = new obj_preview.preview(1,"Title", "Content", "Picture");
-		console.log(new_prev);
-		finished();
+		for(var i in result)
+		{
+			
+			var row = result[i];
+			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
+			var new_prev = new obj_preview.preview(row.wiki_id,row.wiki_title, row.description, new_picture);
+			preview_array.push(new_prev);
+
+		}
+		
+		//console.log(preview_array);
+		dao.die();
+		finished(preview_array);
 	}
 
 	function output2(success, result, fields, new_wiki)
@@ -36,9 +48,11 @@ exports.home_view = function(req, res)
 	}
 
 
-	function finished() 
+	function finished(new_wiki_home) 
 	{
-		res.render('wiki/wiki_home', { title: website_title});
+		console.log(new_wiki_home);
+		res.render('wiki/wiki_home', { title: website_title, home: new_wiki_home});
+
 	}
 
 }

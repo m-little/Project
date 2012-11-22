@@ -8,13 +8,13 @@ html.all(style="background-image:url('/images/bg1.png');")
 			h1= wiki.title
 			
 		- for(var i in wiki.content)
-			div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
+			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
 				
 				div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 					| #{wiki.content[i].title}
 
 				- if(wiki.content[i].picture.id != 1)
-					div(style="float:right; position:relative; top: -28px; height: 80px; width: 80px; margin-bottom:-28px; margin-left:8px;")
+					div(style="float:right; position:relative; top: -4px; height: 138px; width: 138px; margin-bottom:-14px; margin-left:8px;")
 						img(src= "/images/user_images/#{wiki.content[i].picture.location}", style= "max-width:100%;")
 
 				div(style="padding-left:10px;")
