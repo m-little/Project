@@ -320,35 +320,6 @@ INSERT INTO passkeys (user_id, pass, salt) VALUES('John', '2eb605c2fcd4b05b709be
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Felicia', 'bcf3f218b57a5362e3162b77d1dfb54167923618', 'c031c0deb66133614c85bdc40a8019ec90c01b98');
 
 
-INSERT INTO picture (name, caption, location) VALUES('unknown', 'No Picture', 'unknown.png'); -- 1
-INSERT INTO picture (name, caption, location) VALUES('sam1', 'Sam Luebbert', 'sam1.png'); -- 2
-INSERT INTO picture (name, caption, location) VALUES('Potato Salad', 'Potato Salad Yum!', 'pre_1.jpg'); -- 3
-INSERT INTO picture (name, caption, location) VALUES('Grandmas Pumpkin Pie', 'Pumpkin Pie! - It has pumpkin in it.', 'pre_2.jpg'); -- 4
-INSERT INTO picture (name, caption, location) VALUES('Raspberry Cheesecake Bars', 'Raspberry Cheesecake Bars; They are good for you!', 'pre_3.jpg'); -- 5
-INSERT INTO picture (name, caption, location) VALUES('curtis', 'Curtis Sydnor', 'curtis_sydnor.jpg'); -- 6
-INSERT INTO picture (name, caption, location) VALUES('mona', 'Mona Lisa', 'mona_lisa.jpg'); -- 7
-INSERT INTO picture (name, caption, location) VALUES('james', 'James "Sawyer" Ford', 'james_ford.jpg'); -- 8
-INSERT INTO picture (name, caption, location) VALUES('kate', 'Kate Middleton', 'kate_middleton.jpg'); -- 9
-INSERT INTO picture (name, caption, location) VALUES('john', 'Johnny Depp', 'johnny_depp.jpg'); -- 10
-INSERT INTO picture (name, caption, location) VALUES('felicia', 'Falicia Day', 'felicia_day.jpg'); -- 11
-INSERT INTO picture (name, caption, location) VALUES('Grandmas Pumpkin Pie', 'Just out of the oven.', 'pre_2_2.jpg'); -- 12
-INSERT INTO picture (name, caption, location) VALUES('Ginger', 'Gingers!', 'pre_ing1.jpg'); -- 13
-INSERT INTO picture (name, caption, location) VALUES('Egg', 'Eggs', 'pre_ing2.jpg'); -- 14
-INSERT INTO picture (name, caption, location) VALUES('Sugar', 'Sugar', 'pre_ing3.jpg'); -- 15
-INSERT INTO picture (name, caption, location) VALUES('Evaporated Milk', 'Evaporated Milk', 'pre_ing4.jpg'); -- 16
-INSERT INTO picture (name, caption, location) VALUES('Solid Packed Pumpkin', 'Solid Packed Pumpkin', 'pre_ing5.jpg'); -- 17
-INSERT INTO picture (name, caption, location) VALUES('Unbaked Pie Shells', 'Unbaked Pie Shells', 'pre_ing6.jpg'); -- 18
-INSERT INTO picture (name, caption, location) VALUES('Salt', 'Salt', 'pre_ing7.jpg'); -- 19
-INSERT INTO picture (name, caption, location) VALUES('Cinnamon', 'Cinnamon', 'pre_ing8.jpg'); -- 20
-INSERT INTO picture (name, caption, location) VALUES('Nutmeg', 'Nutmeg', 'pre_ing9.jpg'); -- 21
-INSERT INTO picture (name, caption, location) VALUES('Simple White Cake', 'CAKE!', 'simple_white.jpg'); -- 22
-INSERT INTO picture (name, caption, location) VALUES('Oven-Friend Pork Chops', 'pork chops', 'pork_chops.jpg'); -- 23
-INSERT INTO picture (name, caption, location) VALUES('Ranch Burgers', 'ranch burgers', 'ranch_burgers.jpg'); -- 24
-INSERT INTO picture (name, caption, location) VALUES('Pepper', 'pepper', 'pepper.jpg'); -- 25
-INSERT INTO picture (name, caption, location) VALUES('Flour', 'flour', 'flour.jpg'); -- 26
-INSERT INTO picture (name, caption, location) VALUES('Butter', 'butter','butter.jpg'); -- 27
-INSERT INTO picture (name, caption, location) VALUES('Chicken', 'chicken','chicken.jpg'); -- 28
-INSERT INTO picture (name, caption, location) VALUES('Grilling', 'Grilling','grill.jpg'); -- 29
 INSERT INTO picture (caption, location) VALUES('No Picture', 'unknown.png'); -- 1
 INSERT INTO picture (caption, location) VALUES('Sam Luebbert', 'sam1.png'); -- 2
 INSERT INTO picture (caption, location) VALUES('Potato Salad Yum!', 'pre_1.jpg'); -- 3
@@ -386,7 +357,6 @@ INSERT INTO picture (caption, location) VALUES('Lemon Juice','lemon_juice.jpg');
 INSERT INTO picture (caption, location) VALUES('Butter','butter.jpg'); -- 35
 INSERT INTO picture (caption, location) VALUES('Milk','milk.jpg'); -- 36
 INSERT INTO picture (caption, location) VALUES('Vanilla Extract','van_ext.jpg'); -- 37
->>>>>>> bf0a5d303074d61f5cbdc518911328075f00cd82
 
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Sam', 2, 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 30, 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);

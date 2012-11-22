@@ -42,12 +42,6 @@ exports.home_view = function(req, res)
 		finished(preview_array);
 	}
 
-	function output2(success, result, fields, new_wiki)
-	{
-
-	}
-
-
 	function finished(new_wiki_home) 
 	{
 		console.log(new_wiki_home);
