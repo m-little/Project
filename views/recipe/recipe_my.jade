@@ -32,7 +32,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 									| #{public_recipes[i].name}
 
 							div(style="color:black; margin:2px; padding:2px; background-color:white; border-radius:.3em; opacity:.8; filter:alpha(opacity=80); text-align:center;")
-								| #{public_recipes[i].rank / 2} / 5 
+								| #{Math.round(public_recipes[i].rank / 2 * 100) / 100} / 5 
 								b
 									| &#9733
 								| 's

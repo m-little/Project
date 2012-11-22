@@ -145,6 +145,7 @@ script
 	function update_notifications(data)
 	{
 		notification_data = data;
+		console.log(data);
 		redraw_notifications();
 		poll_notifications();
 	}
@@ -170,7 +171,7 @@ script
 				{
 					if (item.type == 0)
 					{
-						var row = $("<div></div>").attr({class: 'header_dropdown_button', onClick: "window.location.href='recipe/view?r_id=" + item.recipe_id + "'"}).appendTo("#header_menu_notifications");
+						var row = $("<div></div>").attr({class: 'header_dropdown_button', onClick: "window.location.href='/recipe/view?r_id=" + item.recipe_id + "'"}).appendTo("#header_menu_notifications");
 						var button = $("<div></div>").attr('class', 'header_dropdown_button_icon').appendTo(row);
 						$("<img/>").attr({src: "../images/icon_comment1.png", style:"position:relative; left:-2px; top:-2px; width:22px;"}).appendTo(button);
 						// 
@@ -189,8 +190,8 @@ script
 						var row = $("<div></div>").attr({class: 'header_dropdown_button', onClick: ""}).appendTo("#header_menu_notifications");
 						var button = $("<div></div>").attr('class', 'header_dropdown_button_icon').appendTo(row);
 						$("<img/>").attr({src: "../images/icon_person1.png", style:"position:relative; left:-2px; top:-2px; width:22px;"}).appendTo(button);
-						// 
-						var a = $("<a></a>").attr({href:"", style:"text-decoration:none; color:#bababa;"}).appendTo(row);
+						//
+						var a = $("<a></a>").attr({href:"/user/profile?u=", style:"text-decoration:none; color:#bababa;"}).appendTo(row);
 						//
 						$("<span>" + item.follower + " wants to follow you. </span>").appendTo(a);
 						$("<div></div>").attr({style: "margin-bottom:20px;"}).appendTo(a);

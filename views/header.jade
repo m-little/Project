@@ -25,16 +25,18 @@ div.header
 
 //- Start drop down boxes
 
-div.header_dropdown(id="header_menu_login", style="position:fixed; top:-1000px; right:10px; width:188px;")
+div.header_dropdown(id="header_menu_login", style="position:fixed; top:-1000px; right:10px; width:auto;")
 	form(style="margin:0px; padding:0px;", method='post', action='/login', id='header_login_form')
-		| Username
-		input.input_text(type="text", name="username", id="header_login_username", style="background-color:#616158; color:white; margin-bottom:5px;", required="required")
-		| Password
-		input.input_text(type="password", name="password", id="header_login_password", style="background-color:#616158; color:white; margin-bottom:5px;", required="required")
+		div(style="float:left; clear:both;")
+			| Username
+		input.input_text(type="text", name="username", id="header_login_username", style="background-color:#616158; color:white; margin-bottom:5px; margin-right:5px; clear:both; float:left;", required="required")
+		div(style="float:left; clear:both;")
+			| Password
+		input.input_text(type="password", name="password", id="header_login_password", style="background-color:#616158; color:white; margin-bottom:5px; clear:both; float:left;", required="required")
 		//- location argument allows us to return to the page we were on when we tried to logon.
 		input(id="header_menu_login_location", type="hidden", name="location")
 		
-		button.button2(style="float:right;", onClick="submit_drop_login();")
+		button.button2(style="float:right; clear:both;", onClick="submit_drop_login();")
 			| Login
 		button.button2(style="float:left;", onClick="hide_drop_login();")
 			| Cancel
@@ -55,6 +57,11 @@ div.header_dropdown(id="header_menu_settings", style="position:fixed; top:-1000p
 		| Log Out
 
 div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px; right:10px; width:auto;")
+	div.header_dropdown_button
+		div.header_dropdown_button_icon
+			img(src="../images/icon_new1.png", style="position:relative; left:-2px; top:-2px; width:22px;")
+		a(href="/recipe/create", style="text-decoration:none; color:#bababa;")
+			| New Recipe
 	div.header_dropdown_button
 		div.header_dropdown_button_icon
 			img(src="../images/icon_recipe1.png", style="position:relative; left:-2px; top:-2px; width:22px;")

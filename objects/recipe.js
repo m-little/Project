@@ -62,7 +62,7 @@ exports.Recipe = function Recipe(id_, owner_, public_, name_, cate_, serv_, prep
 	{
 		var ingredients = [];
 		for (var i = 0; i < this.ingredients.length; i++)
-			ingredients.push("{name: '" + this.ingredients[i].name + "', picture_location: '" + this.ingredients[i].picture.location + "', id: '" + this.ingredients[i].id + "', use_count: " + this.ingredients[i].use_count + "}");
+			ingredients.push("{name: '" + this.ingredients[i].name.replace("'", "\\'") + "', amount: '" + this.ingredients[i].amount + "', unit_name: '" + this.ingredients[i].unit_name + "', picture_location: '" + this.ingredients[i].picture.location + "', id: '" + this.ingredients[i].id + "', use_count: " + this.ingredients[i].use_count + "}");
 		return ingredients;
 	}
 

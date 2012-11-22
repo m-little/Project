@@ -2,6 +2,9 @@ var _mysql = require('mysql');
 
 exports.DAO = function()
 {
+	if (debug_mode)
+		console.log("database_connections: " + database_connections);
+	database_connections += 1;
 	this.client = _mysql.createClient({host: MYSQL_VALS.host,	port: MYSQL_VALS.port, user: MYSQL_VALS.user, password: MYSQL_VALS.password});
 
 	// use the project database
@@ -84,6 +87,7 @@ exports.DAO = function()
 	this.die = function()
 	{
 		this.client.end();
+		database_connections -= 1;
 	}
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

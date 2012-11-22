@@ -7,6 +7,12 @@ CHEF_TITLES = ["Dish Washer", "Kitchen Assistant", "Chef de Partie", "Executive 
 
 website_title = 'Website Name';
 
+// Turn on debug mode if you want to view:
+//      - amount of database connections left open
+debug_mode = false;
+
+database_connections = 0;
+
 var express = require('express')
 	, routes = require('./routes')
 	, http = require('http')
@@ -34,14 +40,14 @@ app.configure(function(){
 	// plenty of room for expansion.
 	// 500 Page
 	app.use(function(err, req, res, next){
-		console.error(err.stack);
+		console.error("###############################################################\033[31m\n" + (new Date()).toLocaleString() + "\n" + err.stack + "\033[0m");
 		res.render('500error', { title: website_title, error: 500, location: req.url });
 		});
 
 	// 404 Page
 	app.use(function(req, res, next){
 		res.render('400error', { title: website_title, error: 404, location: req.headers.host + req.url });
-		console.error("Could not handle request to " + req.url);
+		console.error("###############################################################\033[31m\n" + (new Date()).toLocaleString() + "\nCould not handle request to " + req.url + "\033[0m");
 		});
 });
 
@@ -78,6 +84,7 @@ app.post('/login', routes.login);
 
 app.get('/sign_up', routes.sign_up);
 app.post('/user/new', user.create);
+app.post('/user/lookup', user.lookup);
 app.get('/user/validate', user.validate);
 app.get('/user/profile', user.show_profile);
 app.post('/user/update_follow', user.update_follow);
@@ -104,4 +111,5 @@ app.get('/500error', function(req, res){
 
 http.createServer(app).listen(app.get('port'), function(){
 	console.log("Express server listening on port " + app.get('port'));
+	console.error("###############################################################\n" + "Non-Error: Express server listening on port " + app.get('port'));
 });

@@ -4,11 +4,49 @@ var obj_dao = require('../objects/database');
 var obj_user = require('../objects/user');
 var obj_notify = require('../objects/notifications');
 
+exports.lookup = function(req, res)
+{
+	// Returns 1 if username is not used
+	if (req.body.username == undefined || req.body.username == '')
+	{
+		res.send({result: 0});
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+	dao.query("SELECT user_id FROM user WHERE BINARY user_id = '" + dao.safen(req.body.username) + "' LIMIT 1", output1);
+
+	function output1(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.send({result: 0});
+			return;
+		}
+
+		dao.die();
+		res.send({result: (result.length == 0)});
+	}
+}
+
 exports.create = function(req, res)
 {
 	if (req.body.username == undefined || req.body.username == '') // incorrect post data received. redirect. should never happen
 	{
 		res.redirect('/');
+		return;
+	}
+
+	if (req.body.username.length < 2)
+	{
+		res.redirect('/sign_up?miss=3');
+		return;
+	}
+
+	if (req.body.username.length > 40)
+	{
+		res.redirect('/sign_up?miss=4');
 		return;
 	}
 
@@ -97,7 +135,7 @@ exports.validate = function(req, res)
 	var val_value = req.query.v.match(/[a-z0-9]+/gi)[0];
 
 	var dao = new obj_dao.DAO();
-	dao.query("SELECT user_id, validation_date FROM user WHERE validation_value = '" + val_value + "' LIMIT 1", output1);
+	dao.query("SELECT user_id, validation_date FROM user WHERE BINARY validation_value = '" + val_value + "' LIMIT 1", output1);
 
 	function output1(success, result, fields)
 	{
@@ -121,7 +159,7 @@ exports.validate = function(req, res)
 				return;
 			}
 
-			dao.query("UPDATE user SET active = 1 WHERE user_id = '" + row.user_id + "' LIMIT 1", output2);
+			dao.query("UPDATE user SET active = 1 WHERE BINARY user_id = '" + row.user_id + "' LIMIT 1", output2);
 		}
 	}
 
@@ -139,16 +177,29 @@ exports.validate = function(req, res)
 
 exports.show_profile = function(req, res)
 {
-	if (req.query.u == undefined || req.query.u == '') // incorrect data received.
+	if (req.query.u == undefined || req.query.u == '') // redirect to current user.
 	{
-		global.session.error_message.message = "User was undefined.";
-		res.redirect('/error');
+		if (!global.session.logged_in)
+		{
+			global.session.error_message.message = "User was undefined.";
+			res.redirect('/error');
+			return;
+		}
+		res.redirect('/user/profile?u=' + global.session.user.id);
 		return;
 	}
 
 	var user = undefined;
 	var dao = new obj_dao.DAO();
-	dao.query("SELECT user_id, user_group, user_fname, user_lname, show_email, email, user_points, date_added FROM user WHERE user_id = '" + dao.safen(req.query.u) + "'", output1);
+	if (global.session.logged_in && global.session.user.id == req.query.u)
+	{
+		user = global.session.user;
+		load_recipes();
+	}
+	else
+	{
+		dao.query("SELECT user_id, user_group, user_fname, user_lname, show_email, email, user_points, date_added FROM user WHERE user_id = '" + dao.safen(req.query.u) + "'", output1);
+	}
 
 	function output1(success, result, fields)
 	{
@@ -195,8 +246,22 @@ exports.show_profile = function(req, res)
 				if (user.recipes[i].public == 1)
 					public_recipes.push(user.recipes[i]);
 			}
-			complete(public_recipes);
+			if (global.session.logged_in && global.session.user.id == req.query.u)
+				dao.query("UPDATE user_connections SET seen = 1 WHERE user_id_2 = '" + dao.safen(req.query.u) + "' AND accepted = 0", output2, public_recipes);
+			else
+				complete(public_recipes);
 		}
+	}
+
+	function output2(success, result, fields, public_recipes)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+		complete(public_recipes);
 	}
 
 	function complete(public_recipes)
@@ -214,6 +279,7 @@ exports.show_profile = function(req, res)
 				}
 			}
 		}
+		dao.die();
 		res.render('user/profile', { title: website_title, user: user, public_recipes: public_recipes, follows: follows });
 	}
 }
@@ -227,10 +293,21 @@ exports.update_follow = function(req, res)
 		return;
 	}
 
+	req.body.type = parseInt(req.body.type);
+	if (isNaN(req.body.type) || req.body.type > 3 || req.body.type < 0) // incorrect data received.
+	{
+		global.session.error_message.message = "Type was undefined.";
+		res.redirect('/error');
+		return;
+	}
+
 	var dao = new obj_dao.DAO();
 
 	// Check for status
-	dao.query("SELECT accepted, active FROM user_connections WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "'", output1);
+	if (req.body.type == 0)
+		dao.query("SELECT accepted, active FROM user_connections WHERE BINARY user_id_1 = '" + dao.safen(global.session.user.id) + "' and BINARY user_id_2 = '" + dao.safen(req.body.user) + "'", output1);
+	else
+		dao.query("SELECT accepted, active FROM user_connections WHERE BINARY user_id_1 = '" + dao.safen(req.body.user) + "' and BINARY user_id_2 = '" + dao.safen(global.session.user.id) + "'", output1);
 
 	function output1(success, result, fields)
 	{
@@ -243,6 +320,12 @@ exports.update_follow = function(req, res)
 
 		if (result.length == 0)
 		{
+			if (req.body.type == 0)
+			{
+				res.redirect('/500error');
+				dao.die();
+				return;
+			}
 			// Create new entry
 			dao.query("INSERT INTO user_connections(user_id_1, user_id_2, date_added) VALUES ('" + dao.safen(global.session.user.id) + "', '" + dao.safen(req.body.user) + "', NOW())", complete1, 1);
 		}
@@ -252,13 +335,26 @@ exports.update_follow = function(req, res)
 
 			if (row.active == 1)
 			{
-				// "Remove" entry by setting active = 0
-				dao.query("UPDATE user_connections SET active = 0 WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 2);
+				if (req.body.type == 3)
+				{
+					dao.query("UPDATE user_connections SET accepted = 1 WHERE BINARY user_id_1 = '" + dao.safen(req.body.user) + "' and BINARY user_id_2 = '" + dao.safen(global.session.user.id) + "' LIMIT 1", complete1, 3);
+				}
+				else
+				{
+					// "Remove" entry by setting active = 0
+					if (req.body.type == 0)
+						dao.query("UPDATE user_connections SET active = 0 WHERE BINARY user_id_1 = '" + dao.safen(global.session.user.id) + "' and BINARY user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 2);
+					else
+						dao.query("UPDATE user_connections SET active = 0 WHERE BINARY user_id_1 = '" + dao.safen(req.body.user) + "' and BINARY user_id_2 = '" + dao.safen(global.session.user.id) + "' LIMIT 1", complete1, 2);
+				}
 			}
 			else
 			{
 				// "Create" new entry from undoing active = 0
-				dao.query("UPDATE user_connections SET active = 1, accepted = 0, date_added = NOW() WHERE user_id_1 = '" + dao.safen(global.session.user.id) + "' and user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 1);
+				if (req.body.type == 0)
+					dao.query("UPDATE user_connections SET active = 1, accepted = 0, date_added = NOW() WHERE BINARY user_id_1 = '" + dao.safen(global.session.user.id) + "' and BINARY user_id_2 = '" + dao.safen(req.body.user) + "' LIMIT 1", complete1, 1);
+				else
+					dao.query("UPDATE user_connections SET active = 1, accepted = 0, date_added = NOW() WHERE BINARY user_id_1 = '" + dao.safen(req.body.user) + "' and BINARY user_id_2 = '" + dao.safen(global.session.user.id) + "' LIMIT 1", complete1, 1);
 			}
 		}
 	}
@@ -272,32 +368,77 @@ exports.update_follow = function(req, res)
 			return;
 		}
 
-		if (status == 2) // Removed
+		if (req.body.type == 3) // accepted
 		{
-			for (var n in global.session.user.following)
+			dao.die();
+			for (var n in global.session.user.followers)
 			{
-				if (global.session.user.following[n] != null && global.session.user.following[n].id == req.body.user)
+				if (global.session.user.followers[n] != null && global.session.user.followers[n].id == req.body.user)
 				{
-					delete global.session.user.following[n];
+					global.session.user.followers[n].accepted = 1;
+					confirmed_followers += 1;
 					break;
+				}
+			}
+			res.send({status: status, user: req.body.user, type: req.body.type});
+			return
+		}
+
+		if (req.body.type == 0)
+		{
+			if (status == 2) // Removed
+			{
+				for (var n in global.session.user.following)
+				{
+					if (global.session.user.following[n] != null && global.session.user.following[n].id == req.body.user)
+					{
+						delete global.session.user.following[n];
+						break;
+					}
+				}
+			}
+			else
+			{
+				var i = global.session.user.following.indexOf(null);
+				if (i != -1)
+				{
+					global.session.user.following[i] = {id: req.body.user, accepted: false};
+				}
+				else
+				{
+					global.session.user.following.push({id: req.body.user, accepted: false});
 				}
 			}
 		}
 		else
 		{
-			var i = global.session.user.following.indexOf(null);
-			if (i != -1)
+			if (status == 2) // Removed
 			{
-				global.session.user.following[i] = {id: req.body.user, accepted: false};
+				for (var n in global.session.user.followers)
+				{
+					if (global.session.user.followers[n] != null && global.session.user.followers[n].id == req.body.user)
+					{
+						delete global.session.user.followers[n];
+						break;
+					}
+				}
 			}
 			else
 			{
-				global.session.user.following.push({id: req.body.user, accepted: false});
+				var i = global.session.user.followers.indexOf(null);
+				if (i != -1)
+				{
+					global.session.user.followers[i] = {id: req.body.user, accepted: false};
+				}
+				else
+				{
+					global.session.user.followers.push({id: req.body.user, accepted: false});
+				}
 			}
 		}
 
 		dao.die();
-		res.send({status: status});
+		res.send({status: status, user: req.body.user, type: req.body.type});
 	}
 }
 

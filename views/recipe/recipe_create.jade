@@ -1,5 +1,5 @@
 doctype 5
-html.all(style="background-image:url('../images/bg1.png');")
+html.all(style="background-image:url('/images/bg1.png');")
 
 	include ../header
 	div(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:white; margin:auto;")
@@ -35,9 +35,6 @@ html.all(style="background-image:url('../images/bg1.png');")
 				div(style="float:left")
 					input(type="file", id="recipe_picture", name="recipe_pictures", style="margin-left:10px; width:200px")
 				div(style="float:left")
-					| Picture Name:
-					input.input_text(type="text", class="picture_name", name="picture_name", style="margin-left:5px; width:100px")
-				div(style="float:left; margin-left:10px")
 					| Picture Caption:
 					input.input_text(type="text", class="picture_caption", name="picture_caption", style="margin-left:5px; width:150px")
 
@@ -47,27 +44,29 @@ html.all(style="background-image:url('../images/bg1.png');")
 					| Security:
 				div(style="float:left")
 					p(style="margin:0px")
-						input(type="radio", name="security", value="0", checked="checked") 
-						| Private
-					p(style="margin:0px")
-						input(type="radio", name="security", value="1")
+						input(type="radio", name="security", value="1", checked="checked") 
 						| Public
+					p(style="margin:0px")
+						input(type="radio", name="security", value="0")
+						| Secret
 
 			//- Ingredients input 
 			div.ingredient(style="clear:left; width:900px; padding:10px")
 				div(style="float:left; height:27px; width:150px")
 					| Ingredients:
-				div(style="float:left")
+				div(class="marker delete_0", style="float:left")
 					input.input_text(type="text", class="ingredient_name", style="margin-left:10px; width:170px", name="ingredient")
-				div(style="float:left; margin-left:10px")
+				div(class="delete_0", style="float:left; margin-left:10px")
 					| Unit:
 					select(size="1", class="unit_type", style=" width:140px; font-size:16px; margin-left:10px")
 						- for( var i = 0; i < units.length; i++)
 							option(value=units_id[i])
 								= units[i]
-				div(style="float:left; margin-left:10px")
+				div(class="delete_0", style="float:left; margin-left:10px")
 					| Amount:
 					input.input_text(type="text", class="unit_amount", style="margin-left:10px; width:30px", name="unit_amount")
+				div(class="delete_0", style="float:left; margin-left:10px")
+					img(src="/images/delete.png", alt="delete", class="ingredient_delete", value="0", style="display:none")
 				div(style="float:left")
 					input.add_ingredient(type="button", value="Add Ingredient", style="margin-left:10px; height:27px")
 
@@ -112,7 +111,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 				div(style="float:right")
 					input(type="button", class="recipe_submit", value="Create", style="height:30px; width:80px")
 
-	script(src="../jquery.js")
+	script(src="/jquery.js")
 	script
 		$(document).ready(function()
 		{	
@@ -126,10 +125,30 @@ html.all(style="background-image:url('../images/bg1.png');")
 			//- Creates new recipe lines
 			$('.add_ingredient').live('click', function() {
 				$('.add_ingredient').hide();
-				$('.ingredient').append('<div style="clear:left; float:left; margin-top:5px;"><input class="input_text ingredient_name" type="text", style="margin-left:160px; width:170px"></div>');
-				$('.ingredient').append('<div style="float:left; margin-top:5px; margin-left:10px">Unit: <select class="unit_type" style="width:140px; font-size:16px; margin-left:5px">' + units_select_string + '</select></div>');
-				$('.ingredient').append('<div style="float:left; margin-top:5px; margin-left:10px">Amount: <input type="text" class="input_text unit_amount" style="width:30px; margin-left:5px"></div>');
+				$('.ingredient_delete').show();
+
+				var count = 0;
+				$('.ingredient_delete').each(function() {
+					if(count <= $(this).attr('value')) {
+						count = $(this).attr('value') + 1;
+					}
+				});
+
+				$('.ingredient').append('<div class="marker delete_' + count + '" style="float:left; margin-top:5px;"><input class="input_text ingredient_name" type="text", style="margin-left:160px; width:170px"></div>');
+				$('.ingredient').append('<div class="delete_' + count + '" style="float:left; margin-top:5px; margin-left:10px">Unit: <select class="unit_type" style="width:140px; font-size:16px; margin-left:5px">' + units_select_string + '</select></div>');
+				$('.ingredient').append('<div class="delete_' + count + '" style="float:left; margin-top:5px; margin-left:10px">Amount: <input type="text" class="input_text unit_amount" style="width:30px; margin-left:5px"></div>');
+				$('.ingredient').append('<div class="delete_' + count + ' curtis" value="29" style="float:left; margin-left:10px"><img src="/images/delete.png" alt="delete" class="ingredient_delete" value="' + count + '" style="display:none"></div>')
 				$('.ingredient').append('<div style="float:left; margin-top:5px;"><input type="button" class="add_ingredient" value="Add Ingredient" style="margin-left:10px; height:27px"></div>');
+			});
+
+			//- Remove ingredient from recipe create 
+			$('.ingredient_delete').live('click', function(event) {
+				if($('.ingredient_delete').first().attr('value') == $(this).attr('value')) {
+					$('.marker:eq(1)').children('.ingredient_name').css('margin-left', '10px');
+				}
+
+				var value = $(this).attr('value');
+				$('.delete_' + value).remove();
 			});
 
 			//- Ajax function to send information server side

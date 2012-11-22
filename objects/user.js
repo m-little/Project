@@ -13,6 +13,7 @@ function User(user_id, user_group, user_fname, user_lname, user_points, callback
 	this.lname = user_lname;
 	this.date_added = undefined;
 	this.followers = [];
+	this.confirmed_followers = 0;
 	this.following = [];
 	this.show_email = false;
 	this.email = '';
@@ -49,9 +50,13 @@ function User(user_id, user_group, user_fname, user_lname, user_points, callback
 		{
 			var row = result[i];
 			if (row.user_id_1 == vars.user.id) // this follows
-				vars.user.following.push({id: row.user_id_2, accepted: row.accepted});
+				vars.user.following.push({id: row.user_id_2, accepted: row.accepted, picture: new obj_picture.Picture(row.picture_id, row.caption, row.location)});
 			else // this has follower
-				vars.user.followers.push({id: row.user_id_1, accepted: row.accepted});
+			{
+				vars.user.followers.push({id: row.user_id_1, accepted: row.accepted, picture: new obj_picture.Picture(row.picture_id, row.caption, row.location)});
+				if (row.accepted)
+					vars.user.confirmed_followers += 1;
+			}
 		}
 
 		vars.dao.die();
@@ -70,10 +75,11 @@ function User(user_id, user_group, user_fname, user_lname, user_points, callback
 		var row = result[0];
 		vars.user.set_picture(new obj_picture.Picture(row.picture_id, row.caption, row.location));
 		
-		dao.query("SELECT user_id_1, user_id_2, accepted FROM user_connections WHERE active = 1 and (user_id_1 = '"+dao.safen(vars.user.id)+"' or user_id_2 = '"+dao.safen(vars.user.id)+"')", load_followers, vars);
+		// load followers
+		dao.query("SELECT user_id_1, user_id_2, accepted, p.picture_id, p.location, p.caption FROM user_connections uc JOIN user u ON ((uc.user_id_1 = u.user_id AND NOT BINARY u.user_id = '"+dao.safen(vars.user.id)+"') OR (uc.user_id_2 = u.user_id AND NOT BINARY u.user_id = '"+dao.safen(vars.user.id)+"')) JOIN picture p ON u.picture_id = p.picture_id WHERE uc.active = 1 and (BINARY user_id_1 = '"+dao.safen(vars.user.id)+"' or BINARY user_id_2 = '"+dao.safen(vars.user.id)+"')", load_followers, vars);
 	}
 
-	dao.query("SELECT u.picture_id, caption, location FROM picture p JOIN user u ON p.picture_id = u.picture_id WHERE u.user_id = '"+dao.safen(this.id)+"' LIMIT 1", load_picture, {dao:dao, user:this, callback:callback});
+	dao.query("SELECT u.picture_id, caption, location FROM picture p JOIN user u ON p.picture_id = u.picture_id WHERE BINARY u.user_id = '"+dao.safen(this.id)+"' LIMIT 1", load_picture, {dao:dao, user:this, callback:callback});
 }
 
 exports.load_recipes = function(callback)
@@ -81,7 +87,7 @@ exports.load_recipes = function(callback)
 	var dao = new obj_dao.DAO();
 	this.recipes = [];
 
-	dao.query("SELECT r.recipe_id, recipe_name, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE owner_id = '" + dao.safen(this.id) + "'", output1, {callback: callback, user: this});
+	dao.query("SELECT r.recipe_id, recipe_name, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE BINARY owner_id = '" + dao.safen(this.id) + "'", output1, {callback: callback, user: this});
 
 	function output1(success, result, fields, vars)
 	{
@@ -131,7 +137,7 @@ exports.load_recipes = function(callback)
 		else
 		{
 			vars.i = 0;
-			dao.query("SELECT COUNT(seen) as unseen_count FROM recipe_comment WHERE recipe_id = " + vars.user.recipes[vars.i].id + " AND seen = 0 AND NOT owner_id = '" + dao.safen(vars.user.id) + "'", output3, vars);
+			dao.query("SELECT COUNT(seen) as unseen_count FROM recipe_comment WHERE recipe_id = " + vars.user.recipes[vars.i].id + " AND seen = 0 AND NOT BINARY owner_id = '" + dao.safen(vars.user.id) + "'", output3, vars);
 		}
 	}
 
