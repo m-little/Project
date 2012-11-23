@@ -19,7 +19,8 @@ var express = require('express')
 	, path = require('path')
 	, user = require('./routes/user')
 	, recipe = require('./routes/recipe')
-	, wiki = require('./routes/wiki');
+	, wiki = require('./routes/wiki')
+	, search = require('./routes/search');
 
 var app = express();
 
@@ -101,6 +102,8 @@ app.get('/recipe/my', recipe.my);
 
 app.get('/wiki/view', wiki.display_view);
 app.get('/wiki/home', wiki.home_view);
+
+app.get('/query', search.search_results);
 
 app.get('/error', function(req, res){
 	res.render('error', { title: website_title, error: global.session.error_message });

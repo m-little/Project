@@ -72,10 +72,11 @@ wiki_cat_id BIGINT UNSIGNED,
 wiki_title VARCHAR(40) NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 description TEXT NOT NULL,
+FULLTEXT(wiki_title),
 CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
 CONSTRAINT fk_wiki_video FOREIGN KEY(video_id) REFERENCES video(video_id),
 CONSTRAINT fk_wiki_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE wiki_category
 (
@@ -92,10 +93,11 @@ wiki_id BIGINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 title VARCHAR(40),
 content TEXT NOT NULL,
+FULLTEXT(title, content),
 CONSTRAINT pk_wiki_cont PRIMARY KEY(wiki_cont_id),
 CONSTRAINT fk_wiki FOREIGN KEY(wiki_id) REFERENCES wiki(wiki_id),
 CONSTRAINT fk_cont_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE user
 (
