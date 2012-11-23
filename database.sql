@@ -70,8 +70,11 @@ wiki_id SERIAL,
 video_id BIGINT UNSIGNED,
 wiki_cat_id BIGINT UNSIGNED,
 wiki_title VARCHAR(40) NOT NULL,
+picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
+description TEXT NOT NULL,
 CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
-CONSTRAINT fk_wiki_video FOREIGN KEY(video_id) REFERENCES video(video_id)
+CONSTRAINT fk_wiki_video FOREIGN KEY(video_id) REFERENCES video(video_id),
+CONSTRAINT fk_wiki_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
 );
 
 CREATE TABLE wiki_category
@@ -316,6 +319,7 @@ INSERT INTO passkeys (user_id, pass, salt) VALUES('Catherine', 'e540334e5f07b9b1
 INSERT INTO passkeys (user_id, pass, salt) VALUES('John', '2eb605c2fcd4b05b709bef4cad5ecd289139a143', 'a8f474ca1460e5670c1f0756b99f4d9a01ffbab9');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Felicia', 'bcf3f218b57a5362e3162b77d1dfb54167923618', 'c031c0deb66133614c85bdc40a8019ec90c01b98');
 
+
 INSERT INTO picture (caption, location) VALUES('No Picture', 'unknown.png'); -- 1
 INSERT INTO picture (caption, location) VALUES('Sam Luebbert', 'sam1.png'); -- 2
 INSERT INTO picture (caption, location) VALUES('Potato Salad Yum!', 'pre_1.jpg'); -- 3
@@ -559,7 +563,7 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 
 -- Wiki data
 INSERT INTO video (name, caption, address) VALUES("Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video 1
-INSERT INTO video (name, caption, address) VALUES("Test Video", "How To Grill", "http://www.youtube.com/embed/h82C-FCq2dI"); -- Grilling 1
+INSERT INTO video (name, caption, address) VALUES("Test Video", "How To Grill", "http://www.youtube.com/embed/h82C-FCq2dI"); -- Grilling 2
 
 
 -- Wiki categories
@@ -574,7 +578,7 @@ INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Pepper", 1); -- 
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Butter", 1); -- 4
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Flour", 1); -- 5
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Chicken", 1);  -- 6
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Griling", 3);  -- 6
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(2, "Grilling", 3);  -- 7
 
 -- Wiki content
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,19, "Salt", "Salt, also known as rock salt, is a crystalline mineral that is composed primarily of sodium chloride (NaCl), a chemical compound belonging to the larger class of ionic salts."); -- 1 
@@ -582,5 +586,5 @@ INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(2,15, "Sug
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(3,25, "Pepper", "<a href='?w_id=1'>Black pepper</a> (Piper nigrum) is a flowering vine in the family Piperaceae, cultivated for its fruit, which is usually dried and used as a spice and seasoning. The fruit, known as a peppercorn when dried, is approximately 5 millimetres (0.20 in) in diameter, dark red when fully mature, and, like all drupes, contains a single seed"); -- 3
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(4,27, "Butter", "Butter is a dairy product made by churning fresh or fermented cream or milk. It is generally used as a spread and a condiment, as well as in cooking, such as baking, sauce making, and pan frying. Butter consists of butterfat, milk proteins and water."); -- 4
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(5,26, "Flour", "Flour is a powder which is made by grinding cereal grains, other seeds or roots (like Cassava). It is the main ingredient of bread, which is a staple food for many cultures, making the availability of adequate supplies of flour a major economic and political issue at various times throughout history. Wheat flour is one of the most important foods in European, North American, Middle Eastern, Indian and North African cultures, and is the defining ingredient in most of their styles of breads and pastries. Maize flour has been important in Mesoamerican cuisine since ancient times, and remains a staple in much of Latin American cuisine.[citation needed] Rye flour is an important constituent of bread in much of central/northern Europe."); -- 5
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(6,28, "Chicken", "The chicken (Gallus gallus domesticus is a domesticated fowl, a subspecies of the Red Junglefowl. As one of the most common and widespread domestic animals, and with a population of more than 24 billion in 2003,[1] there are more chickens in the world than any other species of bird. Humans keep chickens primarily as a source of food, consuming both their meat and their eggs. The chicken's cultural and culinary dominance could be considered amazing to some in view of its believed domestic origin and purpose and it has inspired contributions to culture, art, cuisine, science and religion [2] from antiquity to the present."); -- 5
-
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(6,28, "Chicken", "The chicken (Gallus gallus domesticus is a domesticated fowl, a subspecies of the Red Junglefowl. As one of the most common and widespread domestic animals, and with a population of more than 24 billion in 2003,[1] there are more chickens in the world than any other species of bird. Humans keep chickens primarily as a source of food, consuming both their meat and their eggs. The chicken's cultural and culinary dominance could be considered amazing to some in view of its believed domestic origin and purpose and it has inspired contributions to culture, art, cuisine, science and religion [2] from antiquity to the present."); -- 6
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(7,29, "Grilling", "Grilling is a form of cooking that involves dry heat applied to the surface of food, commonly from above or below. Grilling usually involves a significant amount of direct, radiant heat, and tends to be used for cooking meat quickly and meat that has already been sliced (or other pieces). Food to be grilled is cooked on a grill (an open wire grid such as a gridiron with a heat source above or below), a grill pan (similar to a frying pan, but with raised ridges to mimic the wires of an open grill), or griddle (a flat plate heated from below).[1] Heat transfer to the food when using a grill is primarily via thermal radiation. Heat transfer when using a grill pan or griddle is by direct conduction. In the United States and Canada, when the heat source for grilling comes from above, grilling is termed broiling.[2] In this case, the pan that holds the food is called a broiler pan, and heat transfer is by thermal convection.");  -- 7
