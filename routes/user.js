@@ -376,7 +376,7 @@ exports.update_follow = function(req, res)
 				if (global.session.user.followers[n] != null && global.session.user.followers[n].id == req.body.user)
 				{
 					global.session.user.followers[n].accepted = 1;
-					confirmed_followers += 1;
+					global.session.user.confirmed_followers += 1;
 					break;
 				}
 			}

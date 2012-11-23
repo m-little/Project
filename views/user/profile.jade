@@ -132,7 +132,12 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 		- if (global.session.logged_in && global.session.user.id == user.id)
 			div(style="padding:10px; border:1px solid #c2c2c2; background-color:white; margin-bottom:10px; clear:both; overflow:auto;")
-				- if (user.confirmed_followers != user.followers.length)
+				- var flag = false
+				- for (var i in user.followers)
+					- if (user.followers[i] != null && !user.followers[i].accepted)
+						- flag = true
+						- break
+				- if (flag)
 					span(id="follower_notyet")
 						div(style="font-size:18px; float:left;")
 							| Your Wanna-be Followers
@@ -145,7 +150,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 							- for (var i in user.followers)
 								- var person = user.followers[i]
 
-								- if (!person.accepted)
+								- if (person != null && !person.accepted)
 									div(id="follower_notyetdiv_#{person.id}", name="notyet", style="float:left; position:relative; border-radius:.3em; margin:4px; padding:2px; width:96px; height:96px; cursor:pointer; overflow:hidden;", title="#{person.id}", onClick="window.location.href='/user/profile?u=#{person.id}'")
 										div(id="follower_notyetremove_#{person.id}", style="position:absolute; right:-2px; top:-2px; background-color:white; padding-left:4px; padding-right:4px; border-radius:.4em; text-align:center; font-size:16px; visibility:hidden; color:red;", title="Stop #{person.id} from following you.")
 											| &#8855
@@ -159,13 +164,13 @@ html.all(style="background-image:url('../images/bg1.png');")
 				div(style="float:left; clear:left;")
 
 				div(id="followers", style="font-size:14px; color:gray; margin:5px; margin-top:34px; border-top:1px solid #dbdbdb; padding-top:10px;")
-					- if (user.followers.length == 0)
+					- if (user.confirmed_followers == 0)
 						| You have no followers &#9785
 
 					- for (var i in user.followers)
 						- var person = user.followers[i]
 
-						- if (person.accepted)
+						- if (person != null && person.accepted)
 							div(id="follower_div_#{person.id}", style="float:left; position:relative; border-radius:.3em; margin:4px; padding:2px; width:96px; height:96px; cursor:pointer; overflow:hidden; ", title="#{person.id}", onClick="window.location.href='/user/profile?u=#{person.id}'")
 								div(id="follower_remove_#{person.id}", style="position:absolute; right:-2px; top:-2px; background-color:white; padding-left:4px; padding-right:4px; border-radius:.4em; text-align:center; font-size:16px; visibility:hidden; color:red;", title="Stop #{person.id} from following you.")
 									| &#8855
@@ -185,12 +190,12 @@ html.all(style="background-image:url('../images/bg1.png');")
 					- for (var i in user.following)
 						- var person = user.following[i]
 
-						- if (person.accepted)
+						- if (person != null && person.accepted)
 							div(id="following_div_#{person.id}", style="float:left; position:relative; border-radius:.3em; margin:4px; padding:2px; width:96px; height:96px; cursor:pointer; overflow:hidden;", title="#{person.id}", onClick="window.location.href='/user/profile?u=#{person.id}'")
 								div(id="following_remove_#{person.id}", style="position:absolute; right:-2px; top:-2px; background-color:white; padding-left:4px; padding-right:4px; border-radius:.4em; text-align:center; font-size:16px; visibility:hidden; color:red;", title="Stop following #{person.id}.")
 									| &#8855
 								img(id="following_image_#{person.id}", src="../images/user_images/#{person.picture.location}", style="width:100%;")
-						- else
+						- else if (person != null)
 							- flag = true
 
 				- if (flag)
@@ -206,7 +211,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 							- for (var i in user.following)
 								- var person = user.following[i]
 
-								- if (!person.accepted)
+								- if (person != null && !person.accepted)
 									div(id="following_div_#{person.id}", style="float:left; position:relative; border-radius:.3em; margin:4px; padding:2px; width:96px; height:96px; cursor:pointer; overflow:hidden;", title="#{person.id}", onClick="window.location.href='/user/profile?u=#{person.id}'")
 										div(id="following_remove_#{person.id}", style="position:absolute; right:-2px; top:-2px; background-color:white; padding-left:4px; padding-right:4px; border-radius:.4em; text-align:center; font-size:16px; visibility:hidden; color:red;", title="Stop following #{person.id}.")
 											| &#8855
@@ -386,6 +391,8 @@ html.all(style="background-image:url('../images/bg1.png');")
 					rem.attr('onClick', "var e = arguments[0] || window.event; e.stopPropagation();	var u = event.target.id.match(/[a-zA-Z0-9]+$/);	change_type = 1; change_user = u; show_dialog('Are you sure you would like to stop '+u+' from following you?', remove_follower);");
 					var div = $("#follower_notyetdiv_" + data.user).clone();
 					div.attr('id', "follower_div_" + data.user);
+					if ($("#followers").children().length == 0)
+						$("#followers").html('');
 					div.appendTo("#followers");
 					$(document).ready(function()
 					{
@@ -395,14 +402,6 @@ html.all(style="background-image:url('../images/bg1.png');")
 						}, function(){
 							var u = event.target.id.match(/[a-zA-Z0-9]+$/);
 							$("#follower_remove_" + u).css('visibility', 'hidden');
-						});
-						rem.click(function(e){
-							// var e = arguments[0] || window.event;
-							// e.stopPropagation();
-							// var u = event.target.id.match(/[a-zA-Z0-9]+$/);
-							// change_type = 1;
-							// change_user = u;
-							// show_dialog('Are you sure you would like to stop '+u+' from following you?', remove_follower);
 						});
 					});
 					//
