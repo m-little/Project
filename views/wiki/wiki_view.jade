@@ -6,10 +6,18 @@ html.all(style="background-image:url('/images/bg1.png');")
 	div.all(style="max-width:1000px; margin:auto;")
 		div
 			h1= wiki.title
-			
+		
+			- for (var j in wiki.content)
+				div
+					<a href="##{wiki.content[j].id}"> #{wiki.content[j].title} </a>
+			- if (wiki.video.id != 1)
+				div
+					<a href="#video"> Video </a>
+
 		- for(var i in wiki.content)
 			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
-				
+				<a name="#{wiki.content[i].id}">
+
 				div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 					| #{wiki.content[i].title}
 
@@ -25,6 +33,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 
 		- if (wiki.video.id != 1)
 			div
+				<a name="video">
 				<iframe width="560" height="315" src="#{wiki.video.address}?wmode=transparent" frameborder="0" 	allowfullscreen></iframe>
 	
 	include ../footer
