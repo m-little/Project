@@ -3,7 +3,7 @@ var obj_wiki = require('../objects/wiki');
 var obj_video = require('../objects/video');
 var obj_picture = require('../objects/picture');
 var obj_content = require('../objects/wiki_content')
-var obj_preview = require('../objects/wiki_preview')
+var obj_preview = require('../objects/preview')
 
 exports.home_view = function(req, res)
 {

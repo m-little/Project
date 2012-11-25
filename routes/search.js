@@ -1,5 +1,5 @@
 var obj_picture = require('../objects/picture');
-var obj_preview = require('../objects/wiki_preview');
+var obj_preview = require('../objects/preview');
 var obj_dao = require('../objects/database');
 
 
