@@ -18,10 +18,10 @@ html.all
 				div.notify1_bad
 					| Your username must be shorter than 40 characters.
 
-		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; margin-bottom:40px;")
+		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; margin-bottom:40px; border:1px solid #c2c2c2; border-radius:.8em; padding:10px; background-color:white;")
 			| &#9733 Great Choice Signing Up &#9733
 
-		div(style="width:800px; margin:auto;")
+		div(style="width:800px; margin:auto; background-color:white; border:1px solid #c2c2c2; border-radius:.8em; padding:10px;")
 			form(style="margin:0px; padding:0px;", method="post", action="/user/new")
 				div(style="background-color:#292929; color:white; padding:4px; padding-left:10px; border-radius:2em; margin-bottom:20px;")
 					| User Information
@@ -76,7 +76,7 @@ html.all
 					| Ready?
 
 				div(style="margin:auto; width:150px;")
-					button.button1g(id="complete_button", type="submit", style="font-size:34px;")
+					button.button1b(id="complete_button", type="submit", style="font-size:34px; margin-bottom:20px;")
 						| Continue
 
 	script(src="/jquery.js")

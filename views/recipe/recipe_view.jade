@@ -1,5 +1,5 @@
 doctype 5
-html.all(style="background-image:url('/images/bg1.png');")
+html.all()
 
 	include ../header
 
@@ -17,8 +17,8 @@ html.all(style="background-image:url('/images/bg1.png');")
 			- if (recipe.public == '0')
 				div(style="float:left; clear:both; height:73px; width:86px; position:relative; top:-28px; left:-36px; margin-bottom:-140px; background-image:url('/images/private.png'); background-repeat:no-repeat; z-index:3;")
 
-			div(id="recipe_pic_prev", style="position:relative; left:-18px; top:66px; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/prev1.png'); cursor:pointer;", title="Previous photo.", onClick="prev_picture();")
-			div(id="recipe_pic_next", style="position:relative; left:19px; top:66px; float:right; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/next1.png'); cursor:pointer;", title="Next photo.", , onClick="next_picture();")
+			div(id="recipe_pic_prev", style="position:relative; left:-25px; top:66px; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/prev1.png'); cursor:pointer;", title="Previous photo.", onClick="prev_picture();")
+			div(id="recipe_pic_next", style="position:relative; left:25px; top:66px; float:right; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/next1.png'); cursor:pointer;", title="Next photo.", , onClick="next_picture();")
 
 			//- Recipe Category
 			div(style="position:relative; right:10px; top:1px; margin-top:-2px; font-size:28px; float:right; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default; z-index:2;", title="Category")

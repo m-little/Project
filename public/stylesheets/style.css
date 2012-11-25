@@ -13,7 +13,7 @@ div.header
 	height:42px; 
 	color:#bababa;
 	font-size:16px;
-	background-image:url('../images/bar1.png'); background-repeat:repeat-x; background-size:100% 100%;
+	background-image:url('/images/bar1.png'); background-repeat:repeat-x; background-size:100% 100%;
 	z-index:5;
 }
 
@@ -51,7 +51,6 @@ div.header_dropdown_button_icon
 {
 	width:18px;
 	height:18px;
-	/*border:1px solid #bababa;*/
 	float:left;
 	margin-right:10px;
 	margin-left:10px;
@@ -63,52 +62,65 @@ div.title_middle
 {
 	position:absolute; left:50%; top:50%;
 	margin-left:-200px; margin-top:-50px;
+	padding-top:18px;
 	width:400px; height:80px;
+	background-color:white;
+	border-radius:.8em;
 	text-align:center;
 	font-size:48px;
 	cursor:default;
+	opacity:.7; filter:alpha(opacity=70);
 }
 
 body.body
 {
+	background-color:#707F9B;
+	background-image:url('/images/bg4.png');
 	height:auto;
 	min-height:100%;
 	position:relative;
 	margin:0px;
+	z-index:-2;
 }
 
 div.all
 {
 	font-size:18px; color:black;
 	padding:20px;
-	padding-bottom:50px;
+	padding-bottom:100px;
 	min-height:600px;
 	height:auto;
 }
 
 div.footer
 {
-	position:fixed; bottom:-2px; left:50%;
-	margin-left:-150px;
-	padding-top:4px;
-	padding-left:20px;
-	padding-right:20px;
-	background-color:white;
-	border:1px solid gray;
-	width:300px;
-	height:22px;
-	border-top-left-radius:.6em;
-	border-top-right-radius:.6em;
+	position:absolute; bottom:0px;
+	background-color:#292929;
+	background-image:url('/images/bg4.png');
+	border-top:2px solid black;
+	height:64px;
+	width:100%;
 	font-size:14px;
 	color:#a0a0a0;
 	text-align:center;
 	cursor:default;
-	opacity:.8; 
-	filter:alpha(opacity=80);
+	/*opacity:.8; filter:alpha(opacity=80);*/
 }
 div.footer:hover
 {
 	color:#b8b8b8;
+}
+
+a.footer
+{
+	color:#a0a0a0;
+	text-decoration:none;
+	padding-left:10px;
+	padding-right:10px;
+}
+a.footer:hover
+{
+	color:white;
 }
 
 div.notify1_good
@@ -268,7 +280,7 @@ button.button1b
 	padding-right:8px;
 	color:white;
 	background-color:#3d84ff;
-	background-image:url('../images/bg3.png'); background-repeat:repeat-x; background-size:100% 100%;
+	background-image:url('/images/bg3.png'); background-repeat:repeat-x; background-size:100% 100%;
 	border:1px solid #c1c1c1;
 	border-radius:.3em;
 	cursor:pointer;
@@ -303,7 +315,7 @@ button.button1r
 	padding-right:8px;
 	color:white;
 	background-color:#ff3d3d;
-	background-image:url('../images/bg3.png'); background-repeat:repeat-x; background-size:100% 100%;
+	background-image:url('/images/bg3.png'); background-repeat:repeat-x; background-size:100% 100%;
 	border:1px solid #c1c1c1;
 	border-radius:.3em;
 	cursor:pointer;
@@ -338,7 +350,7 @@ button.button1g
 	padding-right:8px;
 	color:white;
 	background-color:#41b839;
-	background-image:url('../images/bg3.png'); background-repeat:repeat-x; background-size:100% 100%;
+	background-image:url('/images/bg3.png'); background-repeat:repeat-x; background-size:100% 100%;
 	border:1px solid #c1c1c1;
 	border-radius:.3em;
 	cursor:pointer;
