@@ -2,8 +2,23 @@ doctype 5
 html.all(style="background-image:url('../images/bg1.png');")
 	
 	include ../header
-	- for (var i in home)
-		| #{home[i].title}
+
+	div.all(style="max-width:1000px; margin:auto;")
+			
+		- for(var i in results)
+			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
+				
+				div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
+					<a href="wiki/view?w_id=#{results[i].id}"> #{results[i].title} </a>
+
+				- if(results[i].picture.id != 1)
+					div(style="float:right; position:relative; top: -4px; height: 138px; width: 138px; margin-bottom:-14px; margin-left:8px;")
+						img(src= "/images/user_images/#{results[i].picture.location}", style= "max-width:100%;")
+
+				div(style="padding-left:10px;")
+					- for content in results[i].description.split('\n')
+						div(style="margin-top:6px; min-height:19px;")
+							p!= content
 
 
 	include ../footer

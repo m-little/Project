@@ -1,5 +1,5 @@
 var obj_picture = require('../objects/picture');
-var obj_preview = require('../objects/wiki_preview');
+var obj_preview = require('../objects/preview');
 var obj_dao = require('../objects/database');
 
 
@@ -40,10 +40,10 @@ exports.search_results = function(req, res)
 		finished(preview_array);
 	}
 
-	function finished(new_wiki_home) 
+	function finished(new_results) 
 	{
-		console.log(new_wiki_home);
-		res.render('search/query', { title: website_title, home: new_wiki_home});
+		console.log(new_results);
+		res.render('search/query', { title: website_title, results: new_results});
 
 	}
 
