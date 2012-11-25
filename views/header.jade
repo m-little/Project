@@ -10,13 +10,11 @@ div.header
 	div(style="float:left; position:fixed; left:160px; top:9px;")
 		input.input_text(style="background-color:#616158; float:left; color:#bababa; margin-bottom:5px; height:14px;", value="Search", id="header_search_bar", onClick="clear_search_bar();")
 
-	if global.session.logged_in != 0
+	- if (global.session.logged_in != 0)
 		div.userinfo_settings(onClick="show_drop_settings();", id="header_button_settings")
 			| Hello #{global.session.user.id}
 		div.userinfo_button(onClick="show_drop_recipes()")
 			| Recipes
-		div.userinfo_button(onClick="show_drop_notifications()", id="notifications_count", title="Your notifications.")
-			| #{global.session.notifications.actual_count}
 	else
 		div.userinfo_button(onClick="show_drop_login();", id="header_button_login")
 			| Login
@@ -24,6 +22,14 @@ div.header
 			| Sign Up!
 
 //- Start drop down boxes
+
+- if (global.session.logged_in != 0)
+	div(style="position:fixed; left:-110px; top:100px; background-color:#292929; border-radius:.4em; z-index:8;")
+		div(onClick="show_drop_notifications()", id="notifications_button", title="Your notifications.", style="border:1px solid #bababa; padding:8px; margin:1px; padding-left:14px; padding-right:12px; border-radius:.4em; cursor:pointer; color:#bababa;")
+			span(id="notifications_title", style="margin-right:14px;")
+				| Notifications
+			span(id="notifications_count")
+				| #{global.session.notifications.actual_count}
 
 div.header_dropdown(id="header_menu_login", style="position:fixed; top:-1000px; right:10px; width:auto;")
 	form(style="margin:0px; padding:0px;", method='post', action='/login', id='header_login_form')
@@ -78,7 +84,7 @@ div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px
 		a(href="", style="text-decoration:none; color:#bababa;")
 			| Lookup Recipes
 
-div.header_dropdown(id="header_menu_notifications", style="position:fixed; top:-1000px; right:10px; width:auto; font-size:14px; min-width:260px;")
+div.header_dropdown(id="header_menu_notifications", style="position:fixed; top:-1000px; left:2px; width:auto; font-size:14px; min-width:260px; z-index:9;")
 	- if (global.session.logged_in)
 	//- The rest of the drawing happens clientside (footer.jade)
 		div.header_dropdown_button(style="cursor:default;")

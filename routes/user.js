@@ -462,3 +462,63 @@ exports.update_notifications = function(req, res)
 		res.send(global.session.notifications);
 	}
 }
+
+exports.share_recipe = function(req, res)
+{
+	if (!global.session.logged_in)
+	{
+		res.redirect('/500error');
+		return;
+	}
+
+	if (req.body.recipe_id == undefined || req.body.recipe_id == '') // incorrect data received.
+	{
+		global.session.error_message.message = "Recipe was undefined.";
+		res.redirect('/error');
+		return;
+	}
+
+	req.body.recipe_id = parseInt(req.body.recipe_id);
+	if (isNaN(req.body.recipe_id)) // incorrect data received.
+	{
+		global.session.error_message.message = "Type was undefined.";
+		res.redirect('/error');
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+
+	dao.query("SELECT user_id_1 FROM user_connections WHERE user_id_2 = '" + dao.safen(global.session.user.id) + "'", output1);
+
+	function output1(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		var inserts = [];
+		for (var i in result)
+		{
+			var row = result[i];
+			inserts.push("INSERT INTO recipe_shared (owner_id, follower_id, recipe_id, date_added) VALUES('" + dao.safen(global.session.user.id) + "', '" + row.user_id_1 + "', " + req.body.recipe_id + ", NOW())");
+		}
+
+		dao.transaction(inserts, output2);
+	}
+
+	function output2(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		dao.die();
+		res.send({});
+	}
+}

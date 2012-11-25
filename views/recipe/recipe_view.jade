@@ -3,8 +3,16 @@ html.all(style="background-image:url('/images/bg1.png');")
 
 	include ../header
 
+	- if (global.session.logged_in != 0)
+		div(style="position:fixed; left:-68px; top:144px; background-color:#243EA7; border-radius:.4em; z-index:8;")
+			div(id="share_button", title="Share this recipe with your followers.", style="border:1px solid white; padding:8px; margin:1px; padding-left:14px; padding-right:10px; border-radius:.4em; cursor:pointer; color:white;", onClick="$(this).css('cursor', 'wait'); share_recipe(); $('#share_title').animate({'padding-left': 0}, 350, function(){share_animate = 0;});")
+				span(id="share_title", style="margin-right:14px;")
+					| Share
+				span
+					| &#9733
+
 	div.all(style="max-width:1000px; margin:auto;")
-		div(style="padding-bottom:40px; background-color:white; margin-bottom:10px; border:1px solid #c2c2c2;")
+		div(style="padding-bottom:40px; background-color:white; margin-bottom:10px; border:1px solid #c2c2c2; position:relative;")
 
 			- if (recipe.public == '0')
 				div(style="float:left; clear:both; height:73px; width:86px; position:relative; top:-28px; left:-36px; margin-bottom:-140px; background-image:url('/images/private.png'); background-repeat:no-repeat; z-index:3;")
@@ -289,6 +297,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 		var recipe_my_rank = #{global.session.user_recipe_rank};
 		var servings = #{recipe.serving_size.match(/[0-9]+/)};
 		var new_servings = servings;
+		var share_animate = 0;
 		$(window).load(function()
 		{
 			$('#stars_power').css('visibility', 'visible'); // this keeps the background from appearing before the stars.
@@ -307,6 +316,20 @@ html.all(style="background-image:url('/images/bg1.png');")
 				$(this).text(fix_num($(this).attr('id').match(/[0-9]+/), 1));
 				$(this).css('visibility', 'visible');
 			});
+			//
+			$("#share_button").hover(function(){
+				if (share_animate == 0)
+				{
+					$("#share_title").animate({'padding-left': 60}, 350, function(){if (share_animate == 3) $("#share_title").animate({'padding-left': 0}, 350, function(){share_animate = 0;}); else share_animate = 2;});
+					share_animate = 1;
+				}
+			}, function(){
+				if (share_animate == 2)
+					$("#share_title").animate({'padding-left': 0}, 350, function(){share_animate = 0;});
+				else if (share_animate == 1)
+					share_animate = 3;
+			});
+			//
 			$("#new_comment_button").click(function(){
 				$("#new_comment_button").hide();
 				$("#new_comment_text").val('');
@@ -315,14 +338,17 @@ html.all(style="background-image:url('/images/bg1.png');")
 				show_buttons = false;
 				$("html, body").animate({ scrollTop: $(document).height() + $("#new_comment").position().top }, "slow");
 			});
+			//
 			$("#new_comment_cancel").click(function(){
 				$("#new_comment").slideUp();
 				$("#new_comment_button").show();
 				show_buttons = true;
 			});
+			//
 			$("#new_reply_cancel").click(function(){
 				hide_new_reply();
 			});
+			//
 			$("#recipe_pic_drag").mousedown(function(e)
 			{
 				e.preventDefault();
@@ -336,10 +362,12 @@ html.all(style="background-image:url('/images/bg1.png');")
 					}
 				});
 			});
+			//
 			$("#recipe_pic_drag").dblclick(function()
 			{
 				$("#recipe_photo_div").css('height', $("#recipe_photo_div").css('min-height'));
 			});
+			//
 			$(document).mouseup(function(e){
 				resizing_image = false;
 				if (hide_rank_submit)
@@ -350,6 +378,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 				}
 				hide_rank_submit = true;
 			});
+			//
 			if (images.length <= 1)
 			{
 				$("#recipe_pic_prev").hide();
@@ -377,6 +406,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 				$("#ingr_float").css({left: (e.pageX + 16) + 'px', top: e.pageY + 'px'});
 			});
 		});
+		//
 		function reply_comment(comment)
 		{ 
 			// show new reply
@@ -778,6 +808,23 @@ html.all(style="background-image:url('/images/bg1.png');")
 				}
 			}
 			return value * unit1_amount;
+		}
+		function share_recipe()
+		{
+			$('body').css('cursor', 'wait');
+			$.ajax({
+				type: 'POST',
+				url: '/user/share_recipe',
+				data: {recipe_id: "#{recipe.id}"}, 
+				dataType: 'json',
+				success: function(data)
+				{
+					$('body').css('cursor', 'auto');
+					$("#share_button").css('cursor', 'pointer');
+					$("#share_title").animate({'padding-left': 60}, 350, function(){$("#share_title").animate({'padding-left': 0}, 350)});
+					$("#share_title").text('Shared');
+				}
+				});
 		}
 
 	include ../footer

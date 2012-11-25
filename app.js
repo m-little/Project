@@ -90,6 +90,7 @@ app.get('/user/validate', user.validate);
 app.get('/user/profile', user.show_profile);
 app.post('/user/update_follow', user.update_follow);
 app.post('/user/update_notifications', user.update_notifications);
+app.post('/user/share_recipe', user.share_recipe);
 
 app.get('/recipe/create', recipe.display_create);
 app.post('/recipe/submit', recipe.submit_recipe);

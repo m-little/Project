@@ -5,6 +5,7 @@ var Notifications = function(user_id_)
 	this.user_id = user_id_;
 	this.new_replies = [];
 	this.new_followers = [];
+	this.new_shared_recipes = [];
 	this.new_items = [];
 	this.actual_count = 0;
 
@@ -39,6 +40,7 @@ var check_all = function(callback)
 			obj.new_replies.push({type: 0, recipe_id: row.recipe_id, recipe_name: row.recipe_name, comment_owner: row.owner_id, content: content, date: new Date(row.date_added)});
 		}
 
+		// Check unseen new follower wanna-be's
 		dao.query("SELECT user_id_1, date_added FROM user_connections WHERE BINARY user_id_2 = '" + dao.safen(obj.user_id) + "' AND accepted = 0 AND seen = 0", followers_output, obj);
 	}
 
@@ -57,10 +59,28 @@ var check_all = function(callback)
 			obj.new_followers.push({type: 1, follower: row.user_id_1, date: new Date(row.date_added)});
 		}
 
+		// Check unseen shared recipes
+		dao.query("SELECT rs.owner_id, rs.recipe_id, recipe_name, rs.date_added FROM recipe_shared rs JOIN recipe r ON rs.recipe_id = r.recipe_id WHERE follower_id = '" + dao.safen(obj.user_id) + "' AND seen = 0", shared_recipes, obj);
+	}
+
+	function shared_recipes(success, result, fields, obj)
+	{
+		if (!success)
+		{
+			callback1(false);
+			return;
+		}
+
+		obj.new_shared_recipes = [];
+		for (var i in result)
+		{
+			var row = result[i];
+			obj.new_shared_recipes.push({type: 2, recipe: {id: row.recipe_id, name: row.recipe_name}, date: new Date(row.date_added), owner: row.owner_id});
+		}
+
 		dao.die();
 		callback1(true);
 	}
-
 
 	var that = this;
 
@@ -74,6 +94,7 @@ var check_all = function(callback)
 
 		that.new_items = that.new_items.concat(that.new_replies);
 		that.new_items = that.new_items.concat(that.new_followers);
+		that.new_items = that.new_items.concat(that.new_shared_recipes);
 
 		that.actual_count = that.new_items.length;
 		

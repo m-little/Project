@@ -25,6 +25,7 @@ DROP TRIGGER IF EXISTS tri_user_rank_counter6;
 DROP TABLE IF EXISTS recipe_ingredient;
 DROP TABLE IF EXISTS ingredient;
 DROP TABLE IF EXISTS unit;
+DROP TABLE IF EXISTS recipe_shared;
 DROP TABLE IF EXISTS recipe_comment;
 DROP TABLE IF EXISTS recipe_ranking;
 DROP TABLE IF EXISTS recipe_picture;
@@ -195,6 +196,19 @@ date_edited DATETIME,
 CONSTRAINT pk_recipe_ranking PRIMARY KEY(rank_id),
 CONSTRAINT fk_recipe_ranking_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_ranking_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
+);
+
+CREATE TABLE recipe_shared
+(
+shared_id SERIAL,
+owner_id VARCHAR(40) BINARY NOT NULL,
+follower_id VARCHAR(40) BINARY NOT NULL,
+recipe_id BIGINT UNSIGNED NOT NULL,
+seen TINYINT(1) NOT NULL DEFAULT 0,
+date_added DATETIME NOT NULL,
+CONSTRAINT pk_recipe_shared PRIMARY KEY(shared_id),
+CONSTRAINT fk_recipe_shared_owner FOREIGN KEY(owner_id) REFERENCES user(user_id),
+CONSTRAINT fk_recipe_shared_follower FOREIGN KEY(follower_id) REFERENCES user(user_id)
 );
 
 CREATE TABLE unit

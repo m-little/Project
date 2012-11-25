@@ -241,7 +241,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 				$("#follower_notyetremove_" + u).css('visibility', 'hidden');
 				$("#follower_add_" + u).css('visibility', 'hidden');
 			});
-			$("[id^=following_div_notyet_]").hover(function(){
+			$("[id^=following_div_]").hover(function(){
 				var u = event.target.id.match(/[a-zA-Z0-9]+$/);
 				$("#following_remove_" + u).css('visibility', 'visible');
 			}, function(){
