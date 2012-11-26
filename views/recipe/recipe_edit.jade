@@ -1,0 +1,148 @@
+doctype 5
+html.all(style="background-image:url('/images/bg1.png');")
+
+	include ../header
+	div(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:white; margin:auto;")
+		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; ")
+			| Edit Recipe
+
+	div.all(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:white; margin:auto; margin-top:15px;")
+		form(class="submit_form", action='/recipe/pictures', method='post', enctype="multipart/form-data")
+
+			div(style="padding:10px; height:25px; color:#cc0000; text-align:center; display:none", class="must_fill_in")
+
+			//- Category select
+			div(style="padding:10px")
+				div(style="float:left; width:150px")
+					| Category:
+				div(style="float:left")
+					select(size="1", class="category", style="width:110px; font-size:16px; margin-left:10px")
+						- for( var i = 0; i < categories.length; i++)
+							if	recipe.category == categories[i]
+								option(selected="true")
+									= categories[i]
+							else
+								option
+									= categories[i]
+
+			//- Recipe Name input
+			div(style="padding:10px; margin-top:20px")
+				div(style="clear:left; float:left; width:150px")
+					| Recipe Name:
+				div(style="float:left")
+					input.input_text(type="text", class="recipe_name", name="recipe_name", value="#{recipe.name}", style="margin-left:10px; width:170px;", required="required", autofucus)
+
+			//- Picture Upload input
+			div(style="clear:left; padding:10px")
+				div(style="float:left; width:150px")
+					| Picture Upload:
+				div(style="float:left")
+					input(type="file", id="recipe_picture", name="recipe_pictures", style="margin-left:10px; width:200px")
+				div(style="float:left")
+					| Picture Caption:
+					input.input_text(type="text", class="picture_caption", name="picture_caption", style="margin-left:5px; width:150px")
+
+			//- Security selection radio buttons
+			div(style="clear:left; width:500px; padding:10px")
+				div(style="float:left; width:150px")
+					| Security:
+				div(style="float:left")
+					p(style="margin:0px")
+						input(type="radio", name="security", value="1", checked = recipe.public == '1') 
+						| Public
+					p(style="margin:0px")
+						input(type="radio", name="security", value="0", checked = recipe.public == '0')
+						| Secret
+
+			//- Ingredients input 
+			div.ingredient(style="clear:left; width:900px; padding:10px")
+				div(style="float:left; height:27px; width:150px")
+					| Ingredients:
+				- for(var i = 0; i < recipe.ingredients.length; i++)
+					if(i == 0)
+						div(class="marker delete_0", style="float:left")
+							input.input_text(type="text", class="ingredient_name", value="#{recipe.ingredients[i].name}", style="margin-left:10px; width:170px", name="ingredient")
+					else	
+						div(class="marker delete_1", style="clear:left; float:left; margin-left:150px; margin-top:5px")
+							input.input_text(type="text", class="ingredient_name", value="#{recipe.ingredients[i].name}", style="margin-left:10px; width:170px", name="ingredient")
+
+					div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+						| Unit:
+						select(size="1", class="unit_type", style=" width:140px; font-size:16px; margin-left:10px")
+							- for( var x = 0; x < units.length; x++)
+								if	recipe.ingredients[i].unit_name == units[x]
+									option(value=unit_ids[x], selected="true")
+										= units[x]
+								if recipe.ingredients[i].unit_name == "" && units[x] == 'None'
+										option(value=unit_ids[x], selected="true")
+											= units[x]
+								else
+									option(value=unit_ids[x])
+										= units[x]
+					div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+						| Amount:
+						input.input_text(type="text", class="unit_amount", value="#{recipe.ingredients[i].amount}", style="margin-left:10px; width:30px", name="unit_amount")
+					div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+						img(src="/images/delete.png", alt="delete", class="ingredient_delete", value=i)
+
+				//- Print one empty ingredients div			
+				div(class="marker delete_0", style="clear:left; float:left")
+					input.input_text(type="text", class="ingredient_name", style="margin-left:160px; width:170px", name="ingredient")
+				div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+					| Unit:
+					select(size="1", class="unit_type", style=" width:140px; font-size:16px; margin-left:10px")
+						- for( var i = 0; i < units.length; i++)
+							option(value=unit_ids[i])
+								= units[i]
+				div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+					| Amount:
+					input.input_text(type="text", class="unit_amount", style="margin-left:10px; width:30px", name="unit_amount")
+				div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+					img(src="/images/delete.png", alt="delete", class="ingredient_delete", value="0", style="display:none")
+				div(style="float:left; margin-top:5px")
+					input.add_ingredient(type="button", value="Add Ingredient", style="margin-left:10px; height:27px")
+
+			//- Preparation time input
+			div(style="clear:left; heigt:26px; width:500px; padding:10px")
+				div(style="float:left; height:26px; width:160px; line-height:140%")
+					| Preparation Time:
+				div(style="float:left")
+					| Hours:
+					input.input_text(type="number", class="preparation_hours", value="#{recipe.prep_hour}", name="preparation_hours", style="margin-left:10px; margin-right:10px; width:30px")
+					| Minutes:
+					input.input_text(type="number", class="preparation_minutes", value="#{recipe.prep_min}", name="preparation_minutes", style="margin-left:10px; margin-right:10px; width:30px")
+
+			//- Ready time input 
+			div(style="clear:left; height:26px; width:500px; padding:10px")
+				div(style="float:left; height:26px; width:160px; line-height:140%")
+					| Ready Time:
+				div(style="float:left")
+					| Hours:
+					input.input_text(type="number", class="ready_hours", value="#{recipe.ready_hour}", name="ready_hours", style="margin-left:10px; margin-right:10px; width:30px")
+					| Minutes:
+					input.input_text(type="number", class="ready_minutes", value="#{recipe.ready_min}", name="ready_minutes", style="margin-left:10px; margin-right:10px; width:30px")
+
+			//- Serving Size input
+			div(style="width:500px; padding:10px")
+				div(style="float:left; width:150px; height:26px; line-height:140%")
+					| Serving Size:
+				div(style="float:left")
+					input.input_text(type="number", class="serving_size_one", value="1", name="serving_size_one", style="margin-left:10px; margin-right:10px; width:30px")
+					| to 
+					input.input_text(type="number", class="serving_size_two", value="1", name="serving_size_two", style="margin-left:10px; width:30px")
+
+			//- Directions text area
+			div(style="clear:left; padding:10px")
+				div(style="float:left; width:150px")
+					| Directions:
+				div(style="float:left; padding-left:10px")
+					textarea.text_box(type="text", class="directions", style="width:770px; height:200px")
+						| #{recipe.serving_size}
+
+			//- Edit and Delete Button 
+			div(style="clear:left; height:20px; width:935px; padding:10px")
+				div(style="float:right")
+					input(type="button", class="recipe_delete", value="delete", style="height:30px; width:80px")
+				div(style="float:right")
+					input(type="button", class="recipe_edit", value="edit", style="height:30px; width:80px; margin-right:10px")
+
