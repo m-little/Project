@@ -134,10 +134,10 @@ html.all(style="background-image:url('/images/bg1.png');")
 					}
 				});
 
-				$('.ingredient').append('<div class="marker delete_' + count + '" style="float:left; margin-top:5px;"><input class="input_text ingredient_name" type="text", style="margin-left:160px; width:170px"></div>');
+				$('.ingredient').append('<div class="marker delete_' + count + '" style="float:left; margin-top:5px"><input class="input_text ingredient_name" type="text", style="margin-left:160px; width:170px"></div>');
 				$('.ingredient').append('<div class="delete_' + count + '" style="float:left; margin-top:5px; margin-left:10px">Unit: <select class="unit_type" style="width:140px; font-size:16px; margin-left:5px">' + units_select_string + '</select></div>');
 				$('.ingredient').append('<div class="delete_' + count + '" style="float:left; margin-top:5px; margin-left:10px">Amount: <input type="text" class="input_text unit_amount" style="width:30px; margin-left:5px"></div>');
-				$('.ingredient').append('<div class="delete_' + count + ' curtis" value="29" style="float:left; margin-left:10px"><img src="/images/delete.png" alt="delete" class="ingredient_delete" value="' + count + '" style="display:none"></div>')
+				$('.ingredient').append('<div class="delete_' + count + '" value="29" style="float:left; margin-left:10px"><img src="/images/delete.png" alt="delete" class="ingredient_delete" value="' + count + '" style="display:none"></div>')
 				$('.ingredient').append('<div style="float:left; margin-top:5px;"><input type="button" class="add_ingredient" value="Add Ingredient" style="margin-left:10px; height:27px"></div>');
 			});
 
