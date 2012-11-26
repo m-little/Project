@@ -377,6 +377,8 @@ INSERT INTO picture (caption, location) VALUES('Vanilla Extract','van_ext.jpg');
 INSERT INTO picture (caption, location) VALUES('Mario','mario.jpg'); -- 38
 INSERT INTO picture (caption, location) VALUES('Mushroom Soup','soup1.jpg'); -- 39
 INSERT INTO picture (caption, location) VALUES('Super Mushroom','mushroom1.jpg'); -- 40
+INSERT INTO picture (caption, location) VALUES('Potatoes','potatoes.jpg'); -- 41
+INSERT INTO picture (caption, location) VALUES('Water','water.jpg'); -- 42
 
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Sam', 2, 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 30, 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
@@ -497,7 +499,7 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curti
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 7, 10, STR_TO_DATE('11,2,2012 15:13:02', '%m,%d,%Y %H:%i:%s')); -- 7
 
-INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Potatoes', 41); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
 INSERT INTO ingredient (ingr_name) VALUES('Mayonnaise');  -- 3
 INSERT INTO ingredient (ingr_name) VALUES('Chopped Green Onions');  -- 4
@@ -535,7 +537,7 @@ INSERT INTO ingredient (ingr_name) VALUES('1 ounce Package of Ranch Dressing Mix
 INSERT INTO ingredient (ingr_name) VALUES('Crushed Saltine Crackers'); -- 36
 INSERT INTO ingredient (ingr_name) VALUES('Chopped Onion'); -- 37
 INSERT INTO ingredient (ingr_name, picture_id) VALUES('Super Mushroom', 40); -- 38
-INSERT INTO ingredient (ingr_name) VALUES('Water'); -- 39
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Water', 42); -- 39
 
 
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 1, 1, 3); -- Potato Salad, 3 pounds potatoes scrubbed and quartered

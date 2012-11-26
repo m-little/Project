@@ -80,6 +80,8 @@ app.post('*', function(req, res, next) {
 app.get('/', routes.index);
 app.post('/', routes.index);
 
+app.get('/notreal', function(req, res){res.render('notreal', { title: website_title });});
+
 app.get('/login', routes.login);
 app.post('/login', routes.login);
 
