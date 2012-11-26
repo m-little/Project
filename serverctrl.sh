@@ -59,7 +59,7 @@ if [[ $1 =~ ^("start"|"START")$ ]]; then # Start the node process
 	if [ $? -eq 0 ]; then
 		echo "Starting Node Process"
 		echo "node $main_javascript_file 1>> ./logs/StdOut.log 2>> ./logs/StdErr.log &" 
-		/usr/local/node/bin/node $main_javascript_file 1>> ./logs/StdOut.log 2>> ./logs/StdErr.log &
+		/usr/local/node/bin/node $main_javascript_file 1>> /usr/local/node/docs/project/logs/StdOut.log 2>> /usr/local/node/docs/project/logs/StdErr.log &
 	fi
 
 elif [[ $1 =~ ^("restart"|"RESTART"|"bounce"|"BOUNCE")$ ]]; then # Restart the node process
@@ -82,7 +82,7 @@ elif [[ $1 =~ ^("restart"|"RESTART"|"bounce"|"BOUNCE")$ ]]; then # Restart the n
 	if [ $? -eq 0 ]; then
 		echo "Starting Node Process"
 		echo "node $main_javascript_file 1>> ./logs/StdOut.log 2>> ./logs/StdErr.log &" 
-		/usr/local/node/bin/node $main_javascript_file 1>> ./logs/StdOut.log 2>> ./logs/StdErr.log &
+		/usr/local/node/bin/node $main_javascript_file 1>> /usr/local/node/docs/project/logs/StdOut.log 2>> /usr/local/node/docs/project/logs/StdErr.log &
 	fi
 
 elif [[ $1 =~ ^("kill"|"KILL"|"stop"|"STOP")$ ]]; then # Kill the node process

@@ -1,7 +1,9 @@
 doctype 5
 html.all(style="background-image:url('../images/bg1.png');")
-
-
+	
 	include ../header
+	- for (var i in home)
+		| #{home[i].title}
+
 
 	include ../footer

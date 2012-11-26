@@ -19,7 +19,8 @@ var express = require('express')
 	, path = require('path')
 	, user = require('./routes/user')
 	, recipe = require('./routes/recipe')
-	, wiki = require('./routes/wiki');
+	, wiki = require('./routes/wiki')
+	, search = require('./routes/search');
 
 var app = express();
 
@@ -79,6 +80,8 @@ app.post('*', function(req, res, next) {
 app.get('/', routes.index);
 app.post('/', routes.index);
 
+app.get('/notreal', function(req, res){res.render('notreal', { title: website_title });});
+
 app.get('/login', routes.login);
 app.post('/login', routes.login);
 
@@ -89,6 +92,7 @@ app.get('/user/validate', user.validate);
 app.get('/user/profile', user.show_profile);
 app.post('/user/update_follow', user.update_follow);
 app.post('/user/update_notifications', user.update_notifications);
+app.post('/user/share_recipe', user.share_recipe);
 
 app.get('/recipe/create', recipe.display_create);
 app.post('/recipe/submit', recipe.submit_recipe);
@@ -102,6 +106,8 @@ app.get('/recipe/my', recipe.my);
 
 app.get('/wiki/view', wiki.display_view);
 app.get('/wiki/home', wiki.home_view);
+
+app.get('/query', search.search_results);
 
 app.get('/error', function(req, res){
 	res.render('error', { title: website_title, error: global.session.error_message });

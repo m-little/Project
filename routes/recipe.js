@@ -184,14 +184,17 @@ exports.display_view = function(req, res)
 		// Now flatten the comment/reply tree so it can be seen correctly on the page.
 		new_recipe.flatten_comments();
 
-		if (global.session.logged_in && new_recipe.owner == global.session.user.id)
-			dao.query("UPDATE recipe_comment SET seen = 1 WHERE recipe_id = " + new_recipe.id, output5, new_recipe);
+		if (global.session.logged_in)
+			if (new_recipe.owner == global.session.user.id)
+				dao.query("UPDATE recipe_comment SET seen = 1 WHERE recipe_id = " + new_recipe.id, output5a, new_recipe);
+			else
+				dao.query("UPDATE recipe_shared SET seen = 1 WHERE recipe_id = " + new_recipe.id + " AND follower_id = '" + dao.safen(global.session.user.id) + "'", output5b, new_recipe);
 		else
 			dao.query("SELECT AVG(rank) as avg, COUNT(rank) as count FROM recipe_ranking WHERE recipe_id = " + req.query.r_id, output6, new_recipe);
 	}
 
 	// function returned when comments have been seen 
-	function output5(success, result, fields, new_recipe)
+	function output5a(success, result, fields, new_recipe)
 	{
 		if (!success)
 		{
@@ -203,6 +206,28 @@ exports.display_view = function(req, res)
 		{
 			var item = global.session.notifications.new_items[i];
 			if (item.type == 0 && item.recipe_id == new_recipe.id)
+			{
+				delete global.session.notifications.new_items[i];
+				global.session.notifications.actual_count -= 1;
+			}
+		}
+		
+		dao.query("UPDATE recipe_shared SET seen = 1 WHERE recipe_id = " + new_recipe.id + " AND follower_id = '" + dao.safen(global.session.user.id) + "'", output5b, new_recipe);
+	}
+
+	// function returned when recipe has been seen 
+	function output5b(success, result, fields, new_recipe)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
+		for (var i in global.session.notifications.new_items)
+		{
+			var item = global.session.notifications.new_items[i];
+			if (item.type == 2 && item.recipe_id == new_recipe.id)
 			{
 				delete global.session.notifications.new_items[i];
 				global.session.notifications.actual_count -= 1;

@@ -3,14 +3,14 @@ var obj_wiki = require('../objects/wiki');
 var obj_video = require('../objects/video');
 var obj_picture = require('../objects/picture');
 var obj_content = require('../objects/wiki_content')
-var obj_preview = require('../objects/wiki_preview')
+var obj_preview = require('../objects/preview')
 
 exports.home_view = function(req, res)
 {
 	// initalize data base access object
 	var dao = new obj_dao.DAO
 
-	dao.query("SELECT * FROM wiki", output1);
+	dao.query("SELECT w.wiki_id, w.wiki_title, p.picture_id, w.description, p.location, p.caption FROM wiki w JOIN picture p  WHERE w.picture_id = p.picture_id ORDER BY wiki_id DESC LIMIT 5", output1);
 
 	function output1(success, result, fields)
 	{
@@ -23,22 +23,30 @@ exports.home_view = function(req, res)
 
 		
 
+		var preview_array = new Array();
+
+
 		// get the first row (should be the only row) from the results returned by the database
-		var row = result[0];
-		var new_prev = new obj_preview.preview(1,"Title", "Content", "Picture");
-		console.log(new_prev);
-		finished();
+		for(var i in result)
+		{
+			
+			var row = result[i];
+			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
+			var new_prev = new obj_preview.preview(row.wiki_id,row.wiki_title, row.description, new_picture);
+			preview_array.push(new_prev);
+
+		}
+		
+		//console.log(preview_array);
+		dao.die();
+		finished(preview_array);
 	}
 
-	function output2(success, result, fields, new_wiki)
+	function finished(new_wiki_home) 
 	{
+		console.log(new_wiki_home);
+		res.render('wiki/wiki_home', { title: website_title, home: new_wiki_home});
 
-	}
-
-
-	function finished() 
-	{
-		res.render('wiki/wiki_home', { title: website_title});
 	}
 
 }
@@ -75,7 +83,7 @@ exports.display_view = function(req, res)
 		var new_wiki = new obj_wiki.Wiki(req.query.w_id, new_video, row.wiki_title);
 		
 		// second query gets the wiki pages content (i.e. sections of the wiki page and pictures belonging to that section) and runst the function output2 on completion
-		dao.query("SELECT content, title, p.picture_id, p.location, p.caption FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id WHERE wc.wiki_id =" + req.query.w_id, output2, new_wiki);
+		dao.query("SELECT content, title, p.picture_id, p.location, p.caption, wc.wiki_cont_id FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id WHERE wc.wiki_id =" + req.query.w_id, output2, new_wiki);
 	}
 
 	// this function builds the wiki_content objects and stores them in an array that is then put in the 'wiki' object
@@ -90,7 +98,7 @@ exports.display_view = function(req, res)
 			var row = result[i];
 
 			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
-			var new_content = new obj_content.Wiki_Content(new_picture, row.title, row.content);
+			var new_content = new obj_content.Wiki_Content(row.wiki_cont_id, new_picture, row.title, row.content);
 
 			//console.log(new_content);
 			content_array.push(new_content);

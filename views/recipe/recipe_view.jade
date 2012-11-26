@@ -1,16 +1,24 @@
 doctype 5
-html.all(style="background-image:url('/images/bg1.png');")
+html.all()
 
 	include ../header
 
+	- if (global.session.logged_in != 0)
+		div(style="position:fixed; left:-68px; top:144px; background-color:#243EA7; border-radius:.4em; z-index:8;")
+			div(id="share_button", title="Share this recipe with your followers.", style="border:1px solid white; padding:8px; margin:1px; padding-left:14px; padding-right:10px; border-radius:.4em; cursor:pointer; color:white;", onClick="$(this).css('cursor', 'wait'); share_recipe(); $('#share_title').animate({'padding-left': 0}, 350, function(){share_animate = 0;});")
+				span(id="share_title", style="margin-right:14px;")
+					| Share
+				span
+					| &#9733
+
 	div.all(style="max-width:1000px; margin:auto;")
-		div(style="padding-bottom:40px; background-color:white; margin-bottom:10px; border:1px solid #c2c2c2;")
+		div(style="padding-bottom:40px; background-color:white; margin-bottom:10px; border:1px solid #c2c2c2; position:relative;")
 
 			- if (recipe.public == '0')
 				div(style="float:left; clear:both; height:73px; width:86px; position:relative; top:-28px; left:-36px; margin-bottom:-140px; background-image:url('/images/private.png'); background-repeat:no-repeat; z-index:3;")
 
-			div(id="recipe_pic_prev", style="position:relative; left:-18px; top:66px; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/prev1.png'); cursor:pointer;", title="Previous photo.", onClick="prev_picture();")
-			div(id="recipe_pic_next", style="position:relative; left:19px; top:66px; float:right; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/next1.png'); cursor:pointer;", title="Next photo.", , onClick="next_picture();")
+			div(id="recipe_pic_prev", style="position:relative; left:-25px; top:66px; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/prev1.png'); cursor:pointer;", title="Previous photo.", onClick="prev_picture();")
+			div(id="recipe_pic_next", style="position:relative; left:25px; top:66px; float:right; width:24px; height:44px; margin-bottom:-46px; background-image:url('/images/next1.png'); cursor:pointer;", title="Next photo.", , onClick="next_picture();")
 
 			//- Recipe Category
 			div(style="position:relative; right:10px; top:1px; margin-top:-2px; font-size:28px; float:right; clear:both; width:auto; height:auto; padding-left:16px; padding-right:16px; margin-bottom:-36px; background-color:white; border-bottom-left-radius:.6em; border-bottom-right-radius:.6em; opacity:.8; filter:alpha(opacity=80); cursor:default; z-index:2;", title="Category")
@@ -47,23 +55,25 @@ html.all(style="background-image:url('/images/bg1.png');")
 			div(style="width:168px; height:30px; margin:auto; position:relative; left:5px; top:6px; margin-bottom:-32px; padding-bottom:3px;")
 				div.star_power(id="stars_power")
 			- if (!global.session.logged_in)
-				div.star_outline(id="recipe_rank", title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks). Please login to rate.", style="cursor:default")
+				div.star_outline(id="recipe_rank", title="#{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks). Please login to rate.", style="cursor:default")
 			- else if (global.session.logged_in && recipe.owner == global.session.user.id)
-				div.star_outline(id="recipe_rank", title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks).", style="cursor:default")
+				div.star_outline(id="recipe_rank", title="#{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks).", style="cursor:default")
 			- else
 				- var text = (global.session.user_recipe_rank == -1 ? "" : " Your rank: " + (global.session.user_recipe_rank / 2) + " stars.");
-				div.star_outline(id="recipe_rank", title="#{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks).#{text}", onClick="show_rank();")
+				div.star_outline(id="recipe_rank", title="#{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks).#{text}", onClick="show_rank();")
 
 			div(id="recipe_rank_text", style="float:right; position:relative; top:6px; right:10px; font-size:12px; color:gray;")
-				| #{recipe.rank / 2}/5 stars (#{recipe.rank_count} ranks)
+				| #{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks)
 			div(style="float:right; clear:right; position:relative; top:8px; right:10px; font-size:12px; color:gray;")
 				| Created on #{recipe.date_added.toDateString()}
 
 		// Ingredients
-		div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; min-height:186px;")
+		div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; min-height:186px; overflow:auto;")
 
 			div(style="border-radius:.6em; float:right; position:relative; padding:6px; margin:6px;")
 				div(style="font-size:14px; float:right; clear:both; text-align:center; width:100%;")
+					span(id="orig_serving_size", style="position:absolute; top:-8px; text-align:center; width:72px; font-size:12px; color:gray; visibility:hidden;")
+						| Original
 					| Serving Size
 				div(style="font-size:18px; float:right; clear:both; text-align:center; width:100%; margin-bottom:6px;")
 					| #{recipe.serving_size}
@@ -80,16 +90,22 @@ html.all(style="background-image:url('/images/bg1.png');")
 
 			div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
 				| Ingredients
-			table(style="margin-left:10px;")
+			div(style="margin-left:10px; overflow:auto;")
 				- for (var i = 0; i < (recipe.ingredients).length; i++)
-					tr
-						td(id="ingredient_amount", style="height:20px; padding-left:10px; padding-left:10px; padding-right:2px; margin:3px; text-align:right; visibility:hidden")
+					div(style="float:left; clear:both; overflow:auto; margin-bottom:4px; margin-top:4px;")
+						div(id="ingredient_amount#{i}", style="padding-left:10px; padding-left:10px; padding-right:2px; text-align:right; visibility:hidden; min-width:60px; float:left;")
 							| #{recipe.ingredients[i].amount} 
-						td(style="padding-right:4px;")
-							|  #{recipe.ingredients[i].unit_name} 
+						div(id="ingredient_unit_name#{i}", style="padding-right:4px; float:left; margin-left:6px;")
+							|  #{recipe.ingredients[i].unit_name}
+						span(style="margin-left:6px;")
 							b(style="cursor:pointer;")
 								a(id="ingr_num#{recipe.ingredients[i].id}", href="", style="color:black; text-decoration:none;")
 									| #{recipe.ingredients[i].name}
+			div(id="ingr_alter_button", style="width:auto; float:left; clear:both; overflow:auto; padding:4px; font-size:10px; cursor:pointer;", onClick="show_ingr_alter();")
+				| &#9660; 
+				span(style="color:gray;")
+					| Change
+			div(id="ingr_alter", style="clear:both;")
 
 		//- Directions
 		div(style="font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white;")
@@ -143,7 +159,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 									span(style="font-size:10px; margin-left:5px; vertical-align:middle;")
 										| #{comment.owner.points}
 								- else
-									a(href="/user/profile?u=#{comment.owner.id}", style="margin:0px; padding:0px; cursor:pointer; text-decoration:none; color:gray;")
+									a(href="/user/profile?u=#{comment.owner.id}", style="margin:0px; padding:0px; cursor:pointer; text-decoration:none; color:gray; white-space:nowrap;")
 										| #{comment.owner.id}
 									span(style="font-size:10px; margin-left:5px; vertical-align:middle;")
 										| #{comment.owner.points}
@@ -279,6 +295,9 @@ html.all(style="background-image:url('/images/bg1.png');")
 		var show_buttons = true;
 		var new_rank = 0;
 		var recipe_my_rank = #{global.session.user_recipe_rank};
+		var servings = #{recipe.serving_size.match(/[0-9]+/)};
+		var new_servings = servings;
+		var share_animate = 0;
 		$(window).load(function()
 		{
 			$('#stars_power').css('visibility', 'visible'); // this keeps the background from appearing before the stars.
@@ -294,22 +313,23 @@ html.all(style="background-image:url('/images/bg1.png');")
 			$("[id^=edit]").hide();
 			// Setup correct ingredient fractions
 			$("[id^=ingredient_amount]").each(function(){
-				var number = $(this).text();
-				var integer = Math.floor(number);
-				var dec = (number - integer) * 100;
-				var gcf = FindGCF(100, dec);
-				var num = dec / gcf;
-				var den = 100 / gcf;
-				if (Math.round(dec) == 67) {num = 2; den = 3;}
-				if (Math.round(dec) == 33) {num = 1; den = 3;}
-				if (dec == 0)
-					$(this).text(integer);
-				else if (integer == 0)
-					$(this).text(num + '/' + den);
-				else
-					$(this).text(integer + ' ' + num + '/' + den);
+				$(this).text(fix_num($(this).attr('id').match(/[0-9]+/), 1));
 				$(this).css('visibility', 'visible');
 			});
+			//
+			$("#share_button").hover(function(){
+				if (share_animate == 0)
+				{
+					$("#share_title").animate({'padding-left': 60}, 350, function(){if (share_animate == 3) $("#share_title").animate({'padding-left': 0}, 350, function(){share_animate = 0;}); else share_animate = 2;});
+					share_animate = 1;
+				}
+			}, function(){
+				if (share_animate == 2)
+					$("#share_title").animate({'padding-left': 0}, 350, function(){share_animate = 0;});
+				else if (share_animate == 1)
+					share_animate = 3;
+			});
+			//
 			$("#new_comment_button").click(function(){
 				$("#new_comment_button").hide();
 				$("#new_comment_text").val('');
@@ -317,16 +337,18 @@ html.all(style="background-image:url('/images/bg1.png');")
 				$("#new_comment_text").focus();
 				show_buttons = false;
 				$("html, body").animate({ scrollTop: $(document).height() + $("#new_comment").position().top }, "slow");
- 
 			});
+			//
 			$("#new_comment_cancel").click(function(){
 				$("#new_comment").slideUp();
 				$("#new_comment_button").show();
 				show_buttons = true;
 			});
+			//
 			$("#new_reply_cancel").click(function(){
 				hide_new_reply();
 			});
+			//
 			$("#recipe_pic_drag").mousedown(function(e)
 			{
 				e.preventDefault();
@@ -340,10 +362,12 @@ html.all(style="background-image:url('/images/bg1.png');")
 					}
 				});
 			});
+			//
 			$("#recipe_pic_drag").dblclick(function()
 			{
 				$("#recipe_photo_div").css('height', $("#recipe_photo_div").css('min-height'));
 			});
+			//
 			$(document).mouseup(function(e){
 				resizing_image = false;
 				if (hide_rank_submit)
@@ -354,6 +378,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 				}
 				hide_rank_submit = true;
 			});
+			//
 			if (images.length <= 1)
 			{
 				$("#recipe_pic_prev").hide();
@@ -381,6 +406,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 				$("#ingr_float").css({left: (e.pageX + 16) + 'px', top: e.pageY + 'px'});
 			});
 		});
+		//
 		function reply_comment(comment)
 		{ 
 			// show new reply
@@ -647,8 +673,8 @@ html.all(style="background-image:url('/images/bg1.png');")
 						width -= 2;
 					$("#old_rank_power").css('width', width);
 					$("#stars_power").css('width', data.rank_avg / 10 * 160);
-					$("#recipe_rank").attr('title', (data.rank_avg / 2) + "/5 stars (" + data.rank_count + " ranks). Your rank: " + (data.rank / 2) + " stars.");
-					$("#recipe_rank_text").text((data.rank_avg / 2) + "/5 stars (" + data.rank_count + " ranks).");
+					$("#recipe_rank").attr('title', Math.round(data.rank_avg / 2 * 100) / 100 + "/5 stars (" + data.rank_count + " ranks). Your rank: " + (data.rank / 2) + " stars.");
+					$("#recipe_rank_text").text(Math.round(data.rank_avg / 2 * 100) / 100 + "/5 stars (" + data.rank_count + " ranks).");
 				}
 				});
 		}
@@ -661,6 +687,144 @@ html.all(style="background-image:url('/images/bg1.png');")
 			a = t;
 		}
 		return a;
+		}
+		function show_ingr_alter()
+		{
+			$("#ingr_alter_button").attr('onClick', 'hide_ingr_alter();');
+			$("#ingr_alter_button").html('&#9650; <span style="color:gray">Cancel</span>');
+			$("<div>Desired Serving Size:</div>").attr({id: 'ingr_alter_div', style: "visiblitly:hidden; width:390px; padding-top:10px; margin:auto;"}).appendTo($('#ingr_alter'));
+			$("<input></input>").attr({id: "ingr_alter_value", type: 'number', min: '0', max: '200', value: new_servings, class: 'input_text', style: "height:15px; margin-left:10px;"}).appendTo($("#ingr_alter_div"));
+			$("<button>Update</button>").attr({id: "ingr_alter_submit", class: 'button1b', style: "margin-left:10px;", onClick: "update_ingrs(0);"}).appendTo($("#ingr_alter_div"));
+			$("<button>Reset</button>").attr({class: 'button1b', style: "margin-left:10px;", onClick: "update_ingrs(1); $('#ingr_alter_value').val(servings);"}).appendTo($("#ingr_alter_div"));
+			$("#ingr_alter_div").hide();
+			$("#ingr_alter_div").css('visibility', 'visible');
+			$("#ingr_alter_div").slideDown();
+		}
+		function hide_ingr_alter()
+		{
+			$("#ingr_alter_button").attr('onClick', 'show_ingr_alter();');
+			$("#ingr_alter_button").html('&#9660; <span style="color:gray">Change</span>');
+			$("#ingr_alter_div").slideUp(function(){$("#ingr_alter_div").remove();});
+		}
+		function fix_num(ingr, m)
+		{
+			var number = ingredients[ingr].amount * m;
+			if (number == 0) return '-';
+			number = shoot_for_1(ingr, number);
+			return prettify_fraction(number);
+		}
+		function prettify_fraction(number)
+		{
+			var integer = Math.floor(number);
+			var dec = (number - integer) * 100;
+			var gcf = FindGCF(100, dec);
+			var num = dec / gcf;
+			var den = 100 / gcf;
+			if (Math.round(dec) == 67) {num = 2; den = 3;}
+			if (Math.round(dec) == 33) {num = 1; den = 3;}
+			if (dec == 0)
+				return integer.toString();
+			else if (integer == 0)
+			{
+				if (num <= 1000 && num != 0)
+					return (num + '/' + den).toString();
+				else
+					return (Math.round(number * 100)/100).toString();
+			}
+			else
+			{
+				if (num <= 1000 && num != 0)
+					return (integer + ' ' + num + '/' + den).toString();
+				else
+					return (Math.round(number * 100)/100).toString();
+			}
+			if (integer == 0 && num == 0)
+				return '';
+		}
+		function update_ingrs(reset)
+		{
+			$("[id^=ingredient_amount]").each(function(){
+				if (reset)
+				{
+					$(this).text(fix_num($(this).attr('id').match(/[0-9]+/), 1));
+					new_servings = servings;
+					$("#orig_serving_size").css('visibility', 'hidden');
+				}
+				else
+				{
+					new_servings = $("#ingr_alter_value").val();
+					$(this).text(fix_num($(this).attr('id').match(/[0-9]+/), new_servings / servings));
+					$("#orig_serving_size").css('visibility', 'visible');
+				}
+			});
+		}
+		function shoot_for_1(ingr, number)
+		{
+			var old_unit = ingredients[ingr].unit_name;
+			if (old_unit == '') return number;
+			old_unit = (old_unit.match(/[a-zA-Z]+/)).toString();
+			old_unit = old_unit.charAt(0).toUpperCase() + old_unit.substr(1);
+			// var list = ['Teaspoon', 'Tablespoon', 'Cup', 'Quart', 'Gallon'];
+			var list = ['Gallon', 'Quart', 'Cup', 'Tablespoon', 'Teaspoon'];
+			for (var i in list)
+			{
+				var value = convert(old_unit, number, list[i]);
+				var fraction = prettify_fraction(value);
+				if (fraction == 0) continue;
+				var den = fraction.match(/\/[0-9]+/);
+				if (den == null) den = 0;
+				if (Math.abs(1 - value) < Math.abs(1 - number) && fraction.indexOf('.') == -1 && den <= 4)
+				{
+					$("#ingredient_unit_name" + ingr.toString()).text(list[i].charAt(0).toLowerCase() + list[i].substr(1));
+					return value;
+				}
+			}
+			// Set to default
+			$("#ingredient_unit_name" + ingr.toString()).text(ingredients[ingr].unit_name);
+			return number;
+		}
+		function convert(unit1, unit1_amount, unit2)
+		{
+			var value;
+			// all the units that are in the table as a starting point:
+			var covered_units = ['Teaspoon', 'Liter'];
+			// all conversions (More can be more accurate or more redundant... it depends)
+			var table = {'Teaspoon-Teaspoon' : 1, 'Teaspoon-Tablespoon': 1/3, 'Teaspoon-Dessertspoon': 2, 'Teaspoon-Cup': 1/48, 'Teaspoon-Drop': 120, 'Teaspoon-Pinch': 16, 'Teaspoon-Dash': 8, 'Teaspoon-Smidgen': 32, 'Teaspoon-Handfull': 3/16, 'Teaspoon-Gill': 1/24, 'Teaspoon-Ounce': 1/6, 'Teaspoon-Fluid Ounces': 1/16, 'Teaspoon-Pound': 1/256, 'Teaspoon-Pint': 1/96, 'Teaspoon-Quart': 1/192, 'Teaspoon-Gallon': 1/768, 'Teaspoon-Jigger': 1/3, 'Teaspoon-Peck': 1/1787.36217, 'Teaspoon-Bushel': 1/7149.44868, 'Teaspoon-Firkin': 1/8300.96932, 'Teaspoon-Hogshead': 1/48384, 'Teaspoon-Mililiter': 4.928924902900179, 'Teaspoon-Cubic Centimeter': 4.928924902900179, 'Teaspoon-Cubic Inch': 0.300780827026962, 'Teaspoon-Cubic Foot': 0.0001740631919011878, 'Teaspoon-Liter': 0.004928924902900179, 'Teaspoon-Shot': 1/9, 'Teaspoon-Fifth': 1/153.6, 'Teaspoon-Bucket': 1/3840, 'Liter-Mililiter': 1000, 'Liter-Cubic Centimeter': 1000, 'Liter-Cubic Inch': 61.0237, 'Liter-Cubic Foot': 1/28.3168}
+			value = table[unit1 + '-' + unit2];
+			if (value == undefined) // not in the list so reverse the search
+			{
+				value = 1 / table[unit2 + '-' + unit1];
+			}
+			// still not in the list so search for a man in the middle link like: Tablespoon-Teaspoon Teaspoon-Gallon --> Tablespoon-Gallon
+			// (Sometimes not the most accurate due to rounding in the table)
+			if (value == undefined || isNaN(value))
+			{
+				for (i = 0; i < covered_units.length; i++)
+				{
+					value = 1 / table[covered_units[i] + '-' + unit1];
+					value /= 1 /table[covered_units[i] + '-' + unit2];
+					if (!isNaN(value))
+						break;
+				}
+			}
+			return value * unit1_amount;
+		}
+		function share_recipe()
+		{
+			$('body').css('cursor', 'wait');
+			$.ajax({
+				type: 'POST',
+				url: '/user/share_recipe',
+				data: {recipe_id: "#{recipe.id}"}, 
+				dataType: 'json',
+				success: function(data)
+				{
+					$('body').css('cursor', 'auto');
+					$("#share_button").css('cursor', 'pointer');
+					$("#share_title").animate({'padding-left': 60}, 350, function(){$("#share_title").animate({'padding-left': 0}, 350)});
+					$("#share_title").text('Shared');
+				}
+				});
 		}
 
 	include ../footer
