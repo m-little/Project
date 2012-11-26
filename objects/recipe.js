@@ -14,10 +14,24 @@ exports.Recipe = function Recipe(id_, owner_, public_, name_, cate_, serv_, prep
 	this.unseen_comment_count = -1;
 	this.flat_comments = [];
 	this.serving_size = serv_;
+	this.serving_first = 0;
+	this.serving_second = 0;
 	this.prep_time = "";
+	this.prep_hour = 0;
+	this.prep_min = 0;
 	this.ready_time = "";
+	this.ready_hour = 0;
+	this.ready_min = 0;
 	this.rank = 0;
 	this.rank_count = 0;
+
+	//set prep hour & min
+	this.prep_hour = parseInt(prep_.substring(0, 2), 10);
+	this.prep_min = parseInt(prep_.substring(3, 5), 10);
+
+	//set ready hour & min
+	this.ready_hour = parseInt(ready_.substring(0, 2), 10);
+	this.ready_min = parseInt(ready_.substring(3, 5), 10);
 
 	var prep_time_array = [parseInt(prep_.substring(0, 2)), prep_.substring(3, 5), prep_.substring(6, 8)];
 	if (prep_time_array[0] > 0)
