@@ -334,6 +334,7 @@ INSERT INTO passkeys (user_id, pass, salt) VALUES('James', '047281f78707c60625a3
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Catherine', 'e540334e5f07b9b136c5b0b489df7a2efa736947', '73e8a8b5c53e648b2ce978a499edba4e64482d99');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('John', '2eb605c2fcd4b05b709bef4cad5ecd289139a143', 'a8f474ca1460e5670c1f0756b99f4d9a01ffbab9');
 INSERT INTO passkeys (user_id, pass, salt) VALUES('Felicia', 'bcf3f218b57a5362e3162b77d1dfb54167923618', 'c031c0deb66133614c85bdc40a8019ec90c01b98');
+INSERT INTO passkeys (user_id, pass, salt) VALUES('Mario', 'ed9afd51c1609d0c4f42dbd3132def270ca9d36f', 'eb99762e96c220d67e6683c25fcd3666ea67041b');
 
 
 INSERT INTO picture (caption, location) VALUES('No Picture', 'unknown.png'); -- 1
@@ -373,6 +374,9 @@ INSERT INTO picture (caption, location) VALUES('Lemon Juice','lemon_juice.jpg');
 INSERT INTO picture (caption, location) VALUES('Butter','butter.jpg'); -- 35
 INSERT INTO picture (caption, location) VALUES('Milk','milk.jpg'); -- 36
 INSERT INTO picture (caption, location) VALUES('Vanilla Extract','van_ext.jpg'); -- 37
+INSERT INTO picture (caption, location) VALUES('Mario','mario.jpg'); -- 38
+INSERT INTO picture (caption, location) VALUES('Mushroom Soup','soup1.jpg'); -- 39
+INSERT INTO picture (caption, location) VALUES('Super Mushroom','mushroom1.jpg'); -- 40
 
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Sam', 2, 'admin', 'Sam', 'Luebbert', 'sgluebbert1@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Mike', 30, 'admin', 'Mike', 'Little', 'malittle3@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
@@ -383,11 +387,12 @@ INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Catherine', 9, 'user', 'Catherine', 'Middleton', 'cemiddleton@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('John', 10, 'user', 'John', 'Depp', 'jcdepp@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
 INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active) VALUES('Felicia', 11, 'user', 'Felicia', 'Day', 'fkday@cougars.ccis.edu', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1);
+INSERT INTO user (user_id, picture_id, user_group, user_fname, user_lname, email, date_added, active, show_email) VALUES('Mario', 38, 'user', 'Mario', '', 'mario@mushroomkingdom.com', STR_TO_DATE('9,14,2012 15:00', '%m,%d,%Y %H:%i'), 1, 1);
 
 -- Read as user_id_1 follows user_id_2...
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Julia', 1, 1, STR_TO_DATE('9,19,2012 6:05', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Curtis', 1, 1, STR_TO_DATE('9,23,2012 13:30', '%m,%d,%Y %H:%i'));
-INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Felicia', 1, 1, STR_TO_DATE('9,30,2012 11:02', '%m,%d,%Y %H:%i'));
+INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Mario', 1, 1, STR_TO_DATE('9,30,2012 11:02', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'John', 1, 1, STR_TO_DATE('9,12,2012 15:00', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, active, date_added) VALUES('Sam', 'James', 1, STR_TO_DATE('10,25,2012 19:20', '%m,%d,%Y %H:%i'));
 INSERT INTO user_connections (user_id_1, user_id_2, accepted, active, date_added) VALUES('Sam', 'Catherine', 1, 1, STR_TO_DATE('10,16,2012 13:30', '%m,%d,%Y %H:%i'));
@@ -465,6 +470,7 @@ INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time,
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Mike', 15, 'Simple White Cake', '6-10', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,25,2012 19:00', '%m,%d,%Y %H:%i')); -- 4
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Curtis', 5, 'Oven-fried Pork Chops', '4', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:00', '%m,%d,%Y %H:%i')); -- 5
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added, public) VALUES ( 'Sam', 2, 'Ranch Burgers', '8', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:05', '%m,%d,%Y %H:%i'), 0); -- 6
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Mario', 13, 'Shroom Soup', '3-4', STR_TO_DATE( '00:20', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), '1. Chop the mushroom and put it into a pot with the water and set it to boil.\n2. Chop potatoes into the pot as well with anything else you usually put in a soup.', STR_TO_DATE('11,02,2012 12:35', '%m,%d,%Y %H:%i')); -- 6
 
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(1, 3);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(2, 4);
@@ -473,6 +479,7 @@ INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(3, 5);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(4, 22);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(5, 23);
 INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(6, 24);
+INSERT INTO recipe_picture (recipe_id, picture_id) VALUES(7, 39);
 
 INSERT INTO recipe_comment (owner_id, recipe_id, content, date_added) VALUES('Curtis', 2, "Hey, this recipe seems good!", STR_TO_DATE('10,1,2012 16:34:21', '%m,%d,%Y %H:%i:%s')); -- 1
 INSERT INTO recipe_comment (owner_id, recipe_id, reply_comment_id, content, date_added) VALUES('Sam', 2, 1, "Thanks! Try it out sometime soon.", STR_TO_DATE('10,1,2012 19:04:54', '%m,%d,%Y %H:%i:%s')); -- 2
@@ -488,6 +495,7 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Julia
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 4, 10, STR_TO_DATE('10,2,2012 19:34:02', '%m,%d,%Y %H:%i:%s')); -- 4
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curtis', 5, 6, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
+INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 7, 10, STR_TO_DATE('11,2,2012 15:13:02', '%m,%d,%Y %H:%i:%s')); -- 7
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
@@ -526,7 +534,8 @@ INSERT INTO ingredient (ingr_name, picture_id) VALUES('Ground Beef', 31); -- 34
 INSERT INTO ingredient (ingr_name) VALUES('1 ounce Package of Ranch Dressing Mix'); -- 35
 INSERT INTO ingredient (ingr_name) VALUES('Crushed Saltine Crackers'); -- 36
 INSERT INTO ingredient (ingr_name) VALUES('Chopped Onion'); -- 37
-
+INSERT INTO ingredient (ingr_name, picture_id) VALUES('Super Mushroom', 40); -- 38
+INSERT INTO ingredient (ingr_name) VALUES('Water'); -- 39
 
 
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 1, 1, 3); -- Potato Salad, 3 pounds potatoes scrubbed and quartered
@@ -575,6 +584,9 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 15, 1, 1); -- Ranch Burgers, 1 eggs lightly beaten
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 36, 5, .75); -- Ranch Burgers, 3/4 cup crushed saltine crackers
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(6, 37, 1, 1); -- Ranch Burgers, 1 Onion chopped
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(7, 38, 1, 1); -- Mushroom Soup
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(7, 39, 5, 3); -- Mushroom Soup
+INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(7, 1, 1, 2); -- Mushroom Soup
 
 
 -- Wiki data
