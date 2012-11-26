@@ -741,3 +741,135 @@ exports.load_pictures = function(req, res)
 	}
 }
 
+exports.display_edit = function(req, res)
+{
+	req.query.r_id = parseInt(req.query.r_id);
+	if (isNaN(req.query.r_id))
+	{
+		global.session.error_message.message = "The recipe could not be found at the location given.";
+		res.redirect('/error');
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+
+	var categories_list = new Array();
+	var units_list = new Array();
+	var unit_ids_list = new Array();
+
+	dao.query("SELECT category_name FROM category ORDER BY category_name = '' DESC, use_count DESC", output);
+
+	function output(success, result, fields)
+	{
+		for (var i in result) 
+		{
+			var row = result[i];
+			if (row.category_name == '')
+				categories_list.push("Select One");
+			else
+				categories_list.push(row.category_name);
+		}
+
+		dao.query("SELECT unit_name, unit_id FROM unit", output2);
+	}
+
+	function output2(success, result, fields) 
+	{
+		for (var i in result)
+		{
+			var row = result[i];
+			if(row.unit_name == '')
+			{
+				units_list.push("Select One");
+				units_list.push("None");
+				unit_ids_list.push(0);
+				unit_ids_list.push(1);
+			}
+			else
+			{
+				units_list.push(row.unit_name);
+				unit_ids_list.push(row.unit_id);
+			}
+		}
+
+		dao.query("SELECT recipe_name, owner_id, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE recipe_id = " + req.query.r_id, output3);
+	}
+
+	// first return for basic recipe info
+	function output3(success, result, fields)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
+		if (result.length == 0) // no recipe found
+		{
+			global.session.error_message.code = "recipe_none";
+			global.session.error_message.message = "That recipe does not seem to exist.";
+			res.redirect('/error');
+			return;
+		}
+
+		var row = result[0];
+		if (row.public == '0' && (!global.session.logged_in || row.owner_id != global.session.user.id))
+		{
+			global.session.error_message.code = "recipe_private";
+			global.session.error_message.message = "That recipe is currently private.";
+			res.redirect('/error');
+			return;
+		}
+		
+		var new_recipe = new obj_recipe.Recipe(req.query.r_id, row.owner_id, row.public, row.recipe_name, row.category_name, row.serving_size, row.prep_time, row.ready_time, row.directions, row.date_added, row.date_edited);
+		
+		dao.query("SELECT p.picture_id, p.caption, p.location FROM recipe_picture rp JOIN picture p ON rp.picture_id = p.picture_id WHERE rp.recipe_id = " + req.query.r_id, output4, new_recipe);
+	}
+
+	// next: pictures
+	function output4(success, result, fields, new_recipe)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
+		var pictures = [];
+		for (var i in result) 
+		{
+			var row = result[i];
+			pictures.push(new obj_picture.Picture(row.picture_id, row.caption, row.location))
+		}
+		new_recipe.set_pictures(pictures);
+
+		dao.query("SELECT i.ingr_id, i.picture_id, p.caption, p.location, i.ingr_name, i.use_count, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN picture p ON i.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output5, new_recipe);
+	}
+
+	// next: ingredients
+	function output5(success, result, fields, new_recipe)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
+		var ingredients = [];
+		for (var i in result) 
+		{
+			var row = result[i];
+			ingredients.push(new obj_ingredient.Ingredient(row.ingr_id, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.ingr_name, row.unit_name, row.abrev, row.unit_amount, row.use_count))
+			console.log(ingredients);
+		}
+
+		new_recipe.set_ingredients(ingredients);
+		dao.die();
+		finished(new_recipe);
+	}
+
+	function finished(new_recipe)
+	{
+		res.render('recipe/recipe_edit', { title: website_title, recipe: new_recipe, categories: categories_list, units: units_list, unit_ids: unit_ids_list});
+	}
+}
