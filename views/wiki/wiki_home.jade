@@ -1,9 +1,14 @@
 doctype 5
 html.all(style="background-image:url('../images/bg1.png');")
 	
+	
 	include ../header
-	- for (var i in home)
-		| #{home[i].title}
+	- for (var i in topFive)
+		| #{topFive[i].title}
+	
 
 
+	script(src="/jquery.js")
+	script
+		var topfive_wikis = [{name: #{topFive[0].title}, picture: #{topFive[0].picture}}, #{topFive[1]}, #{topFive[2]}, #{topFive[3]}, #{topFive[4]}];
 	include ../footer
