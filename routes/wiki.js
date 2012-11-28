@@ -45,7 +45,7 @@ exports.home_view = function(req, res)
 	function finished(new_wiki_home) 
 	{
 		console.log(new_wiki_home);
-		res.render('wiki/wiki_home', { title: website_title, home: new_wiki_home});
+		res.render('wiki/wiki_home', { title: website_title, topFive: new_wiki_home});
 
 	}
 
