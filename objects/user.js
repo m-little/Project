@@ -87,7 +87,7 @@ exports.load_recipes = function(callback)
 	var dao = new obj_dao.DAO();
 	this.recipes = [];
 
-	dao.query("SELECT r.recipe_id, recipe_name, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE BINARY owner_id = '" + dao.safen(this.id) + "'", output1, {callback: callback, user: this});
+	dao.query("SELECT r.recipe_id, recipe_name, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE BINARY owner_id = '" + dao.safen(this.id) + "' AND active = 1", output1, {callback: callback, user: this});
 
 	function output1(success, result, fields, vars)
 	{
