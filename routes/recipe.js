@@ -125,7 +125,7 @@ exports.display_view = function(req, res)
 		}
 		new_recipe.set_pictures(pictures);
 
-		dao.query("SELECT i.ingr_id, p.picture_id, p.caption, p.location, i.ingr_name, i.use_count, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN wiki w ON i.wiki_id = w.wiki_id JOIN picture p ON w.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output3, new_recipe);
+		dao.query("SELECT i.ingr_id, w.wiki_id, p.picture_id, p.caption, p.location, i.ingr_name, i.use_count, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN wiki w ON i.wiki_id = w.wiki_id JOIN picture p ON w.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output3, new_recipe);
 	}
 
 	// next: ingredients
@@ -141,7 +141,7 @@ exports.display_view = function(req, res)
 		for (var i in result) 
 		{
 			var row = result[i];
-			ingredients.push(new obj_ingredient.Ingredient(row.ingr_id, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.ingr_name, row.unit_name, row.abrev, row.unit_amount, row.use_count))
+			ingredients.push(new obj_ingredient.Ingredient(row.ingr_id, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.ingr_name, row.unit_name, row.abrev, row.unit_amount, row.use_count, row.wiki_id))
 		}
 		new_recipe.set_ingredients(ingredients);
 
