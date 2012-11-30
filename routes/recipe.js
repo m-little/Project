@@ -75,7 +75,7 @@ exports.display_view = function(req, res)
 	var dao = new obj_dao.DAO();
 
 	// Command to start the whole chain of events of loading
-	dao.query("SELECT recipe_name, owner_id, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE recipe_id = " + req.query.r_id, output1);
+	dao.query("SELECT recipe_name, owner_id, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE recipe_id = " + req.query.r_id + " AND active = 1", output1);
 
 	// first return for basic recipe info
 	function output1(success, result, fields)
@@ -125,7 +125,7 @@ exports.display_view = function(req, res)
 		}
 		new_recipe.set_pictures(pictures);
 
-		dao.query("SELECT i.ingr_id, i.picture_id, p.caption, p.location, i.ingr_name, i.use_count, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN picture p ON i.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output3, new_recipe);
+		dao.query("SELECT i.ingr_id, w.wiki_id, p.picture_id, p.caption, p.location, i.ingr_name, i.use_count, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN wiki w ON i.wiki_id = w.wiki_id JOIN picture p ON w.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output3, new_recipe);
 	}
 
 	// next: ingredients
@@ -141,7 +141,7 @@ exports.display_view = function(req, res)
 		for (var i in result) 
 		{
 			var row = result[i];
-			ingredients.push(new obj_ingredient.Ingredient(row.ingr_id, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.ingr_name, row.unit_name, row.abrev, row.unit_amount, row.use_count))
+			ingredients.push(new obj_ingredient.Ingredient(row.ingr_id, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.ingr_name, row.unit_name, row.abrev, row.unit_amount, row.use_count, row.wiki_id))
 		}
 		new_recipe.set_ingredients(ingredients);
 

@@ -21,6 +21,8 @@ DROP TRIGGER IF EXISTS tri_user_rank_counter3;
 DROP TRIGGER IF EXISTS tri_user_rank_counter4;
 DROP TRIGGER IF EXISTS tri_user_rank_counter5;
 DROP TRIGGER IF EXISTS tri_user_rank_counter6;
+DROP TRIGGER IF EXISTS tri_ingr_wiki1;
+DROP TRIGGER IF EXISTS tri_ingr_wiki2;
 
 DROP TABLE IF EXISTS recipe_ingredient;
 DROP TABLE IF EXISTS ingredient;
@@ -73,6 +75,7 @@ wiki_cat_id BIGINT UNSIGNED,
 wiki_title VARCHAR(40) NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 description TEXT NOT NULL,
+ingr_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
 FULLTEXT(wiki_title),
 CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
 CONSTRAINT fk_wiki_video FOREIGN KEY(video_id) REFERENCES video(video_id),
@@ -81,7 +84,7 @@ CONSTRAINT fk_wiki_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id
 
 CREATE TABLE wiki_category
 (
-wiki_cat_id SERIAL NOT NULL AUTO_INCREMENT,
+wiki_cat_id SERIAL,
 category_name VARCHAR(40) NOT NULL,
 use_count INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_wiki_cat PRIMARY KEY(wiki_cat_id)
@@ -223,11 +226,11 @@ CONSTRAINT pk_unit PRIMARY KEY(unit_id)
 CREATE TABLE ingredient
 (
 ingr_id SERIAL,
-picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
-ingr_name VARCHAR(60) NOT NULL,
+ingr_name VARCHAR(60) BINARY NOT NULL,
 use_count INT UNSIGNED NOT NULL DEFAULT 0,
-CONSTRAINT pk_ingredient PRIMARY KEY(ingr_id),
-CONSTRAINT fk_ingredient_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
+wiki_id BIGINT UNSIGNED,
+CONSTRAINT pk_ingredient PRIMARY KEY(ingr_id)
+-- CONSTRAINT fk_ingredient_wiki FOREIGN KEY(wiki_id) REFERENCES wiki(wiki_id),
 );
 
 CREATE TABLE recipe_ingredient
@@ -283,16 +286,19 @@ CREATE TRIGGER tri_user_rank_counter1 AFTER INSERT ON recipe_ranking
 	FOR EACH ROW BEGIN
 		UPDATE user SET user_points = user_points + (NEW.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = NEW.recipe_id LIMIT 1);
 	END;
+|
 
 CREATE TRIGGER tri_user_rank_counter2 AFTER UPDATE ON recipe_ranking
 	FOR EACH ROW BEGIN
 		UPDATE user SET user_points = user_points + (NEW.rank * 3) - (OLD.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = NEW.recipe_id LIMIT 1);
 	END;
+|
 
 CREATE TRIGGER tri_user_rank_counter3 AFTER DELETE ON recipe_ranking
 	FOR EACH ROW BEGIN
 		UPDATE user SET user_points = user_points - (OLD.rank * 3) WHERE user_id = (SELECT r.owner_id FROM recipe r JOIN recipe_ranking rr ON r.recipe_id = rr.recipe_id WHERE r.recipe_id = OLD.recipe_id LIMIT 1);
 	END;
+|
 
 CREATE TRIGGER tri_user_rank_counter4 AFTER INSERT ON user_connections
 	FOR EACH ROW BEGIN
@@ -300,6 +306,7 @@ CREATE TRIGGER tri_user_rank_counter4 AFTER INSERT ON user_connections
 			THEN UPDATE user SET user_points = user_points + 1 WHERE user_id = NEW.user_id_2;
 		END IF;
 	END;
+|
 
 CREATE TRIGGER tri_user_rank_counter5 AFTER UPDATE ON user_connections
 	FOR EACH ROW BEGIN
@@ -310,6 +317,7 @@ CREATE TRIGGER tri_user_rank_counter5 AFTER UPDATE ON user_connections
 			UPDATE user SET user_points = user_points + 1 WHERE user_id = NEW.user_id_2;
 		END IF;
 	END;
+|
 
 CREATE TRIGGER tri_user_rank_counter6 AFTER UPDATE ON recipe
 	FOR EACH ROW BEGIN
@@ -320,6 +328,19 @@ CREATE TRIGGER tri_user_rank_counter6 AFTER UPDATE ON recipe
 		ELSEIF NEW.public = 1 AND NEW.active = 1 THEN
 			UPDATE user SET user_points = user_points + 10 WHERE user_id = NEW.owner_id;
 		END IF;
+	END;
+|
+
+CREATE TRIGGER tri_ingr_wiki1 BEFORE INSERT ON ingredient
+	FOR EACH ROW BEGIN
+		INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(1, NEW.ingr_name, 1, '');
+		SET NEW.wiki_id = LAST_INSERT_ID();
+	END;
+|
+
+CREATE TRIGGER tri_ingr_wiki2 AFTER INSERT ON ingredient
+	FOR EACH ROW BEGIN
+		UPDATE wiki SET ingr_id = NEW.ingr_id WHERE wiki_id = NEW.wiki_id;
 	END;
 |
 
@@ -500,25 +521,25 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curti
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 7, 10, STR_TO_DATE('11,2,2012 15:13:02', '%m,%d,%Y %H:%i:%s')); -- 7
 
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Potatoes', 41); --  1
+INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
 INSERT INTO ingredient (ingr_name) VALUES('Mayonnaise');  -- 3
 INSERT INTO ingredient (ingr_name) VALUES('Chopped Green Onions');  -- 4
 INSERT INTO ingredient (ingr_name) VALUES('Chopped Fresh Dill');  -- 5
 INSERT INTO ingredient (ingr_name) VALUES('Dijon Mustard');  -- 6
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Lemon Juice', 34);  -- 7
+INSERT INTO ingredient (ingr_name) VALUES('Lemon Juice');  -- 7
 INSERT INTO ingredient (ingr_name) VALUES('Pepper');  -- 8
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Unbaked Pie Shells', 18);  -- 9
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('White Sugar', 15);  -- 10
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Salt', 19);  -- 11
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Cinnamon', 20);  -- 12
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Ginger', 13);  -- 13
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Nutmeg', 21);  -- 14
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Eggs', 14);  -- 15
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Solid Pack Pumpkin', 17);  -- 16
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Evaporated Milk', 16);  -- 17
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('All Purpose Flour', 32);  -- 18
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Brown Sugar', 33);  -- 19
+INSERT INTO ingredient (ingr_name) VALUES('Unbaked Pie Shells');  -- 9
+INSERT INTO ingredient (ingr_name) VALUES('White Sugar');  -- 10
+INSERT INTO ingredient (ingr_name) VALUES('Salt');  -- 11
+INSERT INTO ingredient (ingr_name) VALUES('Cinnamon');  -- 12
+INSERT INTO ingredient (ingr_name) VALUES('Ginger');  -- 13
+INSERT INTO ingredient (ingr_name) VALUES('Nutmeg');  -- 14
+INSERT INTO ingredient (ingr_name) VALUES('Eggs');  -- 15
+INSERT INTO ingredient (ingr_name) VALUES('Solid Pack Pumpkin');  -- 16
+INSERT INTO ingredient (ingr_name) VALUES('Evaporated Milk');  -- 17
+INSERT INTO ingredient (ingr_name) VALUES('All Purpose Flour');  -- 18
+INSERT INTO ingredient (ingr_name) VALUES('Brown Sugar');  -- 19
 INSERT INTO ingredient (ingr_name) VALUES('Finely Chopped Sliced Almonds');  -- 20
 INSERT INTO ingredient (ingr_name) VALUES('Butter Flavored Shortening');  -- 21
 INSERT INTO ingredient (ingr_name) VALUES('Softened Cream Cheese');  -- 22
@@ -527,18 +548,41 @@ INSERT INTO ingredient (ingr_name) VALUES('Almond Extract');  -- 24
 INSERT INTO ingredient (ingr_name) VALUES('Seedless Raspberry Preserves');  -- 25
 INSERT INTO ingredient (ingr_name) VALUES('Flaked Coconut');  -- 26
 INSERT INTO ingredient (ingr_name) VALUES('Sliced Almonds');  -- 27
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Butter', 35); -- 28
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Vanilla Extract', 37); -- 29
+INSERT INTO ingredient (ingr_name) VALUES('Butter'); -- 28
+INSERT INTO ingredient (ingr_name) VALUES('Vanilla Extract'); -- 29
 INSERT INTO ingredient (ingr_name) VALUES('Baking Powder'); -- 30
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Milk', 36); -- 31
+INSERT INTO ingredient (ingr_name) VALUES('Milk'); -- 31
 INSERT INTO ingredient (ingr_name) VALUES('Pork Chops'); -- 32
 INSERT INTO ingredient (ingr_name) VALUES('Seasoned dry stuffing'); -- 33
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Ground Beef', 31); -- 34
+INSERT INTO ingredient (ingr_name) VALUES('Ground Beef'); -- 34
 INSERT INTO ingredient (ingr_name) VALUES('1 ounce Package of Ranch Dressing Mix'); -- 35
 INSERT INTO ingredient (ingr_name) VALUES('Crushed Saltine Crackers'); -- 36
 INSERT INTO ingredient (ingr_name) VALUES('Chopped Onion'); -- 37
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Super Mushroom', 40); -- 38
-INSERT INTO ingredient (ingr_name, picture_id) VALUES('Water', 42); -- 39
+INSERT INTO ingredient (ingr_name) VALUES('Super Mushroom'); -- 38
+INSERT INTO ingredient (ingr_name) VALUES('Water'); -- 39
+INSERT INTO ingredient (ingr_name) VALUES('Chicken'); -- 40
+INSERT INTO ingredient (ingr_name) VALUES('Sugar'); -- 41
+INSERT INTO ingredient (ingr_name) VALUES('Flour'); -- 41
+
+UPDATE wiki SET picture_id = 41 WHERE ingr_id = 1;
+UPDATE wiki SET picture_id = 34 WHERE ingr_id = 7;
+UPDATE wiki SET picture_id = 18 WHERE ingr_id = 9;
+UPDATE wiki SET picture_id = 15 WHERE ingr_id = 10;
+UPDATE wiki SET picture_id = 19 WHERE ingr_id = 11;
+UPDATE wiki SET picture_id = 20 WHERE ingr_id = 12;
+UPDATE wiki SET picture_id = 13 WHERE ingr_id = 13;
+UPDATE wiki SET picture_id = 21 WHERE ingr_id = 14;
+UPDATE wiki SET picture_id = 14 WHERE ingr_id = 15;
+UPDATE wiki SET picture_id = 17 WHERE ingr_id = 16;
+UPDATE wiki SET picture_id = 16 WHERE ingr_id = 17;
+UPDATE wiki SET picture_id = 32 WHERE ingr_id = 18;
+UPDATE wiki SET picture_id = 33 WHERE ingr_id = 19;
+UPDATE wiki SET picture_id = 35 WHERE ingr_id = 28;
+UPDATE wiki SET picture_id = 37 WHERE ingr_id = 29;
+UPDATE wiki SET picture_id = 36 WHERE ingr_id = 31;
+UPDATE wiki SET picture_id = 31 WHERE ingr_id = 34;
+UPDATE wiki SET picture_id = 40 WHERE ingr_id = 38;
+UPDATE wiki SET picture_id = 42 WHERE ingr_id = 39;
 
 
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 1, 1, 3); -- Potato Salad, 3 pounds potatoes scrubbed and quartered
@@ -602,28 +646,14 @@ INSERT INTO wiki_category (category_name) VALUES ("Ingredients"); -- 1
 INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 2
 INSERT INTO wiki_category (category_name) VALUES ("Cooking Techniques"); -- 3
 
--- Wiki pages
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Salt",1);  -- 1
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Sugar", 1); -- 2
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Pepper", 1); -- 3
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Butter", 1); -- 4
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Flour", 1); -- 5
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(1, "Chicken", 1);  -- 6
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id) VALUES(2, "Grilling", 3);  -- 7
+-- Wiki pages ::::: We can't count these like in previous inserts, because ingredients make wikis, you don't know what ID you are up to.
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(2, "Grilling", 3, '');
 
 -- Wiki content
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(1,19, "Salt", "Salt, also known as rock salt, is a crystalline mineral that is composed primarily of sodium chloride (NaCl), a chemical compound belonging to the larger class of ionic salts. It is absolutely essential for animal life, but can be harmful to animals and plants in excess."'\n''\n'" Salt is one of the oldest, most ubiquitous food seasonings and salting is an important method of food preservation. The taste of salt (saltiness) is one of the basic human tastes.
-	Salt for human consumption is produced in different forms: unrefined salt (such as sea salt), refined salt (table salt), and iodized salt. It is a crystalline solid, white, pale pink or light gray in color, normally obtained from sea water or rock deposits. Edible rock salts may be slightly grayish in color because of mineral content."'\n''\n'" Chloride and sodium ions, the two major components of salt, are needed by all known living creatures in small quantities. Salt is involved in regulating the water content (fluid balance) of the body. The sodium ion itself is used for electrical signaling in the nervous system.[1] Because of its importance to survival, salt has often been considered a valuable commodity during human history."'\n''\n'" ""However, as salt consumption has increased during modern times, scientists have become aware of the health risks associated with high salt intake, including high blood pressure in sensitive individuals. Therefore, some health authorities have recommended limitations of dietary sodium, although others state the risk is minimal for typical western diets.[2][3][4][5][6] The United States Department of Health and Human Services recommends that individuals consume no more than 1500–2300 mg of sodium (3750–5750 mg of salt) per day depending on age.[7]"); -- 1 
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(2,15, "Sugar", "Sugar is the generalised name for a class of sweet flavored substances used as food. They are carbohydrates and as this name implies, are composed of carbon, hydrogen and oxygen.Sugars are found in the tissues of most plants but are only present in sufficient concentrations for efficient extraction in sugarcane and sugar beet. Sugarcane is a giant grass and has been cultivated in tropical climates in the Far East since ancient times."'\n'" A great expansion in its production took place in the 18th century with the setting up of sugar plantations in the West Indies and Americas. This was the first time that sugar became available to the common people who had previously had to rely on honey to sweeten foods."'\n'" Sugar beet is a root crop and is cultivated in cooler climates and became a major source of sugar in the 19th century when methods for extracting the sugar became available. Sugar production and trade has changed the course of human history in many ways. It influenced the formation of colonies, the perpetuation of slavery, the transition to indentured labour, the migration of peoples, wars between 19th century sugar trade controlling nations and the ethnic composition and political structure of the new world."'\n'"
-	The world produced about 168 million tonnes of sugar in 2011. The average person consumes about 24 kilograms of sugar each year (33.1 kg in industrialised countries), equivalent to over 260 food calories per person, per day. Sugar provides empty calories.
-	Since the latter part of the twentieth century, it has been questioned whether a diet high in sugars, especially refined sugars, is bad for health."'\n'" Sugar has been linked to obesity and suspected of being implicated in diabetes, cardiovascular disease, dementia, macular degeneration and tooth decay. Numerous studies have been undertaken to try to clarify the position but the results remain largely unclear, mainly because of the difficulty of finding populations for use as controls that do not consume sugars."); -- 2
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(3,25, "Pepper", "<a href='?w_id=1'>Black pepper</a> (Piper nigrum) is a flowering vine in the family Piperaceae, cultivated for its fruit, which is usually dried and used as a spice and seasoning. The fruit, known as a peppercorn when dried, is approximately 5 millimetres (0.20 in) in diameter, dark red when fully mature, and, like all drupes, contains a single seed."'\n'" Peppercorns, and the powdered pepper derived from grinding them, may be described simply as pepper, or more precisely as black pepper (cooked and dried unripe fruit), green pepper (dried unripe fruit) and white pepper (dried ripe seeds).
-	Black pepper is native to south India, and is extensively cultivated there and elsewhere in tropical regions. Currently Vietnam is the world's largest producer and exporter of pepper, producing 34% of the world's Piper nigrum crop as of 2008."'\n'"
-	Dried ground pepper has been used since antiquity for both its flavour and as a medicine. Black pepper is the world's most traded spice. It is one of the most common spices added to European cuisine and its descendants. The spiciness of black pepper is due to the chemical piperine. It is ubiquitous in the industrialized world, often paired with table salt."'\n'" Black pepper is produced from the still-green unripe drupes of the pepper plant. The drupes are cooked briefly in hot water, both to clean them and to prepare them for drying. The heat ruptures cell walls in the pepper, speeding the work of browning enzymes during drying. The drupes are dried in the sun or by machine for several days, during which the pepper around the seed shrinks and darkens into a thin, wrinkled black layer. Once dried, the spice is called black peppercorn."'\n'" On some estates, the berries are separated from the stem by hand and then sun-dried without the boiling process. Once the peppercorns are dried, pepper spirit & oil can be extracted from the berries by crushing them. Pepper spirit is used in famous beverages like Coca-Cola and many medicinal and beauty products. Pepper oil is also used as an ayurvedic massage oil and used in certain beauty and herbal treatments. "); -- 3
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(4,27, "Butter", "Butter is a dairy product made by churning fresh or fermented cream or milk. It is generally used as a spread and a condiment, as well as in cooking, such as baking, sauce making, and pan frying. Butter consists of butterfat, milk proteins and water. Most frequently made from cows' milk, butter can also be manufactured from the milk of other mammals, including sheep, goats, buffalo, and yaks. Salt, flavorings and preservatives are sometimes added to butter. Rendering butter produces clarified butter or ghee, which is almost entirely butterfat."'\n'"
-Butter is a water-in-oil emulsion resulting from an inversion of the cream, an oil-in-water emulsion; the milk proteins are the emulsifiers. Butter remains a solid when refrigerated, but softens to a spreadable consistency at room temperature, and melts to a thin liquid consistency at 32–35 °C (90–95 °F). The density of butter is 911 g/L (56.9 lb/ft3).[1]"'\n'"
-It generally has a pale yellow color, but varies from deep yellow to nearly white. Its unmodified color is dependent on the animals' feed and is commonly manipulated with food colorings in the commercial manufacturing process, most commonly annatto or carotene. The word butter derives (via Germanic languages) from the Latin butyrum,[2] which is the latinisation of the Greek βούτυρον (bouturon).[3][4] This may have been a construction meaning 'cow-cheese', from βοῦς (bous), 'ox, cow'[5] + τυρός (turos), 'cheese',[6] but perhaps this is a false etymology of a Scythian word.[7]"'\n'" Nevertheless, the earliest attested form of the second stem, turos ('cheese'), is the Mycenaean Greek tu-ro, written in Linear B syllabic script.[8] The root word persists in the name butyric acid, a compound found in rancid butter and dairy products such as Parmesan cheese. In general use, the term 'butter' refers to the spread dairy product when unqualified by other descriptors. The word commonly is used to describe puréed vegetable or seed & nut products such as peanut butter and almond butter. It is often applied to spread fruit products such as apple butter. Fats such as cocoa butter and shea butter that remain solid at room temperature are also known as 'butters'."'\n'" In addition to the act of applying butter being called 'to butter', non-dairy items that have a dairy butter consistency may use 'butter' to call that consistency to mind, including food items such as maple butter and witch\'s butter and nonfood items such as baby bottom butter, hyena butter, and rock butter."); -- 4
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(5,26, "Flour", "Flour is a powder which is made by grinding cereal grains, other seeds or roots (like Cassava). It is the main ingredient of bread, which is a staple food for many cultures, making the availability of adequate supplies of flour a major economic and political issue at various times throughout history. Wheat flour is one of the most important foods in European, North American, Middle Eastern, Indian and North African cultures, and is the defining ingredient in most of their styles of breads and pastries."'\n'" Maize flour has been important in Mesoamerican cuisine since ancient times, and remains a staple in much of Latin American cuisine.[citation needed] Rye flour is an important constituent of bread in much of central/northern Europe. It was discovered around 6000 BC that wheat seeds could be crushed between simple millstones to make flour.[2] The Romans were the first to grind seeds on cone mills. In 1879, at the beginning of the Industrial Era, the first steam mill was erected in London."'\n'"[3] In the 1930s, some flour began to be enriched with iron, niacin, thiamine and riboflavin. In the 1940s, mills started to enrich flour and folic acid was added to the list in the 1990s. Degermed and heat-processed flour An important problem of the industrial revolution was the preservation of flour. Transportation distances and a relatively slow distribution system collided with natural shelf life. The reason for the limited shelf life is the fatty acids of the germ, which react from the moment they are exposed to oxygen."'\n'" This occurs when grain is milled; the fatty acids oxidize and flour starts to become rancid. Depending on climate and grain quality, this process takes six to nine months. In the late 19th century, this process was too short for an industrial production and distribution cycle. As vitamins, micro nutrients and amino acids were completely or relatively unknown in the late 19th century, removing the germ was a brilliant solution. Without the germ, flour cannot become rancid. Degermed flour became standard. Degermation started in densely populated areas and took approximately one generation to reach the countryside."'\n'" Heat-processed flour is flour where the germ is first separated from the endosperm and bran, then processed with steam, dry heat or microwave and blended into flour again.[4]
-The FDA has been advised by several cookie dough manufacturers that they have implemented the use of heat-treated flour for their ready-to-bake cookie dough products' to reduce the risk of E. coli contamination.[5]"); -- 5
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(6,28, "Chicken", "The chicken (Gallus gallus domesticus is a domesticated fowl, a subspecies of the Red Junglefowl. As one of the most common and widespread domestic animals, and with a population of more than 24 billion in 2003,[1] there are more chickens in the world than any other species of bird. Humans keep chickens primarily as a source of food, consuming both their meat and their eggs. The chicken's cultural and culinary dominance could be considered amazing to some in view of its believed domestic origin and purpose and it has inspired contributions to culture, art, cuisine, science and religion [2] from antiquity to the present."'\n' '\n'" The traditional poultry farming view of the domestication of the chicken is stated in Encyclopædia Britannica (2007): 'Humans first domesticated chickens of Indian origin for the purpose of cockfighting in Asia, Africa, and Europe. Very little formal attention was given to egg or meat production... '"'\n' '\n' "[3] Recent genetic studies have pointed to multiple maternal origins in Southeast, East, and South Asia, but with the clade found in the Americas, Europe, the Middle East and Africa originating in the Indian subcontinent. From India the domesticated fowl made its way to the Persianized kingdom of Lydia in western Asia Minor, and domestic fowl were imported to Greece by the fifth century BC."'\n' '\n' "[4] Fowl had been known in Egypt since the 18th Dynasty, with the 'bird that gives birth every day' having come to Egypt from the land between Syria and Shinar, Babylonia, according to the annals of Tutmose III.[5][6]"); -- 6
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES(7,43, "Grilling", "Grilling is a form of cooking that involves dry heat applied to the surface of food, commonly from above or below. Grilling usually involves a significant amount of direct, radiant heat, and tends to be used for cooking meat quickly and meat that has already been sliced (or other pieces). Food to be grilled is cooked on a grill (an open wire grid such as a gridiron with a heat source above or below), a grill pan (similar to a frying pan, but with raised ridges to mimic the wires of an open grill), or griddle (a flat plate heated from below).[1] Heat transfer to the food when using a grill is primarily via thermal radiation. Heat transfer when using a grill pan or griddle is by direct conduction. In the United States and Canada, when the heat source for grilling comes from above, grilling is termed broiling.[2] In this case, the pan that holds the food is called a broiler pan, and heat transfer is by thermal convection. Grilling, like most forms of cooking is more art than science. You can follow a few basic rules but after that it is your skill and style that will make you a great griller or a not so great griller. These tips will help you with many of the problems most people have.");  -- 7
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Salt" LIMIT 1), 19, "Salt", "Salt, also known as rock salt, is a crystalline mineral that is composed primarily of sodium chloride (NaCl), a chemical compound belonging to the larger class of ionic salts. It is absolutely essential for animal life, but can be harmful to animals and plants in excess.\n\nSalt is one of the oldest, most ubiquitous food seasonings and salting is an important method of food preservation. The taste of salt (saltiness) is one of the basic human tastes. Salt for human consumption is produced in different forms: unrefined salt (such as sea salt), refined salt (table salt), and iodized salt. It is a crystalline solid, white, pale pink or light gray in color, normally obtained from sea water or rock deposits. Edible rock salts may be slightly grayish in color because of mineral content.\n\nChloride and sodium ions, the two major components of salt, are needed by all known living creatures in small quantities. Salt is involved in regulating the water content (fluid balance) of the body. The sodium ion itself is used for electrical signaling in the nervous system.[1] Because of its importance to survival, salt has often been considered a valuable commodity during human history.\n\nHowever, as salt consumption has increased during modern times, scientists have become aware of the health risks associated with high salt intake, including high blood pressure in sensitive individuals. Therefore, some health authorities have recommended limitations of dietary sodium, although others state the risk is minimal for typical western diets.[2][3][4][5][6] The United States Department of Health and Human Services recommends that individuals consume no more than 1500–2300 mg of sodium (3750–5750 mg of salt) per day depending on age.[7]"); -- 1 
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Sugar" LIMIT 1), 15, "Sugar", "Sugar is the generalised name for a class of sweet flavored substances used as food. They are carbohydrates and as this name implies, are composed of carbon, hydrogen and oxygen.Sugars are found in the tissues of most plants but are only present in sufficient concentrations for efficient extraction in sugarcane and sugar beet. Sugarcane is a giant grass and has been cultivated in tropical climates in the Far East since ancient times.\n A great expansion in its production took place in the 18th century with the setting up of sugar plantations in the West Indies and Americas. This was the first time that sugar became available to the common people who had previously had to rely on honey to sweeten foods.\n Sugar beet is a root crop and is cultivated in cooler climates and became a major source of sugar in the 19th century when methods for extracting the sugar became available. Sugar production and trade has changed the course of human history in many ways. It influenced the formation of colonies, the perpetuation of slavery, the transition to indentured labour, the migration of peoples, wars between 19th century sugar trade controlling nations and the ethnic composition and political structure of the new world.\nThe world produced about 168 million tonnes of sugar in 2011. The average person consumes about 24 kilograms of sugar each year (33.1 kg in industrialised countries), equivalent to over 260 food calories per person, per day. Sugar provides empty calories. Since the latter part of the twentieth century, it has been questioned whether a diet high in sugars, especially refined sugars, is bad for health.\n Sugar has been linked to obesity and suspected of being implicated in diabetes, cardiovascular disease, dementia, macular degeneration and tooth decay. Numerous studies have been undertaken to try to clarify the position but the results remain largely unclear, mainly because of the difficulty of finding populations for use as controls that do not consume sugars."); -- 2
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Pepper" LIMIT 1), 25, "Pepper", "<a href='?w_id=1'>Black pepper</a> (Piper nigrum) is a flowering vine in the family Piperaceae, cultivated for its fruit, which is usually dried and used as a spice and seasoning. The fruit, known as a peppercorn when dried, is approximately 5 millimetres (0.20 in) in diameter, dark red when fully mature, and, like all drupes, contains a single seed.\n Peppercorns, and the powdered pepper derived from grinding them, may be described simply as pepper, or more precisely as black pepper (cooked and dried unripe fruit), green pepper (dried unripe fruit) and white pepper (dried ripe seeds). Black pepper is native to south India, and is extensively cultivated there and elsewhere in tropical regions. Currently Vietnam is the world's largest producer and exporter of pepper, producing 34% of the world's Piper nigrum crop as of 2008.\nDried ground pepper has been used since antiquity for both its flavour and as a medicine. Black pepper is the world's most traded spice. It is one of the most common spices added to European cuisine and its descendants. The spiciness of black pepper is due to the chemical piperine. It is ubiquitous in the industrialized world, often paired with table salt.\n Black pepper is produced from the still-green unripe drupes of the pepper plant. The drupes are cooked briefly in hot water, both to clean them and to prepare them for drying. The heat ruptures cell walls in the pepper, speeding the work of browning enzymes during drying. The drupes are dried in the sun or by machine for several days, during which the pepper around the seed shrinks and darkens into a thin, wrinkled black layer. Once dried, the spice is called black peppercorn.\n On some estates, the berries are separated from the stem by hand and then sun-dried without the boiling process. Once the peppercorns are dried, pepper spirit & oil can be extracted from the berries by crushing them. Pepper spirit is used in famous beverages like Coca-Cola and many medicinal and beauty products. Pepper oil is also used as an ayurvedic massage oil and used in certain beauty and herbal treatments. "); -- 3
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Butter" LIMIT 1), 27, "Butter", "Butter is a dairy product made by churning fresh or fermented cream or milk. It is generally used as a spread and a condiment, as well as in cooking, such as baking, sauce making, and pan frying. Butter consists of butterfat, milk proteins and water. Most frequently made from cows' milk, butter can also be manufactured from the milk of other mammals, including sheep, goats, buffalo, and yaks. Salt, flavorings and preservatives are sometimes added to butter. Rendering butter produces clarified butter or ghee, which is almost entirely butterfat.\nButter is a water-in-oil emulsion resulting from an inversion of the cream, an oil-in-water emulsion; the milk proteins are the emulsifiers. Butter remains a solid when refrigerated, but softens to a spreadable consistency at room temperature, and melts to a thin liquid consistency at 32–35 °C (90–95 °F). The density of butter is 911 g/L (56.9 lb/ft3).[1]\nIt generally has a pale yellow color, but varies from deep yellow to nearly white. Its unmodified color is dependent on the animals' feed and is commonly manipulated with food colorings in the commercial manufacturing process, most commonly annatto or carotene. The word butter derives (via Germanic languages) from the Latin butyrum,[2] which is the latinisation of the Greek (bouturon).[3][4] This may have been a construction meaning 'cow-cheese', from (bous), 'ox, cow'[5] + (turos), 'cheese',[6] but perhaps this is a false etymology of a Scythian word.[7]\n Nevertheless, the earliest attested form of the second stem, turos ('cheese'), is the Mycenaean Greek tu-ro, written in Linear B syllabic script.[8] The root word persists in the name butyric acid, a compound found in rancid butter and dairy products such as Parmesan cheese. In general use, the term 'butter' refers to the spread dairy product when unqualified by other descriptors. The word commonly is used to describe puréed vegetable or seed & nut products such as peanut butter and almond butter. It is often applied to spread fruit products such as apple butter. Fats such as cocoa butter and shea butter that remain solid at room temperature are also known as 'butters'.\n In addition to the act of applying butter being called 'to butter', non-dairy items that have a dairy butter consistency may use 'butter' to call that consistency to mind, including food items such as maple butter and witch\'s butter and nonfood items such as baby bottom butter, hyena butter, and rock butter."); -- 4
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Flour" LIMIT 1), 26, "Flour", "Flour is a powder which is made by grinding cereal grains, other seeds or roots (like Cassava). It is the main ingredient of bread, which is a staple food for many cultures, making the availability of adequate supplies of flour a major economic and political issue at various times throughout history. Wheat flour is one of the most important foods in European, North American, Middle Eastern, Indian and North African cultures, and is the defining ingredient in most of their styles of breads and pastries.\n Maize flour has been important in Mesoamerican cuisine since ancient times, and remains a staple in much of Latin American cuisine.[citation needed] Rye flour is an important constituent of bread in much of central/northern Europe. It was discovered around 6000 BC that wheat seeds could be crushed between simple millstones to make flour.[2] The Romans were the first to grind seeds on cone mills. In 1879, at the beginning of the Industrial Era, the first steam mill was erected in London.\n[3] In the 1930s, some flour began to be enriched with iron, niacin, thiamine and riboflavin. In the 1940s, mills started to enrich flour and folic acid was added to the list in the 1990s. Degermed and heat-processed flour An important problem of the industrial revolution was the preservation of flour. Transportation distances and a relatively slow distribution system collided with natural shelf life. The reason for the limited shelf life is the fatty acids of the germ, which react from the moment they are exposed to oxygen.\n This occurs when grain is milled; the fatty acids oxidize and flour starts to become rancid. Depending on climate and grain quality, this process takes six to nine months. In the late 19th century, this process was too short for an industrial production and distribution cycle. As vitamins, micro nutrients and amino acids were completely or relatively unknown in the late 19th century, removing the germ was a brilliant solution. Without the germ, flour cannot become rancid. Degermed flour became standard. Degermation started in densely populated areas and took approximately one generation to reach the countryside.\n Heat-processed flour is flour where the germ is first separated from the endosperm and bran, then processed with steam, dry heat or microwave and blended into flour again.[4] The FDA has been advised by several cookie dough manufacturers that they have implemented the use of heat-treated flour for their ready-to-bake cookie dough products' to reduce the risk of E. coli contamination.[5]"); -- 5
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Chicken" LIMIT 1), 28, "Chicken", "The chicken (Gallus gallus domesticus is a domesticated fowl, a subspecies of the Red Junglefowl. As one of the most common and widespread domestic animals, and with a population of more than 24 billion in 2003,[1] there are more chickens in the world than any other species of bird. Humans keep chickens primarily as a source of food, consuming both their meat and their eggs. The chicken's cultural and culinary dominance could be considered amazing to some in view of its believed domestic origin and purpose and it has inspired contributions to culture, art, cuisine, science and religion [2] from antiquity to the present.\n\n The traditional poultry farming view of the domestication of the chicken is stated in Encyclopædia Britannica (2007): 'Humans first domesticated chickens of Indian origin for the purpose of cockfighting in Asia, Africa, and Europe. Very little formal attention was given to egg or meat production...\n\n[3] Recent genetic studies have pointed to multiple maternal origins in Southeast, East, and South Asia, but with the clade found in the Americas, Europe, the Middle East and Africa originating in the Indian subcontinent. From India the domesticated fowl made its way to the Persianized kingdom of Lydia in western Asia Minor, and domestic fowl were imported to Greece by the fifth century BC.\n\n[4] Fowl had been known in Egypt since the 18th Dynasty, with the 'bird that gives birth every day' having come to Egypt from the land between Syria and Shinar, Babylonia, according to the annals of Tutmose III.[5][6]"); -- 6
+INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Grilling" LIMIT 1), 43, "Grilling", "Grilling is a form of cooking that involves dry heat applied to the surface of food, commonly from above or below. Grilling usually involves a significant amount of direct, radiant heat, and tends to be used for cooking meat quickly and meat that has already been sliced (or other pieces). Food to be grilled is cooked on a grill (an open wire grid such as a gridiron with a heat source above or below), a grill pan (similar to a frying pan, but with raised ridges to mimic the wires of an open grill), or griddle (a flat plate heated from below).[1] Heat transfer to the food when using a grill is primarily via thermal radiation. Heat transfer when using a grill pan or griddle is by direct conduction. In the United States and Canada, when the heat source for grilling comes from above, grilling is termed broiling.[2] In this case, the pan that holds the food is called a broiler pan, and heat transfer is by thermal convection. Grilling, like most forms of cooking is more art than science. You can follow a few basic rules but after that it is your skill and style that will make you a great griller or a not so great griller. These tips will help you with many of the problems most people have.");  -- 7
