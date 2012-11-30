@@ -6,9 +6,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 	- for (var i in topFive)
 		| #{topFive[i].title}
 	
-
+	div(id="test", style="background-image:url(''); width:100px; height:100px;")
 
 	script(src="/jquery.js")
 	script
-		var topfive_wikis = [{name: #{topFive[0].title}, picture: #{topFive[0].picture}}, #{topFive[1]}, #{topFive[2]}, #{topFive[3]}, #{topFive[4]}];
+		var topfive_wikis = [{name: "#{topFive[0].title}", picture: {location: "#{topFive[0].picture.location}", caption: "#{topFive[0].picture.caption0}"}},{name: "#{topFive[0].title}", picture: {location: "#{topFive[0].picture.location}", caption: "#{topFive[0].picture.caption1}"}},{name: "#{topFive[2].title}", picture: {location: "#{topFive[2].picture.location}", caption: "#{topFive[2].picture.caption1}"}},{name: "#{topFive[3].title}", picture: {location: "#{topFive[3].picture.location}", caption: "#{topFive[3].picture.caption3}"}},{name: "#{topFive[4].title}", picture: {location: "#{topFive[4].picture.location}", caption: "#{topFive[4].picture.caption4}"}}];
+		$("#test").css("background-image", "url('/images/user_images/" + topfive_wikis[0].picture.location + "')");
 	include ../footer
