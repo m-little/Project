@@ -21,8 +21,6 @@ exports.home_view = function(req, res)
 			return;
 		}
 
-		
-
 		var preview_array = new Array();
 
 
@@ -64,7 +62,7 @@ exports.display_view = function(req, res)
 	var dao = new obj_dao.DAO();	
 	
 	// first query gets information that belongs to the wiki and video tables from the database and runs the function output1 on completion
-	dao.query("SELECT w.video_id, wiki_title, v.name, v.caption, v.address FROM wiki w JOIN video v ON w.video_id = v.video_id WHERE wiki_id =" + req.query.w_id, output1);
+	dao.query("SELECT w.video_id, wiki_title, p.picture_id, p.location, p.caption, v.name, v.caption, v.address FROM wiki w JOIN video v ON w.video_id = v.video_id JOIN picture p ON p.picture_id = w.picture_id WHERE wiki_id =" + req.query.w_id, output1);
 	
 	function output1(success, result, fields)
 	{
@@ -80,7 +78,7 @@ exports.display_view = function(req, res)
 
 		// construct video and wiki objects from the info obtained from the database
 		var new_video = new obj_video.Video(row.video_id, row.name, row.caption, row.address);
-		var new_wiki = new obj_wiki.Wiki(req.query.w_id, new_video, row.wiki_title);
+		var new_wiki = new obj_wiki.Wiki(req.query.w_id, new_video, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location));
 		
 		// second query gets the wiki pages content (i.e. sections of the wiki page and pictures belonging to that section) and runst the function output2 on completion
 		dao.query("SELECT content, title, p.picture_id, p.location, p.caption, wc.wiki_cont_id FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id WHERE wc.wiki_id =" + req.query.w_id, output2, new_wiki);
