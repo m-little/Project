@@ -133,14 +133,15 @@ html.all(style="background-image:url('/images/bg1.png');")
 			//
 			$("#add_content").click(function() {
 				var new_content = $("<div></div>").attr({id: "content_box_parent" + content_boxes, style: "border:1px solid #c2c2c2; background-color:white; padding:10px; margin-bottom:10px;"});
-				$("<span>New Content</span>").attr({style: "color:gray;"}).appendTo(new_content);
+				$("<div>Content Title:</div>").attr({style: "color:gray; float:left; vertical-align:middle; margin-top:4px;"}).appendTo(new_content);
+				var title = $("<input></input>").attr({id: "content_box_title" + content_boxes, class: "input_text", style: "float:left; margin-bottom:8px; margin-left:10px;"}).appendTo(new_content);
 				var remove = $("<div></div>").attr({id: "content_box_remove" + content_boxes, style: "background-image:url('/images/delete.png'); background-size:100% 100%; width:24px; height:24px; position:relative; right:-10px; top:-10px; margin-left:auto; float:right; cursor:pointer;", onclick: "$('#content_box_parent"+ content_boxes +"').slideUp(function(){$('#content_box_parent"+ content_boxes +"').remove();});"}).appendTo(new_content);
 				var input_div = $("<div></div>").attr({style: "min-height:20px; margin-right:20px;"}).appendTo(new_content);
 				var input_box = $("<textarea></textarea>").attr({id: "content_box_text" + content_boxes, class: "text_box", style: "width:100%;"}).appendTo(input_div);
 				new_content.hide();
 				new_content.appendTo("#div_all_contents");
 				new_content.slideDown();
-				input_box.focus();
+				title.focus();
 				// $("#div_add_content").slideUp();
 				content_boxes += 1;
 			});
@@ -152,7 +153,8 @@ html.all(style="background-image:url('/images/bg1.png');")
 			$("[id^=content_box_parent]").each(function(){
 				var num = this.id.match(/[0-9]+/);
 				if (num == null) return;
-				contents.push({body: $("#content_box_text" + num).val()});
+				if ($("#content_box_title" + num).val() != '')
+					contents.push({title: $("#content_box_title" + num).val(), body: $("#content_box_text" + num).val()});
 			});
 			//
 			$.ajax({

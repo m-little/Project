@@ -234,7 +234,8 @@ exports.new = function(req, res)
 	for (var i in req.body.contents)
 	{
 		var content = req.body.contents[i];
-		statements.push("INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES (@wiki_id, 1, '', '" + dao.safen(content.body) + "');");
+		if (content.title != "")
+			statements.push("INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES (@wiki_id, 1, '" + dao.safen(content.title) + "', '" + dao.safen(content.body) + "');");
 	}
 
 	dao.transaction(statements, output1);
