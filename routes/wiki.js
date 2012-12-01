@@ -139,7 +139,7 @@ exports.display_create = function(req, res)
 	// initalize data base access object
 	var dao = new obj_dao.DAO();
 
-	dao.query("SELECT category_name FROM wiki_category ORDER BY use_count", output1);
+	dao.query("SELECT category_name FROM wiki_category ORDER BY use_count DESC", output1);
 
 	function output1(success, result, fields)
 	{
@@ -229,22 +229,43 @@ exports.new = function(req, res)
 
 	var dao = new obj_dao.DAO();
 
-	var statements = ["INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description, picture_id) VALUES (1, '" + dao.safen(req.body.name) + "', 1, '" + dao.safen(req.body.description) + "', " + dao.safen(req.body.pic_id) + ");", "SET @wiki_id = LAST_INSERT_ID();"];
+	dao.query("SELECT wiki_cat_id FROM wiki_category WHERE category_name = '" + dao.safen(req.body.category) + "'", output1);
 
-	for (var i in req.body.contents)
+	function output1(success, result, fields)
 	{
-		var content = req.body.contents[i];
-		if (content.title != "")
-			statements.push("INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES (@wiki_id, 1, '" + dao.safen(content.title) + "', '" + dao.safen(content.body) + "');");
-	}
+		if (!success || result.length == 0)
+		{
+			dao.die();
+			res.send({});
+			return;
+		}
 
-	dao.transaction(statements, output1);
 
-	function output1(success, results, fields)
-	{
-		console.log(results)
-		res.send({success: true, id: results.results[0].insertId});
-		dao.die();
-		return;
+
+		var statements = ["INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description, picture_id) VALUES (1, '" + dao.safen(req.body.name) + "', " + result[0].wiki_cat_id + ", '" + dao.safen(req.body.description) + "', '" + dao.safen(req.body.pic_id) + "');", "SET @wiki_id = LAST_INSERT_ID();"];
+
+		for (var i in req.body.contents)
+		{
+			var content = req.body.contents[i];
+			if (content.pic_id == undefined || content.pic_id == '')
+				content.pic_id = 1;
+			if (content.title != "")
+				statements.push("INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES (@wiki_id, '" + dao.safen(content.pic_id) + "', '" + dao.safen(content.title) + "', '" + dao.safen(content.body) + "');");
+		}
+
+		dao.transaction(statements, output2);
+
+		function output2(success, results, fields)
+		{
+			dao.die();
+			if (!success)
+			{
+				res.send({});
+				return;
+			}
+
+			res.send({success: true, id: results.results[0].insertId});
+			return;
+		}
 	}
 }
