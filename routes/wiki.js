@@ -222,6 +222,11 @@ exports.new = function(req, res)
 		return;
 	}
 
+	if (req.body.pic_id == undefined || req.body.pic_id == -1)
+	{
+		req.body.pic_id == 1;
+	}
+
 	var dao = new obj_dao.DAO();
 
 	var statements = ["INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description, picture_id) VALUES (1, '" + dao.safen(req.body.name) + "', 1, '" + dao.safen(req.body.description) + "', " + dao.safen(req.body.pic_id) + ");", "SET @wiki_id = LAST_INSERT_ID();"];
