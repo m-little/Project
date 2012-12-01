@@ -7,66 +7,85 @@ html.all(style="background-image:url('/images/bg1.png');")
 		div(style="border:1px solid #c2c2c2; background-color:white; text-align:center; font-size:42px; padding:10px; margin-bottom:10px;")
 			| Create New Wiki
 
-		div(style="border:1px solid #c2c2c2; background-color:white; text-align:center; padding:10px; margin-bottom:10px; vertical-align:middle; overflow:auto;")
+		div(style="border:1px solid #c2c2c2; background-color:white; text-align:center; padding:10px; margin-bottom:10px; vertical-align:middle;")
 
-			//- Category select
-			div(style="padding:10px")
-				div(style="float:left; width:150px")
-					| Category:
-				div(style="float:left")
-					select(size="1", class="category", style="width:110px; font-size:16px; margin-left:10px")
-						- for( var i = 0; i < categories.length; i++)
-							option
-								= categories[i]
+			table(style="width:100%; position:relative;")
+				//- Category select
+				tr(style="")
+					td(style="width:150px; text-align:right; vertical-align:middle;")
+						| Category:
+					td(style="")
+						div(style="margin-right:auto; width:140px;")
+							select(size="1", id="category", style="width:110px; font-size:16px;")
+								- for( var i = 0; i < categories.length; i++)
+									option
+										= categories[i]
 
-			//- Recipe Name input
-			div(style="padding:10px; margin-top:20px")
-				div(style="clear:left; float:left; width:150px;")
-					| Wiki Name:
-				div(style="float:left")
-					input.input_text(type="text", class="recipe_name", name="recipe_name", style="margin-left:10px; width:170px;", required="required", autofucus)
+				//- Recipe Name input
+				tr(style="padding:10px; margin-top:20px")
+					td(style="width:150px; text-align:right; vertical-align:middle;")
+						| Wiki Name:
+					td(style="")
+						div(style="margin-right:auto; width:210px;")
+							input.input_text(type="text", id="wiki_name", name="wiki_name", style="margin-left:10px; width:170px;", required="required", autofucus)
 
 
-			//- Picture Upload input
-			div(style="clear:left; padding:10px")
-				div(style="float:left; clear:left; width:150px")
-					| Picture Upload:
-				div(id="div_picture_upload")
-					div(style="float:left")
-						input(type="file", id="wiki_picture", name="wiki_picture", style="margin-left:10px; width:200px")
-					div(style="float:left")
-						| Picture Caption:
-						input.input_text(type="text", id="picture_caption", name="picture_caption", style="margin-left:5px; width:150px")
-					div(style="float:left")
-						button.button1b(style="margin-left:20px;", id="image_upload")
-							| Upload
+				//- Picture Upload input
+				tr(style="clear:left; padding:10px")
+					td(style="width:150px; text-align:right; vertical-align:top;")
+						| Picture Upload:
+					td(id="div_picture_upload")
+						div(style="margin-right:auto; overflow:auto; margin-left:6px;")
+							div(style="")
+								input(type="file", id="wiki_picture", name="wiki_picture", style="margin-left:10px; width:200px; float:left;")
+							div(style="float:left;")
+								| Picture Caption:
+								input.input_text(type="text", id="picture_caption", name="picture_caption", style="margin-left:5px; width:150px")
+							div(style="")
+								button.button1b(style="margin-left:20px;", id="image_upload")
+									| Upload
 
 				//- Uploaded recipe
-				div(id="div_picture_uploaded", style="padding:10px; visibility:hidden; clear:both;")
-					img(id="div_picture_uploaded_img", src="", style="max-width:500px; max-height:256px;")
-				div(id="div_picture_remove", style="clear:both; margin:auto; visibility:hidden;")
-						button.button1r(style="", id="image_upload")
-							| Remove
+				tr
+					td
+					td
+						div(id="div_picture_uploaded", style="padding:10px; visibility:hidden; margin:auto;")
+							img(id="div_picture_uploaded_img", src="/images/user_images/unknown.png", style="max-width:500px; max-height:256px;")
+						div(id="div_picture_remove", style="clear:both; margin:auto; visibility:hidden;")
+								button.button1r(style="", id="image_upload")
+									| Remove
 
-			//- Directions text area
-			div(style="clear:left; padding:10px")
-				div(style="float:left; width:150px")
-					| Directions:
-				div(style="float:left; padding-left:10px")
-					textarea.text_box(type="text", class="directions", style="width:770px; height:300px")
+				//- Description text area
+				tr(style="padding:10px;")
+					td(style="width:150px; text-align:right; vertical-align:top;")
+						| Description:
+					td(style="padding-left:15px; padding-right:20px;")
+						textarea.text_box(type="text", id="description", style="width:100%; height:140px")
 
+		div(id="div_all_contents", style="")
+
+		div(id="div_add_content", style="border:1px solid #c2c2c2; background-color:white; text-align:center; padding:10px; margin-bottom:10px; vertical-align:middle; overflow:auto;")
+			span(style="")
+					button.button1b(id="add_content", type="button", style="")
+						| Add Content
+			span(style="margin-left:20px; color:gray; vertical-align:middle;")
+				| Click here to add content such as paragraphs, links, and videos.
+
+		div(id="div_add_content", style="border:1px solid #c2c2c2; background-color:white; text-align:center; padding:10px; margin-bottom:10px; margin-left:auto; vertical-align:middle; overflow:auto; width:100px;")
 			//- Submit button
-			div(style="clear:left; height:20px; width:935px; padding:10px")
-				div(style="float:right")
-					button.button1b(id="submit", type="button", style="height:30px; width:80px")
+			div(style="")
+				div(style="")
+					button.button1b(id="submit", style="height:30px; width:80px;")
 						| Create
 
 	script(src="/jquery.js")
 	script
 		var uploaded_wiki_pic_id = -1;
+		var content_boxes = 0;
 		//
 		$(document).ready(function()
 		{
+			$("#recipe_name").focus();
 			$("#div_picture_uploaded").hide();
 			$("#div_picture_remove").hide();
 			$("#div_picture_uploaded").css('visibility', 'visible');
@@ -96,7 +115,6 @@ html.all(style="background-image:url('/images/bg1.png');")
 								$("#div_picture_uploaded").slideDown();
 								$("#div_picture_remove").fadeIn();
 								$("#div_picture_uploaded_img").attr({src: '/images/user_images/' + data.picture.location, title: data.picture.caption});
-								alert(res);
 							}  
 						});
 					}
@@ -111,6 +129,42 @@ html.all(style="background-image:url('/images/bg1.png');")
 				// Clear the input field
 				$("#wiki_picture").replaceWith($("#wiki_picture").clone(true));
 				$("#picture_caption").val('');
+			});
+			//
+			$("#add_content").click(function() {
+				var new_content = $("<div></div>").attr({id: "content_box_parent" + content_boxes, style: "border:1px solid #c2c2c2; background-color:white; padding:10px; margin-bottom:10px;"});
+				$("<span>New Content</span>").attr({style: "color:gray;"}).appendTo(new_content);
+				var remove = $("<div></div>").attr({id: "content_box_remove" + content_boxes, style: "background-image:url('/images/delete.png'); background-size:100% 100%; width:24px; height:24px; position:relative; right:-10px; top:-10px; margin-left:auto; float:right; cursor:pointer;", onclick: "$('#content_box_parent"+ content_boxes +"').slideUp(function(){$('#content_box_parent"+ content_boxes +"').remove();});"}).appendTo(new_content);
+				var input_div = $("<div></div>").attr({style: "min-height:20px; margin-right:20px;"}).appendTo(new_content);
+				var input_box = $("<textarea></textarea>").attr({id: "content_box_text" + content_boxes, class: "text_box", style: "width:100%;"}).appendTo(input_div);
+				new_content.hide();
+				new_content.appendTo("#div_all_contents");
+				new_content.slideDown();
+				input_box.focus();
+				// $("#div_add_content").slideUp();
+				content_boxes += 1;
+			});
+		});
+		//
+		//
+		$("#submit").click(function(){
+			var contents = [];
+			$("[id^=content_box_parent]").each(function(){
+				var num = this.id.match(/[0-9]+/);
+				if (num == null) return;
+				contents.push({body: $("#content_box_text" + num).val()});
+			});
+			//
+			$.ajax({
+				url: "/wiki/new",
+				type: "POST",
+				data: {category: $("#category").val(), name: $("#wiki_name").val(), description: $("#description").val(), pic_id: uploaded_wiki_pic_id, contents: contents},
+				dataType: 'json',
+				success: function (data)
+				{
+					if (data.success === true)
+						window.location.href='/wiki/view?w_id=' + data.id;
+				}  
 			});
 		});
 

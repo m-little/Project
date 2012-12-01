@@ -167,7 +167,7 @@ exports.load_pictures = function(req, res)
 {
 	if (req.files == undefined)
 	{
-		res.redirect('/500error');
+		res.send({});
 		return;
 	}
 
@@ -189,7 +189,7 @@ exports.load_pictures = function(req, res)
 			{
 				console.error(err);
 				dao.die();
-				res.redirect('/500error');
+				res.send({});
 				return;
 			}
 			else 
@@ -204,10 +204,41 @@ exports.load_pictures = function(req, res)
 		dao.die();
 		if (!success)
 		{
-			res.redirect('/500error');
+			res.send({});
 			return;
 		}
 		
 		res.send({added_id: result.insertId, picture:{location: newName, caption:req.body.caption}});
+	}
+}
+
+exports.new = function(req, res)
+{
+	console.log(req.body);
+
+	if (req.body.name == undefined || req.body.name == "")
+	{
+		res.send({});
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+
+	var statements = ["INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description, picture_id) VALUES (1, '" + dao.safen(req.body.name) + "', 1, '" + dao.safen(req.body.description) + "', " + dao.safen(req.body.pic_id) + ");", "SET @wiki_id = LAST_INSERT_ID();"];
+
+	for (var i in req.body.contents)
+	{
+		var content = req.body.contents[i];
+		statements.push("INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES (@wiki_id, 1, '', '" + dao.safen(content.body) + "');");
+	}
+
+	dao.transaction(statements, output1);
+
+	function output1(success, results, fields)
+	{
+		console.log(results)
+		res.send({success: true, id: results.results[0].insertId});
+		dao.die();
+		return;
 	}
 }
