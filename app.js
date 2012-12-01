@@ -105,6 +105,8 @@ app.get('/recipe/my', recipe.my);
 
 app.get('/wiki/view', wiki.display_view);
 app.get('/wiki/home', wiki.home_view);
+app.get('/wiki/create', wiki.display_create);
+app.post('/wiki/pictures', wiki.load_pictures);
 
 app.get('/query', search.search_results);
 

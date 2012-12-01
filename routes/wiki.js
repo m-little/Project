@@ -2,8 +2,9 @@ var obj_dao = require('../objects/database');
 var obj_wiki = require('../objects/wiki');
 var obj_video = require('../objects/video');
 var obj_picture = require('../objects/picture');
-var obj_content = require('../objects/wiki_content')
-var obj_preview = require('../objects/preview')
+var obj_content = require('../objects/wiki_content');
+var obj_preview = require('../objects/preview');
+var fs = require('fs');
 
 exports.home_view = function(req, res)
 {
@@ -14,6 +15,13 @@ exports.home_view = function(req, res)
 
 	function output1(success, result, fields)
 	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
 		// if there are no results redirect to the home page
 		if (result.length == 0) 
 		{
@@ -66,6 +74,13 @@ exports.display_view = function(req, res)
 	
 	function output1(success, result, fields)
 	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
 		// if there are no results redirect to the home page
 		if (result.length == 0) 
 		{
@@ -87,6 +102,12 @@ exports.display_view = function(req, res)
 	// this function builds the wiki_content objects and stores them in an array that is then put in the 'wiki' object
 	function output2(success, result, fields, new_wiki)
 	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
 		//console.log(result);
 
 		var content_array = new Array();
@@ -110,5 +131,83 @@ exports.display_view = function(req, res)
 
 	function finished(new_wiki) {
 		res.render('wiki/wiki_view', { title: website_title, wiki: new_wiki});
+	}
+}
+
+exports.display_create = function(req, res)
+{
+	// initalize data base access object
+	var dao = new obj_dao.DAO();
+
+	dao.query("SELECT category_name FROM wiki_category ORDER BY use_count", output1);
+
+	function output1(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		var categories = [];
+
+		for (var i in result)
+		{
+			var row = result[i];
+			categories.push(row.category_name);
+		}
+
+		dao.die();
+		res.render('wiki/wiki_create', { title: website_title, categories: categories});
+	}
+}
+
+exports.load_pictures = function(req, res)
+{
+	if (req.files == undefined)
+	{
+		res.redirect('/500error');
+		return;
+	}
+
+	if (req.body.caption == undefined)
+	{
+		req.body.caption = '';
+	}
+
+	var dao = new obj_dao.DAO();
+	var newPath = "";
+	var newName = "";
+
+	fs.readFile(req.files.image.path, function (err, data) {
+		var newDate = new Date();
+		newName = newDate.getMonth().toString() + newDate.getHours().toString() + newDate.getMinutes().toString() + newDate.getSeconds().toString() + req.files.image.name;
+		newPath = "public/images/user_images/" + newName;
+		fs.writeFile(newPath, data, function (err) {
+			if (err) 
+			{
+				console.error(err);
+				dao.die();
+				res.redirect('/500error');
+				return;
+			}
+			else 
+			{
+				dao.query("INSERT INTO picture (caption, location) VALUES('" + dao.safen(req.body.caption) + "', '" + dao.safen(newName) + "')", output1)
+			}
+		});
+	});
+
+	function output1(success, result, fields)
+	{
+		dao.die();
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+		
+		res.send({added_id: result.insertId, picture:{location: newName, caption:req.body.caption}});
 	}
 }

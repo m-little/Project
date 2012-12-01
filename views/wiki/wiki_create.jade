@@ -1,0 +1,118 @@
+doctype 5
+html.all(style="background-image:url('/images/bg1.png');")
+
+	include ../header
+
+	div.all(style="max-width:1000px; margin:auto;")
+		div(style="border:1px solid #c2c2c2; background-color:white; text-align:center; font-size:42px; padding:10px; margin-bottom:10px;")
+			| Create New Wiki
+
+		div(style="border:1px solid #c2c2c2; background-color:white; text-align:center; padding:10px; margin-bottom:10px; vertical-align:middle; overflow:auto;")
+
+			//- Category select
+			div(style="padding:10px")
+				div(style="float:left; width:150px")
+					| Category:
+				div(style="float:left")
+					select(size="1", class="category", style="width:110px; font-size:16px; margin-left:10px")
+						- for( var i = 0; i < categories.length; i++)
+							option
+								= categories[i]
+
+			//- Recipe Name input
+			div(style="padding:10px; margin-top:20px")
+				div(style="clear:left; float:left; width:150px;")
+					| Wiki Name:
+				div(style="float:left")
+					input.input_text(type="text", class="recipe_name", name="recipe_name", style="margin-left:10px; width:170px;", required="required", autofucus)
+
+
+			//- Picture Upload input
+			div(style="clear:left; padding:10px")
+				div(style="float:left; clear:left; width:150px")
+					| Picture Upload:
+				div(id="div_picture_upload")
+					div(style="float:left")
+						input(type="file", id="wiki_picture", name="wiki_picture", style="margin-left:10px; width:200px")
+					div(style="float:left")
+						| Picture Caption:
+						input.input_text(type="text", id="picture_caption", name="picture_caption", style="margin-left:5px; width:150px")
+					div(style="float:left")
+						button.button1b(style="margin-left:20px;", id="image_upload")
+							| Upload
+
+				//- Uploaded recipe
+				div(id="div_picture_uploaded", style="padding:10px; visibility:hidden; clear:both;")
+					img(id="div_picture_uploaded_img", src="", style="max-width:500px; max-height:256px;")
+				div(id="div_picture_remove", style="clear:both; margin:auto; visibility:hidden;")
+						button.button1r(style="", id="image_upload")
+							| Remove
+
+			//- Directions text area
+			div(style="clear:left; padding:10px")
+				div(style="float:left; width:150px")
+					| Directions:
+				div(style="float:left; padding-left:10px")
+					textarea.text_box(type="text", class="directions", style="width:770px; height:300px")
+
+			//- Submit button
+			div(style="clear:left; height:20px; width:935px; padding:10px")
+				div(style="float:right")
+					button.button1b(id="submit", type="button", style="height:30px; width:80px")
+						| Create
+
+	script(src="/jquery.js")
+	script
+		var uploaded_wiki_pic_id = -1;
+		//
+		$(document).ready(function()
+		{
+			$("#div_picture_uploaded").hide();
+			$("#div_picture_remove").hide();
+			$("#div_picture_uploaded").css('visibility', 'visible');
+			$("#div_picture_remove").css('visibility', 'visible');
+			//
+			$("#image_upload").click(function() {
+				var input = $("#wiki_picture");
+				var file;
+				if ($("#wiki_picture")[0].files[0] != undefined)
+				{
+					file = $("#wiki_picture")[0].files[0];
+					if (window.FileReader)
+					{
+						var formdata = new FormData();
+						formdata.append("image", file);
+						formdata.append("caption", $("#picture_caption").val());
+						$.ajax({
+							url: "/wiki/pictures",  
+							type: "POST",  
+							data: formdata,  
+							processData: false,  
+							contentType: false,  
+							success: function (data)
+							{
+								uploaded_wiki_pic_id = data.added_id;
+								$("#div_picture_upload").hide();
+								$("#div_picture_uploaded").slideDown();
+								$("#div_picture_remove").fadeIn();
+								$("#div_picture_uploaded_img").attr({src: '/images/user_images/' + data.picture.location, title: data.picture.caption});
+								alert(res);
+							}  
+						});
+					}
+				}
+			});
+			//
+			$("#div_picture_remove").click(function() {
+				$("#div_picture_uploaded").slideUp();
+				$("#div_picture_remove").fadeOut();
+				$("#div_picture_upload").show();
+				$("#div_picture_uploaded_img").attr({src: '', title: ''});
+				// Clear the input field
+				$("#wiki_picture").replaceWith($("#wiki_picture").clone(true));
+				$("#picture_caption").val('');
+			});
+		});
+
+
+	include ../footer

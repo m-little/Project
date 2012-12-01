@@ -13,6 +13,8 @@ USE project;
 
 DROP TRIGGER IF EXISTS tri_category_counter1;
 DROP TRIGGER IF EXISTS tri_category_counter2;
+DROP TRIGGER IF EXISTS tri_wiki_category_counter1;
+DROP TRIGGER IF EXISTS tri_wiki_category_counter2;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter1;
 DROP TRIGGER IF EXISTS tri_unit_ingr_counter2;
 DROP TRIGGER IF EXISTS tri_user_rank_counter1;
@@ -265,6 +267,18 @@ CREATE TRIGGER tri_category_counter2 AFTER DELETE ON recipe
 		IF OLD.public = 1 AND OLD.active = 1 THEN
 			UPDATE user SET user_points = user_points - 10 WHERE user_id = OLD.owner_id;
 		END IF;
+	END;
+|
+
+CREATE TRIGGER tri_wiki_category_counter1 AFTER INSERT ON wiki
+	FOR EACH ROW BEGIN
+		UPDATE wiki_category SET use_count = use_count + 1 WHERE wiki_cat_id = NEW.wiki_cat_id;
+	END;
+|
+
+CREATE TRIGGER tri_wiki_category_counter2 AFTER DELETE ON wiki
+	FOR EACH ROW BEGIN
+		UPDATE wiki_category SET use_count = use_count - 1 WHERE wiki_cat_id = OLD.wiki_cat_id;
 	END;
 |
 
@@ -643,8 +657,9 @@ INSERT INTO video (name, caption, address) VALUES("Test Video", "How To Grill", 
 
 -- Wiki categories
 INSERT INTO wiki_category (category_name) VALUES ("Ingredients"); -- 1
-INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 2
+INSERT INTO wiki_category (category_name) VALUES ("Other"); -- 2
 INSERT INTO wiki_category (category_name) VALUES ("Cooking Techniques"); -- 3
+INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 4
 
 -- Wiki pages ::::: We can't count these like in previous inserts, because ingredients make wikis, you don't know what ID you are up to.
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(2, "Grilling", 3, '');
