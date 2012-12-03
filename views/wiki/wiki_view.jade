@@ -4,15 +4,26 @@ html.all(style="background-image:url('/images/bg1.png');")
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
-		div
-			h1= wiki.title
-		
-			- for (var j in wiki.content)
-				div
-					<a href="##{wiki.content[j].id}"> #{wiki.content[j].title} </a>
-			- if (wiki.video.id != 1)
-				div
-					<a href="#video"> Video </a>
+		div(style="margin-bottom:10px;")
+			div(style="overflow:auto; position:relative; border:1px solid #c2c2c2; background-color:white;")
+				h1(style="padding:10px; margin:0px; float:left; clear:both;")
+					| #{wiki.title}
+				- if (wiki.picture.id != 1)
+					img(src="/images/user_images/#{wiki.picture.location}", title="#{wiki.picture.caption}", style="float:right; margin:4px; max-width:256px; max-height:256px;")
+
+				div(style="float:left; clear:left; margin:8px; border:1px solid #c2c2c2; padding:4px;")
+					span(style="float:left; clear:both;")
+						| Content
+					- for (var j in wiki.content)
+						div(style="float:left; clear:both; margin:4px; margin-left:12px;")
+							<a href="##{wiki.content[j].id}"> #{wiki.content[j].title} </a>
+					- if (wiki.video.id != 1)
+						div(style="float:left; clear:both; margin:4px; margin-left:12px;")
+							<a href="#video"> Video </a>
+
+		- if (wiki.content.length == 0)
+			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto; color:gray;")
+				| Wiki is empty.
 
 		- for(var i in wiki.content)
 			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")

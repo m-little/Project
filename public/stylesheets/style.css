@@ -264,12 +264,17 @@ input.input_text
 	padding-right:8px;
 	border:1px solid black;
 	border-radius:.4em;
+	font-size:14px;
 }
 
 textarea.text_box {
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	padding:4px;
+	padding-left:8px;
+	padding-right:8px;
+	font-size:14px;
 }
 
 button.button1b
