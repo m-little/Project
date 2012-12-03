@@ -562,7 +562,7 @@ INSERT INTO ingredient (ingr_name) VALUES('Super Mushroom'); -- 38
 INSERT INTO ingredient (ingr_name) VALUES('Water'); -- 39
 INSERT INTO ingredient (ingr_name) VALUES('Chicken'); -- 40
 INSERT INTO ingredient (ingr_name) VALUES('Sugar'); -- 41
-INSERT INTO ingredient (ingr_name) VALUES('Flour'); -- 41
+INSERT INTO ingredient (ingr_name) VALUES('Flour'); -- 42
 
 UPDATE wiki SET picture_id = 41 WHERE ingr_id = 1;
 UPDATE wiki SET picture_id = 34 WHERE ingr_id = 7;
@@ -583,7 +583,9 @@ UPDATE wiki SET picture_id = 36 WHERE ingr_id = 31;
 UPDATE wiki SET picture_id = 31 WHERE ingr_id = 34;
 UPDATE wiki SET picture_id = 40 WHERE ingr_id = 38;
 UPDATE wiki SET picture_id = 42 WHERE ingr_id = 39;
-
+UPDATE wiki SET picture_id = 28 WHERE ingr_id = 40;
+UPDATE wiki SET picture_id = 13 WHERE ingr_id = 41;
+UPDATE wiki SET picture_id = 26 WHERE ingr_id = 42;
 
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 1, 1, 3); -- Potato Salad, 3 pounds potatoes scrubbed and quartered
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 2, 5, .5); -- Potato Salad, Italian Style Dressing 3/4 cup

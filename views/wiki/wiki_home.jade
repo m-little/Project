@@ -6,10 +6,21 @@ html.all(style="background-image:url('../images/bg1.png');")
 	- for (var i in topFive)
 		| #{topFive[i].title}
 	
-	div(id="test", style="background-image:url(''); width:100px; height:100px;")
+	div(id="test", style="background-image:url(''); height:200px; width:200px; overflow: hidden;")
 
+	div("id="search_box", style="position:absolute; left: 50%; top: 50%; margin-left: -200px; margin-top: -50px; padding-top: 18px; width:400px; height: 80px; background-color: white; border-radius:.8em; text-aline:center; opacity: .7;")
+		<form action = "/query" method = "get" id = "search_box">
+		<div class = "wrapper">
+		<input type = "text" id = "search" name = "q" placeholder = "search" />
+		<button type = "submit" class = "search_btn">
+		<img url = "../public/images/search_icon.png" title = "search" />
+		</button>
+		</div>
+		</form>
+
+	
 	script(src="/jquery.js")
 	script
-		var topfive_wikis = [{name: "#{topFive[0].title}", picture: {location: "#{topFive[0].picture.location}", caption: "#{topFive[0].picture.caption0}"}},{name: "#{topFive[0].title}", picture: {location: "#{topFive[0].picture.location}", caption: "#{topFive[0].picture.caption1}"}},{name: "#{topFive[2].title}", picture: {location: "#{topFive[2].picture.location}", caption: "#{topFive[2].picture.caption1}"}},{name: "#{topFive[3].title}", picture: {location: "#{topFive[3].picture.location}", caption: "#{topFive[3].picture.caption3}"}},{name: "#{topFive[4].title}", picture: {location: "#{topFive[4].picture.location}", caption: "#{topFive[4].picture.caption4}"}}];
-		$("#test").css("background-image", "url('/images/user_images/" + topfive_wikis[0].picture.location + "')");
+		var topfive_wikis = [{name: "#{topFive[0].title}", picture: {location: "#{topFive[0].picture.location}", caption: "#{topFive[0].picture.caption0}"}},{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"}},{name: "#{topFive[2].title}", picture: {location: "#{topFive[2].picture.location}", caption: "#{topFive[2].picture.caption1}"}},{name: "#{topFive[3].title}", picture: {location: "#{topFive[3].picture.location}", caption: "#{topFive[3].picture.caption3}"}},{name: "#{topFive[4].title}", picture: {location: "#{topFive[4].picture.location}", caption: "#{topFive[4].picture.caption4}"}}];
+		$("#test").css("background-image", "url('/images/user_images/" + topfive_wikis[1].picture.location + "')");
 	include ../footer
