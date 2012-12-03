@@ -4,19 +4,20 @@ html.all(style="background-image:url('../images/bg1.png');")
 	
 	include ../header
 	- for (var i in topFive)
-		| #{topFive[i].title}
+		//| #{topFive[i].title}
 	
-	div(id="test", style="background-image:url(''); height:200px; width:200px; overflow: hidden;")
+	//div(id="test", style="background-image:url(''); height:200px; width:200px; overflow: hidden;")
 
-	div("id="search_box", style="position:absolute; left: 50%; top: 50%; margin-left: -200px; margin-top: -50px; padding-top: 18px; width:400px; height: 80px; background-color: white; border-radius:.8em; text-aline:center; opacity: .7;")
+	div("id="search_box", style="position:absolute; left: 50%; top: 50%; margin-left: -200px; margin-top: -50px; padding-top: 18px; width:400px; height: 80px; background-color: white; border-radius:.8em; opacity: .6;")
 		<form action = "/query" method = "get" id = "search_box">
-		<div class = "wrapper">
-		<input type = "text" id = "search" name = "q" placeholder = "search" />
-		<button type = "submit" class = "search_btn">
-		<img url = "../public/images/search_icon.png" title = "search" />
+		<div class = "wrapper", style="margin-left:auto; margin-right: auto; width: 79%; padding-top:15px;">
+		<input type = "text" class = "input_text" id = "search" name = "q" placeholder = "search" style = "width: 253px;" />
+		<button type = "submit" class = "search_btn" value = "Submit">
+		<img src = '/images/Search-icon.png' title = "search" style="max-height:18px; max-width:18px;" />
 		</button>
 		</div>
 		</form>
+	div.
 
 	
 	script(src="/jquery.js")
