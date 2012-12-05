@@ -16,6 +16,8 @@ html.all(style="background-image:url('/images/bg1.png');")
 				- for(var i = 0; i < recipe.ingredients.length; i++)
 					input(type="text", class="org_ingr_unit_" + i + "", value="#{recipe.ingredients[i].unit_name}", style="display:none")
 					input(type="text", class="org_ingr_amount_" + i + "", value="#{recipe.ingredients[i].amount}", style="display:none")
+				textarea(type="text", class="org_directions", style="display:none")
+					| #{recipe.directions}
 
 			div(style="padding:10px; height:25px; color:#cc0000; text-align:center; display:none", class="must_fill_in")
 
@@ -307,7 +309,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 				recipe_obj.serving_size = serving_size;
 				//-
 				//- Check directions  
-				if( replace_new_line('#{recipe.directions}') != replace_new_line( $('.directions').val() ) && replace_new_line( $('.directions').val() ) != "" ) {
+				if( $('.org_directions').val() != $('.directions').val() && $('.directions').val() != "" ) {
 					directions = $('.directions').val();
 				}
 				recipe_obj.directions = directions;
@@ -385,11 +387,6 @@ html.all(style="background-image:url('/images/bg1.png');")
 			});
 		});
 		//-
-		function replace_new_line(string) {
-			string = string.replace("\n", "");
-			string = string.replace("\r", "");
-			return string;
-		}
 		function convert_time(hours, minutes) {
 			var str_1 = "" + hours;
 			var pad_1 = "00";
