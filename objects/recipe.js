@@ -33,6 +33,11 @@ exports.Recipe = function Recipe(id_, owner_, public_, name_, cate_, serv_, prep
 	this.ready_hour = parseInt(ready_.substring(0, 2), 10);
 	this.ready_min = parseInt(ready_.substring(3, 5), 10);
 
+	//set first & second serving sizes
+	var serving_array = this.serving_size.split("-");
+	this.serving_first = serving_array[0];
+	this.serving_second = serving_array[1];
+
 	var prep_time_array = [parseInt(prep_.substring(0, 2)), prep_.substring(3, 5), prep_.substring(6, 8)];
 	if (prep_time_array[0] > 0)
 		this.prep_time += prep_time_array[0].toString() + ":";
@@ -76,7 +81,7 @@ exports.Recipe = function Recipe(id_, owner_, public_, name_, cate_, serv_, prep
 	{
 		var ingredients = [];
 		for (var i = 0; i < this.ingredients.length; i++)
-			ingredients.push("{name: '" + this.ingredients[i].name.replace("'", "\\'") + "', amount: '" + this.ingredients[i].amount + "', unit_name: '" + this.ingredients[i].unit_name + "', picture_location: '" + this.ingredients[i].picture.location + "', id: '" + this.ingredients[i].id + "', use_count: " + this.ingredients[i].use_count + "}");
+			ingredients.push("{id: " + this.ingredients[i].ingr_id + ", name: '" + this.ingredients[i].name.replace("'", "\\'") + "', amount: '" + this.ingredients[i].amount + "', unit_name: '" + this.ingredients[i].unit_name + "', picture_location: '" + this.ingredients[i].picture.location + "', id: '" + this.ingredients[i].id + "', use_count: " + this.ingredients[i].use_count + "}");
 		return ingredients;
 	}
 
