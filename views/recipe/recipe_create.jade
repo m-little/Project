@@ -2,11 +2,11 @@ doctype 5
 html.all(style="background-image:url('/images/bg1.png');")
 
 	include ../header
-	div(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:white; margin:auto;")
+	div.round(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:#EEEEFF; margin:auto;")
 		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; ")
 			| Create Recipe
 
-	div.all(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:white; margin:auto; margin-top:15px;")
+	div.all.round(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:#EEEEFF; margin:auto; margin-top:15px;")
 		form(class="submit_form", action='/recipe/pictures', method='post', enctype="multipart/form-data")
 
 			div(style="padding:10px; height:25px; color:#cc0000; text-align:center; display:none", class="must_fill_in")
@@ -110,6 +110,8 @@ html.all(style="background-image:url('/images/bg1.png');")
 			div(style="clear:left; height:20px; width:935px; padding:10px")
 				div(style="float:right")
 					input(type="button", class="recipe_submit", value="Create", style="height:30px; width:80px")
+
+	div(style="height:90px")
 
 	script(src="/jquery.js")
 	script
