@@ -19,6 +19,12 @@ exports.index = function(req, res)
 
 exports.login = function(req, res)
 {
+	if (global.session.logged_in)
+	{
+		res.redirect('/');
+		return;
+	}
+
 	var success = -1; //-1 = hasn't tried logging in yet; 0 = fail; 1 = pass;
 
 	function result(success, user, group, location)

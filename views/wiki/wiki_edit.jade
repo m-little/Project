@@ -4,20 +4,12 @@ html.all(style="background-image:url('/images/bg1.png');")
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
-		div(style="border:1px solid #c2c2c2; background-color:white; text-align:center; font-size:42px; padding:10px; margin:auto; margin-bottom:10px; width:400px; border-top-left-radius:.4em; border-top-right-radius:.4em;")
-			| Create New Wiki
+		div(style="border:1px solid #c2c2c2; background-color:white; text-align:center; font-size:42px; padding:10px; margin:auto; margin-bottom:10px; width:auto; border-top-left-radius:.4em; border-top-right-radius:.4em; white-space:no-wrap;")
+			| #{wiki.title}
 
 		div(style="border:1px solid #c2c2c2; background-color:white; text-align:center; padding:10px; margin-bottom:10px; vertical-align:middle;")
 
 			table(style="width:100%; position:relative;")
-
-				//- Recipe Name input
-				tr(style="padding:10px; margin-top:20px")
-					td(style="width:150px; text-align:right; vertical-align:middle; padding-bottom:8px;")
-						| * Wiki Name:
-					td(style="")
-						div(style="margin-right:auto; width:210px;")
-							input.input_text(type="text", id="wiki_name", name="wiki_name", style="margin-left:10px; width:170px; margin-bottom:10px;", required="required", autofucus)
 
 				//- Category select
 				tr(style="")
@@ -27,11 +19,11 @@ html.all(style="background-image:url('/images/bg1.png');")
 						div(style="margin-right:auto; float:left; padding-left:14px; margin-bottom:10px;")
 							select(size="1", id="category", style="font-size:16px;")
 								- for( var i = 0; i < categories.length; i++)
-									- if (categories[i] != 'Other')
+									- if (categories[i] != wiki.category_id)
 										option
 											= categories[i]
 								option(selected="selected")
-									| Other
+									| #{wiki.category_id}
 
 				//- Picture Upload input
 				tr(style="clear:left; padding:10px")
@@ -64,6 +56,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 						| Description:
 					td(style="padding-left:15px; padding-right:20px;")
 						textarea.text_box(type="text", id="description", style="width:100%; height:140px")
+							| #{wiki.description}
 
 		div(id="div_all_contents", style="")
 
@@ -79,11 +72,11 @@ html.all(style="background-image:url('/images/bg1.png');")
 			div(style="")
 				div(style="")
 					button.button1b(id="submit", style="height:30px; width:80px;")
-						| Create
+						| Complete
 
 	script(src="/jquery.js")
 	script
-		var uploaded_wiki_pic_id = -1;
+		var uploaded_wiki_pic_id = #{wiki.picture.id};
 		var content_boxes = 0;
 		var content_pics = {};
 		//
@@ -94,6 +87,13 @@ html.all(style="background-image:url('/images/bg1.png');")
 			$("#div_picture_remove").hide();
 			$("#div_picture_uploaded").css('visibility', 'visible');
 			$("#div_picture_remove").css('visibility', 'visible');
+			if (uploaded_wiki_pic_id != 1)
+			{
+				$("#div_picture_upload").hide();
+				$("#div_picture_uploaded").show();
+				$("#div_picture_remove").show();
+				$("#div_picture_uploaded_img").attr({src: '/images/user_images/#{wiki.picture.location}', title: '#{wiki.picture.caption}'});
+			}
 			if ($("#wiki_name").val() == '')
 				$("#submit").attr('disabled', 'disabled');
 			//
@@ -116,11 +116,11 @@ html.all(style="background-image:url('/images/bg1.png');")
 						formdata.append("image", file);
 						formdata.append("caption", $("#picture_caption").val());
 						$.ajax({
-							url: "/wiki/pictures",  
-							type: "POST",  
-							data: formdata,  
-							processData: false,  
-							contentType: false,  
+							url: "/wiki/pictures",
+							type: "POST",
+							data: formdata,
+							processData: false,
+							contentType: false,
 							success: function (data)
 							{
 								uploaded_wiki_pic_id = data.added_id;
@@ -128,7 +128,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 								$("#div_picture_uploaded").slideDown();
 								$("#div_picture_remove").fadeIn();
 								$("#div_picture_uploaded_img").attr({src: '/images/user_images/' + data.picture.location, title: data.picture.caption});
-							}  
+							}
 						});
 					}
 				}

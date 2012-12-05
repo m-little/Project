@@ -37,8 +37,8 @@ DROP TABLE IF EXISTS recipe;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user_connections;
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS wiki_content;
 DROP TABLE IF EXISTS wiki;
+DROP TABLE IF EXISTS wiki_content;
 DROP TABLE IF EXISTS wiki_category;
 DROP TABLE IF EXISTS picture;
 DROP TABLE IF EXISTS passkeys;
@@ -69,6 +69,14 @@ address VARCHAR(100),
 CONSTRAINT pk_video PRIMARY KEY(video_id)
 );
 
+CREATE TABLE wiki_category
+(
+wiki_cat_id SERIAL,
+category_name VARCHAR(40) NOT NULL,
+use_count INT UNSIGNED NOT NULL DEFAULT 0,
+CONSTRAINT pk_wiki_cat PRIMARY KEY(wiki_cat_id)
+);
+
 CREATE TABLE wiki
 (
 wiki_id SERIAL,
@@ -80,17 +88,10 @@ description TEXT NOT NULL,
 ingr_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
 FULLTEXT(wiki_title),
 CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
+CONSTRAINT fk_wiki_category FOREIGN KEY(wiki_cat_id) REFERENCES wiki_category(wiki_cat_id),
 CONSTRAINT fk_wiki_video FOREIGN KEY(video_id) REFERENCES video(video_id),
 CONSTRAINT fk_wiki_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
 ) ENGINE=MyISAM;
-
-CREATE TABLE wiki_category
-(
-wiki_cat_id SERIAL,
-category_name VARCHAR(40) NOT NULL,
-use_count INT UNSIGNED NOT NULL DEFAULT 0,
-CONSTRAINT pk_wiki_cat PRIMARY KEY(wiki_cat_id)
-);
 
 CREATE TABLE wiki_content
 (
@@ -347,8 +348,13 @@ CREATE TRIGGER tri_user_rank_counter6 AFTER UPDATE ON recipe
 
 CREATE TRIGGER tri_ingr_wiki1 BEFORE INSERT ON ingredient
 	FOR EACH ROW BEGIN
-		INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(1, NEW.ingr_name, 1, '');
-		SET NEW.wiki_id = LAST_INSERT_ID();
+		SET @temp = (SELECT wiki_id FROM wiki WHERE ingr_id = 0 AND wiki_title = NEW.ingr_name LIMIT 1);
+		IF (SELECT COUNT(wiki_id) FROM wiki WHERE ingr_id = 0 AND wiki_title = NEW.ingr_name LIMIT 1) = 0 THEN
+			INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(1, NEW.ingr_name, 1, '');
+			SET NEW.wiki_id = LAST_INSERT_ID();
+		ELSE
+			SET NEW.wiki_id = @temp;
+		END IF;
 	END;
 |
 
@@ -535,6 +541,12 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curti
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 7, 10, STR_TO_DATE('11,2,2012 15:13:02', '%m,%d,%Y %H:%i:%s')); -- 7
 
+-- Wiki categories
+INSERT INTO wiki_category (category_name) VALUES ("Ingredients"); -- 1
+INSERT INTO wiki_category (category_name) VALUES ("Other"); -- 2
+INSERT INTO wiki_category (category_name) VALUES ("Cooking Techniques"); -- 3
+INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 4
+
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
 INSERT INTO ingredient (ingr_name) VALUES('Mayonnaise');  -- 3
@@ -654,12 +666,6 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 INSERT INTO video (name, caption, address) VALUES("Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video 1
 INSERT INTO video (name, caption, address) VALUES("Test Video", "How To Grill", "http://www.youtube.com/embed/h82C-FCq2dI"); -- Grilling 2
 
-
--- Wiki categories
-INSERT INTO wiki_category (category_name) VALUES ("Ingredients"); -- 1
-INSERT INTO wiki_category (category_name) VALUES ("Other"); -- 2
-INSERT INTO wiki_category (category_name) VALUES ("Cooking Techniques"); -- 3
-INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 4
 
 -- Wiki pages ::::: We can't count these like in previous inserts, because ingredients make wikis, you don't know what ID you are up to.
 INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(2, "Grilling", 3, '');

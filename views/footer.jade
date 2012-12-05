@@ -16,6 +16,12 @@ div.footer
 						a.footer(href="/recipe/create")
 							| New Recipe
 					td
+						a.footer(href="/wiki/home")
+							| Wiki Home
+					td
+						a.footer(href="/wiki/create")
+							| New Wiki Page
+					td
 						a.footer(href="/user/profile")
 							| Your Profile
 					td
@@ -68,6 +74,8 @@ script
 		$("#header_menu_settings").css('top', '48px');
 		$("#header_menu_recipes").hide();
 		$("#header_menu_recipes").css('top', '48px');
+		$("#header_menu_wikis").hide();
+		$("#header_menu_wikis").css('top', '48px');
 		$("#header_menu_notifications").hide();
 		$("#header_menu_notifications").css('top', '140px');
 		// Update location for logging out
@@ -93,6 +101,9 @@ script
 			div = $("#header_menu_recipes");
 			if (div.is(':visible') && div.has(e.target).length === 0)
 				hide_drop_recipes();
+			div = $("#header_menu_wikis");
+			if (div.is(':visible') && div.has(e.target).length === 0)
+				hide_drop_wikis();
 			div = $("#header_menu_notifications");
 			if (div.is(':visible') && div.has(e.target).length === 0)
 				hide_drop_notifications();
@@ -177,6 +188,15 @@ script
 	function hide_drop_recipes()
 	{
 		$("#header_menu_recipes").slideUp(100);
+	}
+	// Wikis
+	function show_drop_wikis()
+	{
+		$("#header_menu_wikis").slideDown(100);
+	}
+	function hide_drop_wikis()
+	{
+		$("#header_menu_wikis").slideUp(100);
 	}
 	// Notifications
 	function show_drop_notifications()

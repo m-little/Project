@@ -70,7 +70,7 @@ exports.display_view = function(req, res)
 	var dao = new obj_dao.DAO();	
 	
 	// first query gets information that belongs to the wiki and video tables from the database and runs the function output1 on completion
-	dao.query("SELECT w.video_id, wiki_title, p.picture_id, p.location, p.caption, v.name, v.caption, v.address FROM wiki w JOIN video v ON w.video_id = v.video_id JOIN picture p ON p.picture_id = w.picture_id WHERE wiki_id =" + req.query.w_id, output1);
+	dao.query("SELECT w.video_id, wiki_title, w.description, p.picture_id, p.location, p.caption, v.name, v.caption, v.address FROM wiki w JOIN video v ON w.video_id = v.video_id JOIN picture p ON p.picture_id = w.picture_id JOIN wiki_category wc ON w.wiki_cat_id = wc.wiki_cat_id WHERE wiki_id = " + req.query.w_id, output1);
 	
 	function output1(success, result, fields)
 	{
@@ -93,7 +93,7 @@ exports.display_view = function(req, res)
 
 		// construct video and wiki objects from the info obtained from the database
 		var new_video = new obj_video.Video(row.video_id, row.name, row.caption, row.address);
-		var new_wiki = new obj_wiki.Wiki(req.query.w_id, new_video, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location));
+		var new_wiki = new obj_wiki.Wiki(req.query.w_id, new_video, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.description, row.category_name);
 		
 		// second query gets the wiki pages content (i.e. sections of the wiki page and pictures belonging to that section) and runst the function output2 on completion
 		dao.query("SELECT content, title, p.picture_id, p.location, p.caption, wc.wiki_cont_id FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id WHERE wc.wiki_id =" + req.query.w_id, output2, new_wiki);
@@ -134,8 +134,16 @@ exports.display_view = function(req, res)
 	}
 }
 
+
+// Sam
 exports.display_create = function(req, res)
 {
+	if (!global.session.logged_in)
+	{
+		res.redirect('/login');
+		return;
+	}
+
 	// initalize data base access object
 	var dao = new obj_dao.DAO();
 
@@ -163,6 +171,99 @@ exports.display_create = function(req, res)
 	}
 }
 
+// Sam
+exports.display_edit = function(req, res)
+{
+	if (!global.session.logged_in)
+	{
+		res.redirect('/login');
+		return;
+	}
+
+	console.log(req.query.w_id);
+	req.query.w_id = parseInt(req.query.w_id);
+	if (isNaN(req.query.w_id))
+	{
+		global.session.error_message.message = "That wiki does not exist.";
+		res.redirect('/error');
+		return;
+	}
+
+	// initalize data base access object
+	var dao = new obj_dao.DAO();
+	var wiki;
+	var categories = [];
+
+	dao.query("SELECT category_name FROM wiki_category ORDER BY use_count DESC", output1);
+
+	function output1(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		for (var i in result)
+		{
+			var row = result[i];
+			categories.push(row.category_name);
+		}
+
+		dao.query("SELECT wiki_id, category_name, wiki_title, p.picture_id, location, caption, description, ingr_id FROM wiki w JOIN picture p ON p.picture_id = w.picture_id JOIN wiki_category wc ON w.wiki_cat_id = wc.wiki_cat_id WHERE wiki_id = " + req.query.w_id + " LIMIT 1", output2);
+	}
+
+	function output2(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		if (result.length == 0)
+		{
+			dao.die();
+			global.session.error_message.message = "That wiki does not exist.";
+			res.redirect('/error');
+			return;
+		}
+
+		var row = result[0];
+
+		wiki = new obj_wiki.Wiki(row.wiki_id, 1, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.description, row.category_name);
+
+		dao.query("SELECT wc.wiki_cont_id, wc.picture_id, location, caption, wc.title, wc.content FROM wiki_content wc JOIN wiki w ON wc.wiki_id = w.wiki_id JOIN picture p ON p.picture_id = wc.picture_id WHERE w.wiki_id = " + req.query.w_id, output3);
+	}
+
+	function output3(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		var contents = [];
+
+		for (var i in result)
+		{
+			var row = result[i];
+			contents.push(new obj_content.Wiki_Content(row.wiki_cont_id, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.title, row.content));
+		}
+
+		wiki.set_content(contents);
+
+		dao.die();
+		res.render('wiki/wiki_edit', { title: website_title, categories: categories, wiki: wiki});
+	}
+}
+
+
+// Sam
 exports.load_pictures = function(req, res)
 {
 	if (req.files == undefined)
@@ -212,6 +313,7 @@ exports.load_pictures = function(req, res)
 	}
 }
 
+// Sam
 exports.new = function(req, res)
 {
 	console.log(req.body);
@@ -222,9 +324,16 @@ exports.new = function(req, res)
 		return;
 	}
 
-	if (req.body.pic_id == undefined || req.body.pic_id == -1)
+	req.body.pic_id = parseInt(req.body.pic_id);
+	if (isNaN(req.body.pic_id))
 	{
-		req.body.pic_id == 1;
+		res.send({});
+		return;
+	}
+
+	if (req.body.pic_id < 1)
+	{
+		req.body.pic_id = 1;
 	}
 
 	var dao = new obj_dao.DAO();
@@ -242,7 +351,7 @@ exports.new = function(req, res)
 
 
 
-		var statements = ["INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description, picture_id) VALUES (1, '" + dao.safen(req.body.name) + "', " + result[0].wiki_cat_id + ", '" + dao.safen(req.body.description) + "', '" + dao.safen(req.body.pic_id) + "');", "SET @wiki_id = LAST_INSERT_ID();"];
+		var statements = ["INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description, picture_id) VALUES (1, '" + dao.safen(req.body.name) + "', " + result[0].wiki_cat_id + ", '" + dao.safen(req.body.description) + "', " + req.body.pic_id + ");", "SET @wiki_id = LAST_INSERT_ID();"];
 
 		for (var i in req.body.contents)
 		{
