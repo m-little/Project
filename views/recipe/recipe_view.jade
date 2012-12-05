@@ -99,7 +99,7 @@ html.all()
 							|  #{recipe.ingredients[i].unit_name}
 						span(style="margin-left:6px;")
 							b(style="cursor:pointer;")
-								a(id="ingr_num#{recipe.ingredients[i].id}", href="", style="color:black; text-decoration:none;")
+								a(id="ingr_num#{recipe.ingredients[i].id}", href="/wiki/view?w_id=#{recipe.ingredients[i].wiki_id}", style="color:black; text-decoration:none;")
 									| #{recipe.ingredients[i].name}
 			div(id="ingr_alter_button", style="width:auto; float:left; clear:both; overflow:auto; padding:4px; font-size:10px; cursor:pointer;", onClick="show_ingr_alter();")
 				| &#9660; 

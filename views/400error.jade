@@ -3,18 +3,18 @@ html.all
 
 	include header
 
-	div.all
-		div(style="background-color:#292929; border-top-left-radius:1em; border-top-right-radius:1em; padding:4px; padding-left:12px; color:white; margin-bottom:20px; height:22px; white-space:nowrap;")
+	div.all(style="max-width:1000px; margin:auto;")
+		div(style="background-color:#292929; border-top-left-radius:1em; border-top-right-radius:1em; padding:4px; padding-left:12px; color:white; height:22px; white-space:nowrap;")
 			| Error #{error}
 		
-		p(style="margin:0px; font-size:16px;")
+		div(style="margin:0px; font-size:16px; background-color:white; padding:10px; padding-top:20px; padding-bottom:20px;")
 			| Sorry, we could not find 
-		div(style="border:1px dotted black; padding:4px; padding-left:16px; margin:20px; margin-top:10px; margin-bottom:10px; border-radius:.4em;")
-			| #{location} 
+			div(style="border:1px dotted black; padding:4px; padding-left:16px; margin:20px; margin-top:10px; margin-bottom:10px; border-radius:.4em;")
+				| #{location} 
 
-		p(style="margin:0px; font-size:16px;")
-			| The error has been recorded.
-		div(style="background-color:#292929; border-bottom-left-radius:1em; border-bottom-right-radius:1em; padding:4px; padding-left:12px; color:white; margin-top:20px; height:22px; white-space:nowrap;")
+			p(style="margin:0px; font-size:16px;")
+				| The error has been recorded.
+		div(style="background-color:#292929; border-bottom-left-radius:1em; border-bottom-right-radius:1em; padding:4px; padding-left:12px; color:white; height:22px; white-space:nowrap;")
 			
 
 	include footer
