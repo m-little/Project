@@ -2,12 +2,20 @@ doctype 5
 html.all(style="background-image:url('/images/bg1.png');")
 
 	include ../header
-	div(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:white; margin:auto;")
+	div.round(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:#EEEEFF; margin:auto;")
 		div(style="width:600px; margin:auto; text-align:center; font-size:42px; color:black; ")
 			| Edit Recipe
 
-	div.all(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:white; margin:auto; margin-top:15px;")
+	div.all.round(style="max-width:1000px; padding:10px; border:1px solid #c2c2c2; background-color:#EEEEFF; margin:auto; margin-top:15px;")
 		form(class="submit_form", action='/recipe/pictures', method='post', enctype="multipart/form-data")
+
+			//- Original Picture Captions
+			div()
+				- for(var i = 0; i < recipe.pictures.length; i++)
+					input(type="text", class="org_caption_" + i + "", value="#{recipe.get_picture(i).caption}", style="display:none")
+				- for(var i = 0; i < recipe.ingredients.length; i++)
+					input(type="text", class="org_ingr_unit_" + i + "", value="#{recipe.ingredients[i].unit_name}", style="display:none")
+					input(type="text", class="org_ingr_amount_" + i + "", value="#{recipe.ingredients[i].amount}", style="display:none")
 
 			div(style="padding:10px; height:25px; color:#cc0000; text-align:center; display:none", class="must_fill_in")
 
@@ -18,19 +26,36 @@ html.all(style="background-image:url('/images/bg1.png');")
 				div(style="float:left")
 					select(size="1", class="category", style="width:110px; font-size:16px; margin-left:10px")
 						- for( var i = 0; i < categories.length; i++)
-							if	recipe.category == categories[i]
+							- if(recipe.category == categories[i])
 								option(selected="true")
 									= categories[i]
-							else
+							- else
 								option
 									= categories[i]
 
 			//- Recipe Name input
-			div(style="padding:10px; margin-top:20px")
-				div(style="clear:left; float:left; width:150px")
+			div(style="clear:left; padding:10px; margin-top:20px")
+				div(style="float:left; width:150px")
 					| Recipe Name:
 				div(style="float:left")
 					input.input_text(type="text", class="recipe_name", name="recipe_name", value="#{recipe.name}", style="margin-left:10px; width:170px;", required="required", autofucus)
+
+			//- Display Pictures
+			div(style="clear:left; padding:10px; margin-top:20px; width:920px; height:165px")
+				div(style="float:left; width:150px")
+					| Pictures:
+				- for(var i = 0; i < recipe.pictures.length; i++)
+					- if(i > 0 && 0 == i % 3 )
+						div(style="clear:left; loat:left; width:150px; margin-top:10px")						
+
+					div(style="float:left; height:120px; margin-left:10px")
+						div(style="height:130px")
+							div(style="float:left")
+								img(class="recipe_photo", value="#{recipe.get_picture(i).location}", src="/images/user_images/#{recipe.get_picture(i).location}", style="height:120px; width:120px; border-style:solid; boarder-width:1px", alt="#{recipe.get_picture(i).caption}", title="#{recipe.get_picture(i).caption}")
+							div(style="float:left; height:130px; line-height:1220%")
+								input(type="button", class="delete_picture", value="Delete Picture", style="height:30px; width:95px; margin-left:5px; margin-bottom:1px")
+						div()
+							input.input_text(type="text", class="picture_caption_" + i + "", value="#{recipe.get_picture(i).caption}", style="width:210px; margin-top:3px")
 
 			//- Picture Upload input
 			div(style="clear:left; padding:10px")
@@ -61,44 +86,44 @@ html.all(style="background-image:url('/images/bg1.png');")
 				- for(var i = 0; i < recipe.ingredients.length; i++)
 					if(i == 0)
 						div(class="marker delete_0", style="float:left")
-							input.input_text(type="text", class="ingredient_name", value="#{recipe.ingredients[i].name}", style="margin-left:10px; width:170px", name="ingredient")
+							input.input_text(type="text", class="ingredient_name ingredient_"+ i + "", value="#{recipe.ingredients[i].name}", readonly="readonly", style="margin-left:10px; width:170px; background-color:#BDBDBD", name="ingredient")
 					else	
-						div(class="marker delete_1", style="clear:left; float:left; margin-left:150px; margin-top:5px")
-							input.input_text(type="text", class="ingredient_name", value="#{recipe.ingredients[i].name}", style="margin-left:10px; width:170px", name="ingredient")
+						div(class="marker delete_" + i + "", style="clear:left; float:left; margin-left:150px; margin-top:5px")
+							input.input_text(type="text", class="ingredient_name ingredient_"+ i + "", value="#{recipe.ingredients[i].name}", readonly="readonly", style="margin-left:10px; width:170px; background-color:#BDBDBD", name="ingredient")
 
-					div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+					div(class="delete_" + i + " ingredient_" + i + "_id", value="#{recipe.ingredients[i].id}", style="float:left; margin-left:10px; margin-top:5px")
 						| Unit:
-						select(size="1", class="unit_type", style=" width:140px; font-size:16px; margin-left:10px")
+						select(size="1", class="unit_type unit_type_" + i + "", style=" width:140px; font-size:16px; margin-left:10px")
 							- for( var x = 0; x < units.length; x++)
-								if	recipe.ingredients[i].unit_name == units[x]
+								if recipe.ingredients[i].unit_name.charAt(0).toUpperCase() + recipe.ingredients[i].unit_name.slice(1) == units[x]
 									option(value=unit_ids[x], selected="true")
 										= units[x]
 								if recipe.ingredients[i].unit_name == "" && units[x] == 'None'
-										option(value=unit_ids[x], selected="true")
-											= units[x]
+									option(value=unit_ids[x], selected="true")
+										= units[x]
 								else
 									option(value=unit_ids[x])
 										= units[x]
-					div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+					div(class="delete_" + i + "", style="float:left; margin-left:10px; margin-top:5px")
 						| Amount:
-						input.input_text(type="text", class="unit_amount", value="#{recipe.ingredients[i].amount}", style="margin-left:10px; width:30px", name="unit_amount")
-					div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+						input.input_text(type="text", class="unit_amount_" + i + "", value="#{recipe.ingredients[i].amount}", style="margin-left:10px; width:30px", name="unit_amount")
+					div(class="delete_" + i + "", style="float:left; margin-left:10px; margin-top:5px")
 						img(src="/images/delete.png", alt="delete", class="ingredient_delete", value=i)
 
 				//- Print one empty ingredients div			
-				div(class="marker delete_0", style="clear:left; float:left")
-					input.input_text(type="text", class="ingredient_name", style="margin-left:160px; width:170px", name="ingredient")
-				div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+				div(class="marker delete_" + recipe.ingredients.length + "", style="clear:left; float:left")
+					input.input_text(type="text", class="ingredient_name ingredient_"+ recipe.ingredients.length + "", style="margin-left:160px; width:170px", name="ingredient")
+				div(class="delete_" + recipe.ingredients.length + "", style="float:left; margin-left:10px; margin-top:5px")
 					| Unit:
-					select(size="1", class="unit_type", style=" width:140px; font-size:16px; margin-left:10px")
+					select(size="1", class="unit_type unit_type_" + recipe.ingredients.length + "", style=" width:140px; font-size:16px; margin-left:10px")
 						- for( var i = 0; i < units.length; i++)
 							option(value=unit_ids[i])
 								= units[i]
-				div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
+				div(class="delete_" + recipe.ingredients.length + "", style="float:left; margin-left:10px; margin-top:5px")
 					| Amount:
-					input.input_text(type="text", class="unit_amount", style="margin-left:10px; width:30px", name="unit_amount")
-				div(class="delete_0", style="float:left; margin-left:10px; margin-top:5px")
-					img(src="/images/delete.png", alt="delete", class="ingredient_delete", value="0", style="display:none")
+					input.input_text(type="text", class="unit_amount_" + recipe.ingredients.length + "", style="margin-left:10px; width:30px", name="unit_amount")
+				div(class="delete_" + recipe.ingredients.length + "", style="float:left; margin-left:10px; margin-top:5px")
+					img(src="/images/delete.png", alt="delete", class="ingredient_delete", value="" + recipe.ingredients.length + "", style="display:none")
 				div(style="float:left; margin-top:5px")
 					input.add_ingredient(type="button", value="Add Ingredient", style="margin-left:10px; height:27px")
 
@@ -108,9 +133,9 @@ html.all(style="background-image:url('/images/bg1.png');")
 					| Preparation Time:
 				div(style="float:left")
 					| Hours:
-					input.input_text(type="number", class="preparation_hours", value="#{recipe.prep_hour}", name="preparation_hours", style="margin-left:10px; margin-right:10px; width:30px")
+					input.input_text(type="number", class="preparation_hours", value="#{recipe.prep_hour}", name="preparation_hours", min="0", style="margin-left:10px; margin-right:10px; width:30px")
 					| Minutes:
-					input.input_text(type="number", class="preparation_minutes", value="#{recipe.prep_min}", name="preparation_minutes", style="margin-left:10px; margin-right:10px; width:30px")
+					input.input_text(type="number", class="preparation_minutes", value="#{recipe.prep_min}", name="preparation_minutes", min="0", style="margin-left:10px; margin-right:10px; width:30px")
 
 			//- Ready time input 
 			div(style="clear:left; height:26px; width:500px; padding:10px")
@@ -118,18 +143,18 @@ html.all(style="background-image:url('/images/bg1.png');")
 					| Ready Time:
 				div(style="float:left")
 					| Hours:
-					input.input_text(type="number", class="ready_hours", value="#{recipe.ready_hour}", name="ready_hours", style="margin-left:10px; margin-right:10px; width:30px")
+					input.input_text(type="number", class="ready_hours", value="#{recipe.ready_hour}", name="ready_hours", min="0", style="margin-left:10px; margin-right:10px; width:30px")
 					| Minutes:
-					input.input_text(type="number", class="ready_minutes", value="#{recipe.ready_min}", name="ready_minutes", style="margin-left:10px; margin-right:10px; width:30px")
+					input.input_text(type="number", class="ready_minutes", value="#{recipe.ready_min}", name="ready_minutes", min="0", style="margin-left:10px; margin-right:10px; width:30px")
 
 			//- Serving Size input
 			div(style="width:500px; padding:10px")
 				div(style="float:left; width:150px; height:26px; line-height:140%")
 					| Serving Size:
 				div(style="float:left")
-					input.input_text(type="number", class="serving_size_one", value="1", name="serving_size_one", style="margin-left:10px; margin-right:10px; width:30px")
+					input.input_text(type="number", class="serving_size_one", value="#{recipe.serving_first}", name="serving_size_one", min="0", style="margin-left:10px; margin-right:10px; width:30px")
 					| to 
-					input.input_text(type="number", class="serving_size_two", value="1", name="serving_size_two", style="margin-left:10px; width:30px")
+					input.input_text(type="number", class="serving_size_two", value="#{recipe.serving_second}", name="serving_size_two", min="0", style="margin-left:10px; width:30px")
 
 			//- Directions text area
 			div(style="clear:left; padding:10px")
@@ -137,12 +162,245 @@ html.all(style="background-image:url('/images/bg1.png');")
 					| Directions:
 				div(style="float:left; padding-left:10px")
 					textarea.text_box(type="text", class="directions", style="width:770px; height:200px")
-						| #{recipe.serving_size}
+						| #{recipe.directions}
 
 			//- Edit and Delete Button 
 			div(style="clear:left; height:20px; width:935px; padding:10px")
 				div(style="float:right")
-					input(type="button", class="recipe_delete", value="delete", style="height:30px; width:80px")
+					input(type="button", class="recipe_delete", value="Delete", style="height:30px; width:80px")
 				div(style="float:right")
-					input(type="button", class="recipe_edit", value="edit", style="height:30px; width:80px; margin-right:10px")
+					input(type="button", class="recipe_edit", value="Save", style="height:30px; width:80px; margin-right:10px")
+
+	div(style="height:90px")
+
+	script(src="/jquery.js")
+	script
+		$(document).ready(function() {	
+			var edited_pictures = [];
+			var deleted_ingredients = [];
+			//-
+			//- Builds string for dynamic creation of recipe inputs
+			var units = new Array();
+			var units_select_string = '';
+			$('.unit_type option').each(function() {
+				units_select_string += "<option value='" + $(this).val() + "'>" + $(this).text() + "</option>";
+			});
+			//-------------------------------------------------------------------------------------------------------
+			$('.recipe_edit').click(function() {
+				var deleted = "No changes made";
+				var category = "No changes made";
+				var recipe_name = "No changes made";
+				var picture = "No changes made";
+				var picture_caption = "No changes made";
+				var picture_caption_edit = [];
+				var picture_location = [];
+				var privacy = "No changes made";
+				var ingr_unit = "No changes made";
+				var unit_ingr_id = [];
+				var unit_id = [];
+				var ingr_amount = "No changes made";
+				var amount_ingr_id = [];
+				var amount = [];
+				var new_ingredient = "No changes made";
+				var new_ingredient_name = [];
+				var new_ingredient_unit = [];
+				var new_ingredient_amount = [];
+				var preparation_time = "No changes made";
+				var ready_time = "No changes made";
+				var serving_size = "No changes made";
+				var directions = "No changes made";
+				//-
+				var recipe_obj = new Object();
+				recipe_obj.recipe_id = "#{recipe.id}";	
+				//-
+				//- Check category
+				if( "#{recipe.category}" != $('.category').val() ) {
+					category = $('.category').val();
+				}
+				recipe_obj.category = category;
+				//-
+				//- Add deleted ingredients
+				if(deleted_ingredients.length > 0) {
+					deleted = "Changes made";
+				}
+				recipe_obj.deleted = deleted;
+				recipe_obj.deleted_ingredients = deleted_ingredients;
+				//-
+				//- Check recipe name
+				if( "#{recipe.name}" != $('.recipe_name').val() ) {
+					recipe_name = $('.recipe_name').val();
+				}
+				recipe_obj.recipe_name = recipe_name;
+				//-
+				//- Check picture captions
+				for(var i = 0; i < "#{recipe.pictures.length}"; i++) {
+					if( $('.org_caption_' + i).val() != $('.picture_caption_' + i).val() && $('.picture_caption_' + i).css('display') != 'none') {
+						picture_caption = "Changes made";
+						picture_location.push( $('.picture_caption_' + i).parent().parent().find('.recipe_photo').attr("value") );
+						picture_caption_edit.push( $('.picture_caption_' + i).val() );
+					}
+				}
+				recipe_obj.caption_check = picture_caption;
+				recipe_obj.picture_location = picture_location;
+				recipe_obj.picture_caption = picture_caption_edit;
+				//-
+				//- Check privacy
+				if( "#{recipe.public}" != $('input:radio:checked').val() ) {
+					privacy = $('input:radio:checked').val();
+				}
+				recipe_obj.privacy = privacy;
+				//-
+				//- Check unit
+				$('.marker').each(function(index) {
+					if(index < "#{recipe.ingredients.length}" && $('.org_ingr_unit_' + index).val().charAt(0).toUpperCase() + $('.org_ingr_unit_' + index).val().slice(1) != $('.unit_type_' + index).find(":selected").text() && $('.unit_type_' + index).find(":selected").text() != "None") {
+						ingr_unit = "Changes made";
+						unit_ingr_id.push($('.ingredient_' + index + '_id').attr('value'));
+						unit_id.push($('.unit_type_' + index).find(":selected").val());
+					}
+				});
+				recipe_obj.ingr_unit = ingr_unit;
+				recipe_obj.unit_ingr_id = unit_ingr_id;
+				recipe_obj.unit_id = unit_id;
+				//-
+				//- Check unit amount
+				$('.marker').each(function(index) {
+					if(index < "#{recipe.ingredients.length}" && $('.org_ingr_amount_' + index).val() != $('.unit_amount_' + index).val() && $('.unit_amount_' + index).val() != "") {
+						ingr_amount = "Changes made";
+						amount_ingr_id.push($('.ingredient_' + index + '_id').attr('value'));
+						amount.push($('.unit_amount_' + index).val());
+					}
+				});
+				recipe_obj.ingr_amount = ingr_amount;
+				recipe_obj.amount_ingr_id = amount_ingr_id;
+				recipe_obj.amount = amount;
+				//-
+				//- Check for new ingredients
+				$('.ingredient_name').each(function(index) {
+					if(index >= "#{recipe.ingredients.length}" && $('.ingredient_name.ingredient_' + index).val() != "" && $('.marker.delete_' + index).css('display') != 'none') {
+							new_ingredient = "Changes made";
+							new_ingredient_name.push( $('.ingredient_name.ingredient_' + index).val() );
+							new_ingredient_unit.push( $('.unit_type_' + index).val() );
+							new_ingredient_amount.push( $('.unit_amount_' + index).val() );
+					}
+				});
+				recipe_obj.new_ingredient = new_ingredient;
+				recipe_obj.new_ingredient_name = new_ingredient_name;
+				recipe_obj.new_ingredient_unit = new_ingredient_unit;
+				recipe_obj.new_ingredient_amount = new_ingredient_amount;
+				//-
+				//- Check preparation time
+				if( "#{recipe.prep_hour}" != $('.preparation_hours').val() || "#{recipe.prep_min}" != $('.preparation_minutes').val() ) {
+					preparation_time = convert_time( $('.preparation_hours').val(), $('.preparation_minutes').val() );
+				}
+				recipe_obj.prep_time = preparation_time;
+				//-
+				//- Check ready time
+				if( "#{recipe.ready_hour}" != $('.ready_hours').val() || "#{recipe.ready_min}" != $('.ready_minutes').val() ) {
+					ready_time = convert_time( $('.ready_hours').val(), $('.ready_minutes').val());
+				}
+				recipe_obj.ready_time = ready_time;	
+				//-			
+				//- Check serving size
+				if( "#{recipe.serving_first}" != $('.serving_size_one').val() || "#{recipe.serving_second}" != $('.serving_size_two').val() ) {
+					serving_size = $('.serving_size_one').val() + "-" + $('.serving_size_two').val();
+				}
+				recipe_obj.serving_size = serving_size;
+				//-
+				//- Check directions  
+				if( replace_new_line('#{recipe.directions}') != replace_new_line( $('.directions').val() ) && replace_new_line( $('.directions').val() ) != "" ) {
+					directions = $('.directions').val();
+				}
+				recipe_obj.directions = directions;
+				var json = JSON.stringify(recipe_obj);
+				$.ajax({
+					type: 'POST',
+					url: '/recipe/edit_submit',
+					data: {recipe: json}, 
+					dataType: 'json',
+					success: function(data){
+						var recipe_obj = new Object();
+						recipe_obj.recipe_id = "#{recipe.id}";
+						recipe_obj.picture_locations = edited_pictures;
+						var json = JSON.stringify(recipe_obj);
+						$.ajax({
+							type: 'POST',
+							url: '/recipe/delete_picture',
+							data: {recipe: json}, 
+							dataType: 'json'
+						});
+							$('.must_fill_in').empty();
+							$('.must_fill_in').show();
+							$('.must_fill_in').append("The Changes Have Been Saved");
+					}
+				});
+			});
+			//-------------------------------------------------------------------------------------------------------
+			//- Delete picture
+			$('.delete_picture').click(function() {
+				$(this).parent().parent().parent().hide();
+				var recipe_obj = new Object();
+				edited_pictures.push($(this).parent().parent().find('.recipe_photo').attr("value"));
+			});
+			//-------------------------------------------------------------------------------------------------------
+			//- Delete recipe
+			$('.recipe_delete').click(function() {
+				var recipe_id = "#{recipe.id}";
+				var json = JSON.stringify(recipe_id);
+				$.ajax({
+					type: 'POST',
+					url: '/recipe/delete',
+					data: {recipe_id: json}, 
+					dataType: 'json',
+					success: function(data){
+						window.location.replace("my");
+					}
+				});
+			});
+			//-------------------------------------------------------------------------------------------------------
+			//- Creates new recipe lines
+			$('.add_ingredient').live('click', function() {
+				$('.add_ingredient').hide();
+				$('.ingredient_delete').show();
+				var count = 0;
+				$('.ingredient_delete').each(function() {
+					if(count <= $(this).attr('value')) {
+						count = parseInt($(this).attr('value'), 10) + 1;
+					}
+				});
+				$('.ingredient').append('<div class="marker delete_' + count + '" style="float:left; margin-top:5px"><input class="input_text ingredient_name ingredient_' + count + '" type="text", style="margin-left:160px; width:170px"></div>');
+				$('.ingredient').append('<div class="delete_' + count + '" style="float:left; margin-top:5px; margin-left:10px">Unit: <select class="unit_type unit_type_' + count + '" style="width:140px; font-size:16px; margin-left:5px">' + units_select_string + '</select></div>');
+				$('.ingredient').append('<div class="delete_' + count + '" style="float:left; margin-top:5px; margin-left:10px">Amount: <input type="text" class="input_text unit_amount_' + count + '" style="width:30px; margin-left:5px"></div>');
+				$('.ingredient').append('<div class="delete_' + count + '" value="29" style="float:left; margin-left:10px"><img src="/images/delete.png" alt="delete" class="ingredient_delete" value="' + count + '" style="display:none"></div>')
+				$('.ingredient').append('<div style="float:left; margin-top:5px;"><input type="button" class="add_ingredient" value="Add Ingredient" style="margin-left:10px; height:27px"></div>');
+			});
+			//-------------------------------------------------------------------------------------------------------
+			//- Remove ingredient from recipe create 
+			$('.ingredient_delete').live('click', function(event) {
+				if($('.ingredient_delete').first().attr('value') == $(this).attr('value')) {
+					$('.marker:eq(1)').children('.ingredient_name').css('margin-left', '10px');
+				}
+				var place = $(this).attr('value');
+				deleted_ingredients.push( $('.ingredient_' + place + '_id').attr('value') );
+				$('.delete_' + place).hide();
+			});
+		});
+		//-
+		function replace_new_line(string) {
+			string = string.replace("\n", "");
+			string = string.replace("\r", "");
+			return string;
+		}
+		function convert_time(hours, minutes) {
+			var str_1 = "" + hours;
+			var pad_1 = "00";
+			pad_1 = pad_1.substring(0, pad_1.length - str_1.length) + str_1;
+
+			var str_2 = "" + minutes;
+			var pad_2 = "00";
+			pad_2 = pad_2.substring(0, pad_2.length - str_2.length) + str_2;
+
+			return pad_1 + ":" + pad_2;			
+		}
+
+	include ../footer
 
