@@ -241,6 +241,12 @@ div.userinfo_settings:active
 	padding-bottom:4px;
 }
 
+div.round {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
 body.page
 {
 	width:800px;
