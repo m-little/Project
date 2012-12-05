@@ -8,16 +8,22 @@ exports.search_results = function(req, res)
 	// initalize data base access object
 	var dao = new obj_dao.DAO
 
-	dao.query("select w.wiki_id, w.wiki_title, p.picture_id, p.caption, p.location, w.description from wiki w join wiki_content wc, picture p where MATCH(wc.title,wc.content) AGAINST(\"" + req.query.q + "\") AND wc.wiki_id=w.wiki_id AND w.picture_id=p.picture_id;", output1);
+	dao.query("select w.wiki_id, w.wiki_title, p.picture_id, p.caption, p.location, w.description from wiki w join wiki_content wc, picture p where MATCH(wc.title,wc.content) AGAINST(\"" + dao.safen(req.query.q) + "\") AND wc.wiki_id=w.wiki_id AND w.picture_id=p.picture_id;", output1);
 
 	function output1(success, result, fields)
 	{
-		// if there are no results redirect to the home page
-		if (result.length == 0) 
+		if (!success)
 		{
-			res.redirect('/');
+			res.redirect('/500error');
 			return;
 		}
+
+		//// if there are no results say so
+		//if (result.length == 0) 
+		//{
+		//	res.redirect('/');
+		//	return;
+		//}
 
 		
 
