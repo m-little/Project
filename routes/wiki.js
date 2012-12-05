@@ -66,6 +66,14 @@ exports.display_view = function(req, res)
 		return;
 	}
 
+	req.query.w_id = parseInt(req.query.w_id);
+	if (isNaN(req.query.w_id))
+	{
+		global.session.error_message.message = "Danger, Will Robinson!  That wiki page does not seem to exist.";
+		res.redirect('/error');
+		return;
+	}
+
 	// initalize data base access object
 	var dao = new obj_dao.DAO();	
 	
@@ -82,9 +90,11 @@ exports.display_view = function(req, res)
 		}
 
 		// if there are no results redirect to the home page
-		if (result.length == 0) 
+		if (result.length == 0)
 		{
-			res.redirect('/');
+			global.session.error_message.code = "wiki_none";
+			global.session.error_message.message = "Danger, Will Robinson!  That wiki page does not seem to exist.";
+			res.redirect('/error');
 			return;
 		}
 
