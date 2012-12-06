@@ -5,13 +5,13 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 	div.all(style="max-width:1000px; margin:auto;")
 		- if (results.length == 0)
-			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
+			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:#EEEEFF; overflow:auto;")
 				p Sorry no pages were found.  Please try your search again.
 		- else
 			- for(var i in results)
-				div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
+				div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:#EEEEFF; overflow:auto;")
 				
-					div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
+					div(style="font-size:20px; background-color:#EEEEFF; width:100px; padding:2px;")
 						- if (type == 'w')
 							<a href="wiki/view?w_id=#{results[i].id}"> #{results[i].title} </a>
 						- if (type == 'r')

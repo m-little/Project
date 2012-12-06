@@ -5,7 +5,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 
 	div.all(style="max-width:1000px; margin:auto;")
 		div(style="margin-bottom:10px;")
-			div(style="overflow:auto; position:relative; border:1px solid #c2c2c2; background-color:white;")
+			div(style="overflow:auto; position:relative; border:1px solid #c2c2c2; background-color:#EEEEFF;")
 				h1(style="padding:10px; margin:0px; float:left; clear:both;")
 					| #{wiki.title}
 				- if (wiki.picture.id != 1)
@@ -22,14 +22,14 @@ html.all(style="background-image:url('/images/bg1.png');")
 							<a href="#video"> Video </a>
 
 		- if (wiki.content.length == 0)
-			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto; color:gray;")
+			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:#EEEEFF; overflow:auto; color:gray;")
 				| Wiki is empty.
 
 		- for(var i in wiki.content)
-			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:white; overflow:auto;")
+			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:#EEEEFF; overflow:auto;")
 				<a name="#{wiki.content[i].id}">
 
-				div(style="font-size:20px; background-color:white; width:100px; padding:2px;")
+				div(style="font-size:20px; background-color:#EEEEFF; width:100px; padding:2px;")
 					| #{wiki.content[i].title}
 
 				- if(wiki.content[i].picture.id != 1)
