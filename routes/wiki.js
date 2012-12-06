@@ -95,6 +95,7 @@ exports.display_view = function(req, res)
 		{
 			global.session.error_message.code = "wiki_none";
 			global.session.error_message.message = "Danger, Will Robinson!  That wiki page does not seem to exist.";
+			dao.die();
 			res.redirect('/error');
 			return;
 		}
