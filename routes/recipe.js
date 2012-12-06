@@ -5,6 +5,54 @@ var obj_comment = require('../objects/comment');
 var obj_picture = require('../objects/picture');
 var obj_user = require('../objects/user');
 
+exports.home_view = function(req, res) {
+	var dao = new obj_dao.DAO();
+
+	dao.query("select r.recipe_id, r.recipe_name, r.description from recipe r ORDER BY wiki_id DESC LIMIT 5;", output1);
+	
+	function output1(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		//if (result.length == 0) 
+		//{
+		//	res.redirect('/');
+		//	return;
+		//}
+
+		var preview_array = new Array();
+
+
+		// get the first row (should be the only row) from the results returned by the database
+		for(var i in result)
+		{
+			
+			var row = result[i];
+			var new_picture = new obj_picture.Picture(1, ' ', ' ');
+			var new_prev = new obj_preview.preview(row.recipe_id,row.recipe_name, row.description, new_picture);
+			preview_array.push(new_prev);
+
+		}
+		
+		//console.log(preview_array);
+		dao.die();
+		finished(preview_array);
+	}
+
+	function finished(new_recipe_home) 
+	{
+		console.log(new_wiki_home);
+		res.render('wiki/wiki_home', { title: website_title, topFive: new_recipe_home});
+
+	}
+
+}
+
 exports.display_create = function(req, res)
 {
 	var dao = new obj_dao.DAO();

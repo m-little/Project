@@ -9,7 +9,7 @@ var fs = require('fs');
 exports.home_view = function(req, res)
 {
 	// initalize data base access object
-	var dao = new obj_dao.DAO
+	var dao = new obj_dao.DAO();
 
 	dao.query("SELECT w.wiki_id, w.wiki_title, p.picture_id, w.description, p.location, p.caption FROM wiki w JOIN picture p  WHERE w.picture_id = p.picture_id ORDER BY wiki_id DESC LIMIT 5", output1);
 
@@ -23,11 +23,11 @@ exports.home_view = function(req, res)
 		}
 
 		// if there are no results redirect to the home page
-		if (result.length == 0) 
-		{
-			res.redirect('/');
-			return;
-		}
+		//if (result.length == 0) 
+		//{
+		//	res.redirect('/');
+		//	return;
+		//}
 
 		var preview_array = new Array();
 
