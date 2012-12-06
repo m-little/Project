@@ -4,11 +4,15 @@ var obj_ingredient = require('../objects/ingredient');
 var obj_comment = require('../objects/comment');
 var obj_picture = require('../objects/picture');
 var obj_user = require('../objects/user');
+var obj_preview = require('../objects/preview');
+
 
 exports.home_view = function(req, res) {
 	var dao = new obj_dao.DAO();
 
-	dao.query("select r.recipe_id, r.recipe_name, r.description from recipe r where r.public = 1 ORDER BY recipe_id DESC LIMIT 5;", output1);
+	//dao.query("select r.recipe_id, r.recipe_name, r.description from recipe r where r.public = 1 ORDER BY recipe_id DESC LIMIT 5;", output1);
+	dao.query("select r.recipe_id, r.recipe_name, r.description, p.picture_id, p.caption, p.location from recipe r JOIN recipe_picture rp, picture p where r.public = 1 AND rp.recipe_id = r.recipe_id AND p.picture_id=rp.picture_id ORDER BY recipe_id DESC LIMIT 5 ;", output1);
+
 	
 	function output1(success, result, fields)
 	{
@@ -33,7 +37,7 @@ exports.home_view = function(req, res) {
 		{
 			
 			var row = result[i];
-			var new_picture = new obj_picture.Picture(1, ' ', ' ');
+			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
 			var new_prev = new obj_preview.preview(row.recipe_id,row.recipe_name, row.description);
 			new_prev.set_picture(new_picture);
 			preview_array.push(new_prev);
@@ -46,8 +50,8 @@ exports.home_view = function(req, res) {
 
 	function finished(new_recipe_home) 
 	{
-		console.log(new_wiki_home);
-		res.render('wiki/wiki_home', { title: website_title, topFive: new_recipe_home});
+		console.log(new_recipe_home);
+		res.render('recipe/recipe_home', { title: website_title, topFive: new_recipe_home});
 
 	}
 
