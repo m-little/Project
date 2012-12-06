@@ -1,5 +1,6 @@
 USE project;
 
+ft_min_word_len=3;
 -- This sql script will flush the database!!!
 -- to update database with this script:
 -- run command: mysql -u student -p
@@ -161,10 +162,12 @@ directions TEXT NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
 active TINYINT(1) NOT NULL DEFAULT 1,
+description TEXT NOT NULL,
+FULLTEXT(recipe_name),
 CONSTRAINT pk_recipe PRIMARY KEY(recipe_id),
 CONSTRAINT fk_recipe_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(category_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_picture
 (
@@ -174,7 +177,7 @@ picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 CONSTRAINT pk_recipe_picture PRIMARY KEY(recipe_picture_id),
 CONSTRAINT fk_recipe_picture_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id),
 CONSTRAINT fk_recipe_picture_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_comment
 (
@@ -189,7 +192,7 @@ seen TINYINT(1) NOT NULL DEFAULT 0,
 CONSTRAINT pk_comment PRIMARY KEY(comment_id),
 CONSTRAINT fk_recipe_comment_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_comment_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_ranking
 (
@@ -202,7 +205,7 @@ date_edited DATETIME,
 CONSTRAINT pk_recipe_ranking PRIMARY KEY(rank_id),
 CONSTRAINT fk_recipe_ranking_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_ranking_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_shared
 (
@@ -247,7 +250,7 @@ CONSTRAINT fk_rec_ingr_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id
 CONSTRAINT fk_rec_ingr_ingr FOREIGN KEY(ingr_id) REFERENCES ingredient(ingr_id),
 CONSTRAINT fk_rec_ingr_unit FOREIGN KEY(unit_id) REFERENCES unit(unit_id),
 CONSTRAINT pk_rec_ingr PRIMARY KEY(recipe_ingr_id)
-);
+) ENGINE=MyISAM;
 
 -- Triggers
 
