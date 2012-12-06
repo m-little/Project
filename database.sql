@@ -1,6 +1,5 @@
 USE project;
 
-ft_min_word_len=3;
 -- This sql script will flush the database!!!
 -- to update database with this script:
 -- run command: mysql -u student -p

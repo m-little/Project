@@ -38,7 +38,8 @@ exports.home_view = function(req, res)
 			
 			var row = result[i];
 			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
-			var new_prev = new obj_preview.preview(row.wiki_id,row.wiki_title, row.description, new_picture);
+			var new_prev = new obj_preview.preview(row.wiki_id,row.wiki_title, row.description);
+			new_prev.set_picture(new_picture);
 			preview_array.push(new_prev);
 
 		}
