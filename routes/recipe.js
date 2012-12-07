@@ -897,11 +897,11 @@ exports.display_edit = function(req, res)
 		var row = result[0];
 		if (global.session.logged_in) {
 			if (row.owner != global.session.user.id) {
-				res.render('login');
+				res.redirect('/login');
 			}
 		}
 		else {
-			res.render('/login');
+			res.redirect('/login');
 		}
 		
 		var new_recipe = new obj_recipe.Recipe(req.query.r_id, row.owner_id, row.public, row.recipe_name, row.category_name, row.serving_size, row.prep_time, row.ready_time, row.directions, row.date_added, row.date_edited);
