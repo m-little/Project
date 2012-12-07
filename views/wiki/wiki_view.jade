@@ -7,19 +7,24 @@ html.all(style="background-image:url('/images/bg1.png');")
 		div(style="margin-bottom:10px;")
 			div(style="overflow:auto; position:relative; border:1px solid #c2c2c2; background-color:#EEEEFF;")
 				h1(style="padding:10px; margin:0px; float:left; clear:both;")
-					| #{wiki.title}
+					| #{wiki.title} 
 				- if (wiki.picture.id != 1)
 					img(src="/images/user_images/#{wiki.picture.location}", title="#{wiki.picture.caption}", style="float:right; margin:4px; max-width:256px; max-height:256px;")
 
-				div(style="float:left; clear:left; margin:8px; border:1px solid #c2c2c2; padding:4px;")
-					span(style="float:left; clear:both;")
-						| Content
-					- for (var j in wiki.content)
+				- if (wiki.content.length != 0)
+					div(style="float:left; clear:left; margin:8px; border:1px solid #c2c2c2; padding:4px;")
+						span(style="float:left; clear:both;")
+							| Content 
+						- for (var j in wiki.content)
+							div(style="float:left; clear:both; margin:4px; margin-left:12px;")
+								<a href="##{wiki.content[j].id}"> #{wiki.content[j].title} </a>
+
+				- if (wiki.description != "")
+					div(style="float:left; margin:8px; border:1px solid #c2c2c2; padding:4px;")
+						span(style="float:left; clear:both;")
+							| Description 
 						div(style="float:left; clear:both; margin:4px; margin-left:12px;")
-							<a href="##{wiki.content[j].id}"> #{wiki.content[j].title} </a>
-					- if (wiki.video.id != 1)
-						div(style="float:left; clear:both; margin:4px; margin-left:12px;")
-							<a href="#video"> Video </a>
+							| #{wiki.description} 
 
 		- if (wiki.content.length == 0)
 			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:#EEEEFF; overflow:auto; color:gray;")
@@ -33,18 +38,15 @@ html.all(style="background-image:url('/images/bg1.png');")
 					| #{wiki.content[i].title}
 
 				- if(wiki.content[i].picture.id != 1)
-					div(style="float:right; position:relative; top: -4px; height: 138px; width: 138px; margin-bottom:-14px; margin-left:8px;")
-						img(src= "/images/user_images/#{wiki.content[i].picture.location}", style= "max-width:100%;")
+					div(style="float:right; margin:10px; max-width:256px;")
+						img(src= "/images/user_images/#{wiki.content[i].picture.location}", alt= "#{wiki.content[i].picture.caption}", title="#{wiki.content[i].picture.caption}", style= "max-width:100%;")
 
+				- if(wiki.content[i].video.id != 1)
+					span(style="margin:10px; position:relative; float:left;")
+						iframe(src="#{wiki.content[i].video.address}?wmode=transparent", frameborder="0", allowfullscreen, style= "max-width:640px; max-height:480px;")
+	
 				div(style="padding-left:10px;")
 					- for content in wiki.content[i].content.split('\n')
 						div(style="margin-top:6px; min-height:19px;")
 							p!= content
-		
-
-		- if (wiki.video.id != 1)
-			div
-				<a name="video">
-				<iframe width="560" height="315" src="#{wiki.video.address}?wmode=transparent" frameborder="0" 	allowfullscreen></iframe>
-	
 	include ../footer
