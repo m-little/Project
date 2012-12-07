@@ -4,6 +4,7 @@ var obj_dao = require('../objects/database');
 var obj_user = require('../objects/user');
 var obj_notify = require('../objects/notifications');
 
+// Sam
 exports.lookup = function(req, res)
 {
 	// Returns 1 if username is not used
@@ -30,6 +31,7 @@ exports.lookup = function(req, res)
 	}
 }
 
+// Sam
 exports.create = function(req, res)
 {
 	if (req.body.username == undefined || req.body.username == '') // incorrect post data received. redirect. should never happen
@@ -124,6 +126,7 @@ exports.create = function(req, res)
 	}
 }
 
+// Sam
 exports.validate = function(req, res)
 {
 	if (req.query.v == undefined)
@@ -175,6 +178,7 @@ exports.validate = function(req, res)
 	}
 }
 
+// Sam
 exports.show_profile = function(req, res)
 {
 	if (req.query.u == undefined || req.query.u == '') // redirect to current user.
@@ -284,6 +288,7 @@ exports.show_profile = function(req, res)
 	}
 }
 
+// Sam
 exports.update_follow = function(req, res)
 {
 	if (req.body.user == undefined || req.body.user == '') // incorrect data received.
@@ -442,6 +447,7 @@ exports.update_follow = function(req, res)
 	}
 }
 
+// Sam
 exports.update_notifications = function(req, res)
 {
 	if (!global.session.logged_in)
@@ -463,26 +469,25 @@ exports.update_notifications = function(req, res)
 	}
 }
 
+// Sam
 exports.share_recipe = function(req, res)
 {
 	if (!global.session.logged_in)
 	{
-		res.redirect('/500error');
+		res.send({status: 0});
 		return;
 	}
 
 	if (req.body.recipe_id == undefined || req.body.recipe_id == '') // incorrect data received.
 	{
-		global.session.error_message.message = "Recipe was undefined.";
-		res.redirect('/error');
+		res.send({status: 0});
 		return;
 	}
 
 	req.body.recipe_id = parseInt(req.body.recipe_id);
 	if (isNaN(req.body.recipe_id)) // incorrect data received.
 	{
-		global.session.error_message.message = "Type was undefined.";
-		res.redirect('/error');
+		res.send({status: 0});
 		return;
 	}
 
@@ -495,7 +500,7 @@ exports.share_recipe = function(req, res)
 		if (!success)
 		{
 			dao.die();
-			res.redirect('/500error');
+			res.send({status: 0});
 			return;
 		}
 
@@ -506,6 +511,13 @@ exports.share_recipe = function(req, res)
 			inserts.push("INSERT INTO recipe_shared (owner_id, follower_id, recipe_id, date_added) VALUES('" + dao.safen(global.session.user.id) + "', '" + row.user_id_1 + "', " + req.body.recipe_id + ", NOW())");
 		}
 
+		if (inserts.length == 0)
+		{
+			dao.die();
+			res.send({status: 2});
+			return;
+		}
+
 		dao.transaction(inserts, output2);
 	}
 
@@ -514,11 +526,11 @@ exports.share_recipe = function(req, res)
 		if (!success)
 		{
 			dao.die();
-			res.redirect('/500error');
+			res.send({status: 0});
 			return;
 		}
 
 		dao.die();
-		res.send({});
+		res.send({status: 1});
 	}
 }
