@@ -106,6 +106,8 @@ app.post('/recipe/comment_on', recipe.comment_on);
 app.post('/recipe/set_rank', recipe.set_rank);
 app.post('/recipe/edit_comment', recipe.edit_comment);
 app.get('/recipe/my', recipe.my);
+app.get('/recipe/home', recipe.home_view);
+
 
 app.get('/wiki/view', wiki.display_view);
 app.get('/wiki/home', wiki.home_view);

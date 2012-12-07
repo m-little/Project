@@ -9,7 +9,7 @@ var fs = require('fs');
 exports.home_view = function(req, res)
 {
 	// initalize data base access object
-	var dao = new obj_dao.DAO
+	var dao = new obj_dao.DAO();
 
 	dao.query("SELECT w.wiki_id, w.wiki_title, p.picture_id, w.description, p.location, p.caption FROM wiki w JOIN picture p  WHERE w.picture_id = p.picture_id ORDER BY wiki_id DESC LIMIT 5", output1);
 
@@ -23,11 +23,11 @@ exports.home_view = function(req, res)
 		}
 
 		// if there are no results redirect to the home page
-		if (result.length == 0) 
-		{
-			res.redirect('/');
-			return;
-		}
+		//if (result.length == 0) 
+		//{
+		//	res.redirect('/');
+		//	return;
+		//}
 
 		var preview_array = new Array();
 
@@ -38,7 +38,8 @@ exports.home_view = function(req, res)
 			
 			var row = result[i];
 			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
-			var new_prev = new obj_preview.preview(row.wiki_id,row.wiki_title, row.description, new_picture);
+			var new_prev = new obj_preview.preview(row.wiki_id,row.wiki_title, row.description);
+			new_prev.set_picture(new_picture);
 			preview_array.push(new_prev);
 
 		}
@@ -77,8 +78,8 @@ exports.display_view = function(req, res)
 	// initalize data base access object
 	var dao = new obj_dao.DAO();	
 	
-	// first query gets information that belongs to the wiki and video tables from the database and runs the function output1 on completion
-	dao.query("SELECT w.video_id, wiki_title, w.description, p.picture_id, p.location, p.caption, v.name, v.caption, v.address FROM wiki w JOIN video v ON w.video_id = v.video_id JOIN picture p ON p.picture_id = w.picture_id JOIN wiki_category wc ON w.wiki_cat_id = wc.wiki_cat_id WHERE wiki_id = " + req.query.w_id, output1);
+	// first query gets information that belongs to the wiki from the database and runs the function output1 on completion
+	dao.query("SELECT wiki_title, w.description, p.picture_id, p.location, p.caption FROM wiki w JOIN picture p ON p.picture_id = w.picture_id JOIN wiki_category wc ON w.wiki_cat_id = wc.wiki_cat_id WHERE wiki_id = " + req.query.w_id, output1);
 	
 	function output1(success, result, fields)
 	{
@@ -94,6 +95,7 @@ exports.display_view = function(req, res)
 		{
 			global.session.error_message.code = "wiki_none";
 			global.session.error_message.message = "Danger, Will Robinson!  That wiki page does not seem to exist.";
+			dao.die();
 			res.redirect('/error');
 			return;
 		}
@@ -101,12 +103,11 @@ exports.display_view = function(req, res)
 		// get the first row (should be the only row) from the results returned by the database
 		var row = result[0];
 
-		// construct video and wiki objects from the info obtained from the database
-		var new_video = new obj_video.Video(row.video_id, row.name, row.caption, row.address);
-		var new_wiki = new obj_wiki.Wiki(req.query.w_id, new_video, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.description, row.category_name);
+		// construct wiki objects from the info obtained from the database
+		var new_wiki = new obj_wiki.Wiki(req.query.w_id, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.description, row.category_name);
 		
 		// second query gets the wiki pages content (i.e. sections of the wiki page and pictures belonging to that section) and runst the function output2 on completion
-		dao.query("SELECT content, title, p.picture_id, p.location, p.caption, wc.wiki_cont_id FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id WHERE wc.wiki_id =" + req.query.w_id, output2, new_wiki);
+		dao.query("SELECT content, title, p.picture_id, p.location, p.caption, v.video_id, v.address, v.caption, wc.wiki_cont_id FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id JOIN video v ON v.video_id = wc.video_id WHERE wc.wiki_id =" + req.query.w_id, output2, new_wiki);
 	}
 
 	// this function builds the wiki_content objects and stores them in an array that is then put in the 'wiki' object
@@ -126,8 +127,9 @@ exports.display_view = function(req, res)
 		{
 			var row = result[i];
 
+			var new_video = new obj_video.Video(row.video_id, row.caption, row.address);
 			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
-			var new_content = new obj_content.Wiki_Content(row.wiki_cont_id, new_picture, row.title, row.content);
+			var new_content = new obj_content.Wiki_Content(row.wiki_cont_id, new_picture, new_video, row.title, row.content);
 
 			//console.log(new_content);
 			content_array.push(new_content);
@@ -361,7 +363,7 @@ exports.new = function(req, res)
 
 
 
-		var statements = ["INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description, picture_id) VALUES (1, '" + dao.safen(req.body.name) + "', " + result[0].wiki_cat_id + ", '" + dao.safen(req.body.description) + "', " + req.body.pic_id + ");", "SET @wiki_id = LAST_INSERT_ID();"];
+		var statements = ["INSERT INTO wiki (wiki_title, wiki_cat_id, description, picture_id) VALUES ('" + dao.safen(req.body.name) + "', " + result[0].wiki_cat_id + ", '" + dao.safen(req.body.description) + "', " + req.body.pic_id + ");", "SET @wiki_id = LAST_INSERT_ID();"];
 
 		for (var i in req.body.contents)
 		{

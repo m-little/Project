@@ -14,7 +14,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 		<form action = "/query" method = "get" id = "search_box">
 		<div class = "wrapper", style="margin-left:auto; margin-right: auto; width: 79%; padding-top:15px;">
 		<input type = "text" class = "input_text" id = "search" name = "q" placeholder = "search" style = "width: 253px;" />
-		<input type="hidden" name="t" value="w" />
+		<input type="hidden" name="t" value="r" />
 		<button type = "submit" class = "search_btn" value = "Submit">
 		<img src = '/images/Search-icon.png' title = "search" style="max-height:18px; max-width:18px;" />
 		</button>
@@ -25,19 +25,19 @@ html.all(style="background-image:url('../images/bg1.png');")
 	
 	script(src="/jquery.js")
 	script
-		var topfive_wikis = [{name: "#{topFive[0].title}", picture: {location: "#{topFive[0].picture.location}", caption: "#{topFive[0].picture.caption0}"}},{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"}},{name: "#{topFive[2].title}", picture: {location: "#{topFive[2].picture.location}", caption: "#{topFive[2].picture.caption1}"}},{name: "#{topFive[3].title}", picture: {location: "#{topFive[3].picture.location}", caption: "#{topFive[3].picture.caption3}"}},{name: "#{topFive[4].title}", picture: {location: "#{topFive[4].picture.location}", caption: "#{topFive[4].picture.caption4}"}}];
+		var topfive_recipes = [{name: "#{topFive[0].title}", picture: {location: "#{topFive[0].picture.location}", caption: "#{topFive[0].picture.caption0}"}},{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"}},{name: "#{topFive[2].title}", picture: {location: "#{topFive[2].picture.location}", caption: "#{topFive[2].picture.caption1}"}},{name: "#{topFive[3].title}", picture: {location: "#{topFive[3].picture.location}", caption: "#{topFive[3].picture.caption3}"}},{name: "#{topFive[4].title}", picture: {location: "#{topFive[4].picture.location}", caption: "#{topFive[4].picture.caption4}"}}];
 		var frame = 0;
 		$(document).ready(function(){
 			setInterval(next_slide,3000);
-			//$("#test").css("background-image", "url('/images/user_images/" + topfive_wikis[1].picture.location + "')");
+			//$("#test").css("background-image", "url('/images/user_images/" + topfive_recipes[1].picture.location + "')");
 
 
 		});
 
 		function next_slide(){
-			$("#slide-image").attr("src", "/images/user_images/" + topfive_wikis[frame].picture.location);
+			$("#slide-image").attr("src", "/images/user_images/" + topfive_recipes[frame].picture.location);
 						frame += 1;
-			if(frame >= topfive_wikis.length)
+			if(frame >= topfive_recipes.length)
 				{
 					frame = 0;
 				}

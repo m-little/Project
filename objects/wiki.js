@@ -1,7 +1,6 @@
-exports.Wiki = function Wiki(id_, video_, title_, picture_, desc_, cate_)
+exports.Wiki = function Wiki(id_, title_, picture_, desc_, cate_)
 {
 	this.id = id_;
-	this.video = video_;
 	this.title = title_;
 	this.content = [];
 	this.picture = picture_;

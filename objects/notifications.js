@@ -112,16 +112,5 @@ var check_all = function(callback)
 	}
 }
 
-Function.prototype.bind = function(obj)
-{
-	var method = this, 
-	temp = function() 
-	{ 
-		return method.apply(obj, arguments); 
-	}; 
-
-return temp; 
-}
-
 exports.Notifications = Notifications;
 exports.check_all = check_all;
