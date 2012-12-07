@@ -9,7 +9,7 @@ var fs = require('fs');
 exports.home_view = function(req, res)
 {
 	// initalize data base access object
-	var dao = new obj_dao.DAO
+	var dao = new obj_dao.DAO();
 
 	dao.query("SELECT w.wiki_id, w.wiki_title, p.picture_id, w.description, p.location, p.caption FROM wiki w JOIN picture p  WHERE w.picture_id = p.picture_id ORDER BY wiki_id DESC LIMIT 5", output1);
 
@@ -23,11 +23,11 @@ exports.home_view = function(req, res)
 		}
 
 		// if there are no results redirect to the home page
-		if (result.length == 0) 
-		{
-			res.redirect('/');
-			return;
-		}
+		//if (result.length == 0) 
+		//{
+		//	res.redirect('/');
+		//	return;
+		//}
 
 		var preview_array = new Array();
 
@@ -38,7 +38,8 @@ exports.home_view = function(req, res)
 			
 			var row = result[i];
 			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
-			var new_prev = new obj_preview.preview(row.wiki_id,row.wiki_title, row.description, new_picture);
+			var new_prev = new obj_preview.preview(row.wiki_id,row.wiki_title, row.description);
+			new_prev.set_picture(new_picture);
 			preview_array.push(new_prev);
 
 		}
@@ -94,6 +95,7 @@ exports.display_view = function(req, res)
 		{
 			global.session.error_message.code = "wiki_none";
 			global.session.error_message.message = "Danger, Will Robinson!  That wiki page does not seem to exist.";
+			dao.die();
 			res.redirect('/error');
 			return;
 		}

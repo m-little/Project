@@ -161,10 +161,12 @@ directions TEXT NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
 active TINYINT(1) NOT NULL DEFAULT 1,
+description TEXT NOT NULL,
+FULLTEXT(recipe_name),
 CONSTRAINT pk_recipe PRIMARY KEY(recipe_id),
 CONSTRAINT fk_recipe_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(category_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_picture
 (
@@ -174,7 +176,7 @@ picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 CONSTRAINT pk_recipe_picture PRIMARY KEY(recipe_picture_id),
 CONSTRAINT fk_recipe_picture_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id),
 CONSTRAINT fk_recipe_picture_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_comment
 (
@@ -189,7 +191,7 @@ seen TINYINT(1) NOT NULL DEFAULT 0,
 CONSTRAINT pk_comment PRIMARY KEY(comment_id),
 CONSTRAINT fk_recipe_comment_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_comment_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_ranking
 (
@@ -202,7 +204,7 @@ date_edited DATETIME,
 CONSTRAINT pk_recipe_ranking PRIMARY KEY(rank_id),
 CONSTRAINT fk_recipe_ranking_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_ranking_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_shared
 (
@@ -247,7 +249,7 @@ CONSTRAINT fk_rec_ingr_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id
 CONSTRAINT fk_rec_ingr_ingr FOREIGN KEY(ingr_id) REFERENCES ingredient(ingr_id),
 CONSTRAINT fk_rec_ingr_unit FOREIGN KEY(unit_id) REFERENCES unit(unit_id),
 CONSTRAINT pk_rec_ingr PRIMARY KEY(recipe_ingr_id)
-);
+) ENGINE=MyISAM;
 
 -- Triggers
 
@@ -511,7 +513,7 @@ INSERT INTO category (category_name) VALUES('Vegetables'); -- 21
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Curtis', 11, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), '1. Do this\n2. Do that\n3. Maybe your done?', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Sam', 15, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('00:10', '%H:%i'), STR_TO_DATE('02:00', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Julia', 15, 'Raspberry Cheesecake Bars', '3-5', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('9,28,2012 19:00', '%m,%d,%Y %H:%i')); -- 3
-INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Mike', 15, 'Simple White Cake', '6-10', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,25,2012 19:00', '%m,%d,%Y %H:%i')); -- 4
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added, description) VALUES ( 'Mike', 15, 'Simple White Cake', '6-10', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,25,2012 19:00', '%m,%d,%Y %H:%i'), 'Cake that taste great and its simple to make.'); -- 4
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Curtis', 5, 'Oven-fried Pork Chops', '4', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:00', '%m,%d,%Y %H:%i')); -- 5
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added, public) VALUES ( 'Sam', 2, 'Ranch Burgers', '8', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:05', '%m,%d,%Y %H:%i'), 0); -- 6
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Mario', 13, 'Mushroom Soup', '3-4', STR_TO_DATE( '00:20', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), '1. Chop the mushroom and put it into a pot with the water and set it to boil.\n2. Chop potatoes into the pot as well with anything else you usually put in a soup.', STR_TO_DATE('11,02,2012 12:35', '%m,%d,%Y %H:%i')); -- 6
@@ -670,7 +672,7 @@ INSERT INTO video (name, caption, address) VALUES("Test Video", "How To Grill", 
 
 
 -- Wiki pages ::::: We can't count these like in previous inserts, because ingredients make wikis, you don't know what ID you are up to.
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(2, "Grilling", 3, '');
+INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(2, "Grilling", 3, 'All about the art of grilling.');
 
 -- Wiki content
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Salt" LIMIT 1), 19, "Salt", "Salt, also known as rock salt, is a crystalline mineral that is composed primarily of sodium chloride (NaCl), a chemical compound belonging to the larger class of ionic salts. It is absolutely essential for animal life, but can be harmful to animals and plants in excess.\n\nSalt is one of the oldest, most ubiquitous food seasonings and salting is an important method of food preservation. The taste of salt (saltiness) is one of the basic human tastes. Salt for human consumption is produced in different forms: unrefined salt (such as sea salt), refined salt (table salt), and iodized salt. It is a crystalline solid, white, pale pink or light gray in color, normally obtained from sea water or rock deposits. Edible rock salts may be slightly grayish in color because of mineral content.\n\nChloride and sodium ions, the two major components of salt, are needed by all known living creatures in small quantities. Salt is involved in regulating the water content (fluid balance) of the body. The sodium ion itself is used for electrical signaling in the nervous system.[1] Because of its importance to survival, salt has often been considered a valuable commodity during human history.\n\nHowever, as salt consumption has increased during modern times, scientists have become aware of the health risks associated with high salt intake, including high blood pressure in sensitive individuals. Therefore, some health authorities have recommended limitations of dietary sodium, although others state the risk is minimal for typical western diets.[2][3][4][5][6] The United States Department of Health and Human Services recommends that individuals consume no more than 1500–2300 mg of sodium (3750–5750 mg of salt) per day depending on age.[7]"); -- 1 

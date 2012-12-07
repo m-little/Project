@@ -97,11 +97,17 @@ app.post('/user/share_recipe', user.share_recipe);
 app.get('/recipe/create', recipe.display_create);
 app.post('/recipe/submit', recipe.submit_recipe);
 app.post('/recipe/pictures', recipe.load_pictures);
+app.get('/recipe/edit', recipe.display_edit);
+app.post('/recipe/edit_submit', recipe.submit_edit);
+app.post('/recipe/delete_picture', recipe.delete_picture);
+app.post('/recipe/delete', recipe.update_delete);
 app.get('/recipe/view', recipe.display_view);
 app.post('/recipe/comment_on', recipe.comment_on);
 app.post('/recipe/set_rank', recipe.set_rank);
 app.post('/recipe/edit_comment', recipe.edit_comment);
 app.get('/recipe/my', recipe.my);
+app.get('/recipe/home', recipe.home_view);
+
 
 app.get('/wiki/view', wiki.display_view);
 app.get('/wiki/home', wiki.home_view);
