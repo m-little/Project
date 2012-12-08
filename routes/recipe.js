@@ -23,12 +23,6 @@ exports.home_view = function(req, res) {
 			return;
 		}
 
-		//if (result.length == 0) 
-		//{
-		//	res.redirect('/');
-		//	return;
-		//}
-
 		var preview_array = new Array();
 
 
