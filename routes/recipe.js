@@ -53,6 +53,10 @@ exports.home_view = function(req, res) {
 
 exports.display_create = function(req, res)
 {
+	if(!global.session.logged_in) {
+		res.redirect('/login');
+	}
+
 	var dao = new obj_dao.DAO();
 
 	dao.query("SELECT category_name FROM category ORDER BY category_name = '' DESC, use_count DESC", output);
