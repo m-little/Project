@@ -230,12 +230,13 @@ CONSTRAINT pk_unit PRIMARY KEY(unit_id)
 CREATE TABLE ingredient
 (
 ingr_id SERIAL,
-ingr_name VARCHAR(60) BINARY NOT NULL,
+ingr_name VARCHAR(60) NOT NULL,
 use_count INT UNSIGNED NOT NULL DEFAULT 0,
 wiki_id BIGINT UNSIGNED,
+FULLTEXT(ingr_name),
 CONSTRAINT pk_ingredient PRIMARY KEY(ingr_id)
 -- CONSTRAINT fk_ingredient_wiki FOREIGN KEY(wiki_id) REFERENCES wiki(wiki_id),
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_ingredient
 (
