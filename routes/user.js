@@ -101,8 +101,8 @@ exports.create = function(req, res)
 	{
 		if (success)
 		{
-			var body = "<h1>Thank you for registering!</h1>Please follow the link below to validate you email and start using the site.  You have <b> until " + vals.val_date.toDateString() + ' ' + vals.val_date.toLocaleTimeString() + " to do so before the request expires.</b> <p><a href='localhost/user/validate?v=" + vals.val_value + "'>Click here to validate your email</a></p>";
-			obj_system.email('sgluebbert1@cougars.ccis.edu', 'Test', false, body, complete);
+			var body = "<h1>Thank you for registering!</h1>Please follow the link below to validate you email and start using the site.  You have <b> until " + vals.val_date.toDateString() + ' ' + vals.val_date.toLocaleTimeString() + " to do so before the request expires.</b> <p><a href=\"localhost/user/validate?v=" + vals.val_value + "\">Click here to validate your email</a></p>";
+			obj_system.email('sgluebbert1@cougars.ccis.edu', 'Validation', false, body, complete);
 		}
 		else
 		{
