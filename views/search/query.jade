@@ -14,8 +14,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 					div(style="font-size:20px; background-color:#EEEEFF; width:auto; padding:2px;")
 						- if (type == 'w')
 							<a href="wiki/view?w_id=#{results[i].id}"> #{results[i].title} </a>
-						- if (type == 'r')
+						- else if (type == 'r')
 							<a href="recipe/view?r_id=#{results[i].id}"> #{results[i].title} </a>
+						- else if (type == 'u')
+							<a href="user/profile?u=#{results[i].id}"> #{results[i].title} </a>
 
 					- if(results[i].picture.id != 1)
 						div(style="float:right; position:relative; top: -4px; height: 138px; width: 138px; margin-bottom:-14px; margin-left:8px;")

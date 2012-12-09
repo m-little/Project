@@ -119,10 +119,11 @@ active TINYINT(1) DEFAULT 1,
 show_email TINYINT(1) DEFAULT 0,
 validation_value VARCHAR(40) DEFAULT '',
 validation_date DATETIME NOT NULL DEFAULT 0,
+FULLTEXT(user_fname, user_lname, email),
 CONSTRAINT pk_user PRIMARY KEY(user_id),
 CONSTRAINT fk_user_passkeys FOREIGN KEY(user_id) REFERENCES passkeys(user_id),
 CONSTRAINT fk_user_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE user_connections
 (
@@ -136,7 +137,7 @@ date_added DATETIME NOT NULL,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
 CONSTRAINT fk_user_1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
 CONSTRAINT fk_user_2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE category
 (
@@ -216,7 +217,7 @@ date_added DATETIME NOT NULL,
 CONSTRAINT pk_recipe_shared PRIMARY KEY(shared_id),
 CONSTRAINT fk_recipe_shared_owner FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_shared_follower FOREIGN KEY(follower_id) REFERENCES user(user_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE unit
 (
