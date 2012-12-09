@@ -293,18 +293,18 @@ exports.update_follow = function(req, res)
 {
 	if (req.body.user == undefined || req.body.user == '') // incorrect data received.
 	{
-		global.session.error_message.message = "User was undefined.";
-		res.redirect('/error');
+		res.send({});
 		return;
 	}
 
 	req.body.type = parseInt(req.body.type);
 	if (isNaN(req.body.type) || req.body.type > 3 || req.body.type < 0) // incorrect data received.
 	{
-		global.session.error_message.message = "Type was undefined.";
-		res.redirect('/error');
+		res.send({});
 		return;
 	}
+
+	console.log(req.body);
 
 	var dao = new obj_dao.DAO();
 
@@ -319,18 +319,12 @@ exports.update_follow = function(req, res)
 		if (!success)
 		{
 			dao.die();
-			res.redirect('/500error');
+			res.send({});
 			return;
 		}
 
 		if (result.length == 0)
 		{
-			if (req.body.type == 0)
-			{
-				res.redirect('/500error');
-				dao.die();
-				return;
-			}
 			// Create new entry
 			dao.query("INSERT INTO user_connections(user_id_1, user_id_2, date_added) VALUES ('" + dao.safen(global.session.user.id) + "', '" + dao.safen(req.body.user) + "', NOW())", complete1, 1);
 		}
@@ -369,7 +363,7 @@ exports.update_follow = function(req, res)
 		if (!success)
 		{
 			dao.die();
-			res.redirect('/500error');
+			res.send({});
 			return;
 		}
 

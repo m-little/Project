@@ -424,6 +424,18 @@ exports.edit = function(req, res)
 		return;
 	}
 
+	req.body.pic_id = parseInt(req.body.pic_id);
+	if (isNaN(req.body.pic_id))
+	{
+		res.send({});
+		return;
+	}
+
+	if (req.body.pic_id < 1)
+	{
+		req.body.pic_id = 1;
+	}
+
 	var dao = new obj_dao.DAO();
 	var cat_id = 0;
 
