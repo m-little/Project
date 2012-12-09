@@ -24,12 +24,13 @@ html.all(style="background-image:url('../images/bg1.png');")
 		div(id="slide-show", style="width:300px; margin:auto;")
 			div(id="border", style="margin-left:-44px;background-color: white; border-radius:.8em; opacity: .6; width:393px; margin-top:10px;")
 				a(id="link_to_wiki", href="/wiki/view?w_id=", style="color:black; text-decoration:none;")
-				img(id = "slide-image",src ='/images/.png', style="display:block; height:300px; width:300px; padding: 24px; margin-left:auto; margin-right:auto;")
+					img(id = "slide-image",src ='/images/.png', style="display:block; height:300px; width:300px; padding: 24px; margin-left:auto; margin-right:auto;")
 				
 	
 	script(src="/jquery.js")
 	script
-		var topfive_wikis =[{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"},id: "#{topFive[1].id}"},{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"}, id: "#{topFive[1].id}"},{name: "#{topFive[2].title}", picture: {location: "#{topFive[2].picture.location}", caption: "#{topFive[2].picture.caption1}"} , id:"#{topFive[1].id}"},{name: "#{topFive[3].title}", picture: {location: "#{topFive[3].picture.location}", caption: "#{topFive[3].picture.caption3}"}, id: "#{topFive[1].id}"},{name: "#{topFive[4].title}", picture: {location: "#{topFive[4].picture.location}", caption: "#{topFive[4].picture.caption4}"}, id: "#{topFive[1].id}"}];
+		var topfive_wikis =[{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"},id: "#{topFive[1].id}"},{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"}, id: "#{topFive[1].id}"},{name: "#{topFive[2].title}", picture: {location: "#{topFive[2].picture.location}", caption: "#{topFive[2].picture.caption1}"} , id:"#{topFive[2].id}"},{name: "#{topFive[3].title}", picture: {location: "#{topFive[3].picture.location}", caption: "#{topFive[3].picture.caption3}"}, id: "#{topFive[3].id}"},{name: "#{topFive[4].title}", picture: {location: "#{topFive[4].picture.location}", caption: "#{topFive[4].picture.caption4}"}, id: "#{topFive[4].id}"}];
+
 		var frame = 0;
 		$(document).ready(function(){
 			setInterval(next_slide,3000);
@@ -41,7 +42,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 		function next_slide(){
 			$("#link_to_wiki").attr('href', '/wiki/view?w_id=' + topfive_wikis[frame].id);
 						
-			$("#slide-image").attr("src", "/images/user_images/" + topive_wikis[frame].picture.location);
+			$("#slide-image").attr("src", "/images/user_images/" + topfive_wikis[frame].picture.location);
 						frame += 1;
 			
 			if(frame >= topfive_wikis.length)
