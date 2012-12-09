@@ -894,7 +894,7 @@ exports.display_edit = function(req, res)
 
 		var row = result[0];
 		if (global.session.logged_in) {
-			if (row.owner != global.session.user.id) {
+			if (row.owner_id != global.session.user.id) {
 				res.redirect('/login');
 			}
 		}
