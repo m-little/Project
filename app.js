@@ -47,8 +47,8 @@ app.configure(function(){
 
 	// 404 Page
 	app.use(function(req, res, next){
-		res.render('400error', { title: website_title, error: 404, location: req.headers.host + req.url });
 		console.error("###############################################################\033[31m\n" + (new Date()).toLocaleString() + "\nCould not handle request to " + req.url + "\033[0m");
+		res.render('400error', { title: website_title, error: 404, location: req.headers.host + req.url });
 		});
 });
 
@@ -90,6 +90,8 @@ app.post('/user/new', user.create);
 app.post('/user/lookup', user.lookup);
 app.get('/user/validate', user.validate);
 app.get('/user/profile', user.show_profile);
+app.get('/user/settings', user.show_settings);
+app.post('/user/save_settings', user.save_settings);
 app.post('/user/update_follow', user.update_follow);
 app.post('/user/update_notifications', user.update_notifications);
 app.post('/user/share_recipe', user.share_recipe);
@@ -97,15 +99,23 @@ app.post('/user/share_recipe', user.share_recipe);
 app.get('/recipe/create', recipe.display_create);
 app.post('/recipe/submit', recipe.submit_recipe);
 app.post('/recipe/pictures', recipe.load_pictures);
+app.get('/recipe/edit', recipe.display_edit);
+app.post('/recipe/edit_submit', recipe.submit_edit);
+app.post('/recipe/delete_picture', recipe.delete_picture);
+app.post('/recipe/delete', recipe.update_delete);
 app.get('/recipe/view', recipe.display_view);
 app.post('/recipe/comment_on', recipe.comment_on);
 app.post('/recipe/set_rank', recipe.set_rank);
 app.post('/recipe/edit_comment', recipe.edit_comment);
 app.get('/recipe/my', recipe.my);
+app.get('/recipe/home', recipe.home_view);
+
 
 app.get('/wiki/view', wiki.display_view);
 app.get('/wiki/home', wiki.home_view);
 app.get('/wiki/create', wiki.display_create);
+app.get('/wiki/edit', wiki.display_edit);
+app.post('/wiki/edit', wiki.edit);
 app.post('/wiki/pictures', wiki.load_pictures);
 app.post('/wiki/new', wiki.new);
 

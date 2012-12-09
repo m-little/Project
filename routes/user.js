@@ -4,6 +4,7 @@ var obj_dao = require('../objects/database');
 var obj_user = require('../objects/user');
 var obj_notify = require('../objects/notifications');
 
+// Sam
 exports.lookup = function(req, res)
 {
 	// Returns 1 if username is not used
@@ -30,6 +31,7 @@ exports.lookup = function(req, res)
 	}
 }
 
+// Sam
 exports.create = function(req, res)
 {
 	if (req.body.username == undefined || req.body.username == '') // incorrect post data received. redirect. should never happen
@@ -99,8 +101,8 @@ exports.create = function(req, res)
 	{
 		if (success)
 		{
-			var body = "<h1>Thank you for registering!</h1>Please follow the link below to validate you email and start using the site.  You have <b> until " + vals.val_date.toDateString() + ' ' + vals.val_date.toLocaleTimeString() + " to do so before the request expires.</b> <p><a href='localhost/user/validate?v=" + vals.val_value + "'>Click here to validate your email</a></p>";
-			obj_system.email('sgluebbert1@cougars.ccis.edu', 'Test', false, body, complete);
+			var body = "<h1>Thank you for registering!</h1>Please follow the link below to validate you email and start using the site.  You have <b> until " + vals.val_date.toDateString() + ' ' + vals.val_date.toLocaleTimeString() + " to do so before the request expires.</b> <p><a href=\"localhost/user/validate?v=" + vals.val_value + "\">Click here to validate your email</a></p>";
+			obj_system.email('sgluebbert1@cougars.ccis.edu', 'Validation', false, body, complete);
 		}
 		else
 		{
@@ -124,6 +126,7 @@ exports.create = function(req, res)
 	}
 }
 
+// Sam
 exports.validate = function(req, res)
 {
 	if (req.query.v == undefined)
@@ -175,6 +178,7 @@ exports.validate = function(req, res)
 	}
 }
 
+// Sam
 exports.show_profile = function(req, res)
 {
 	if (req.query.u == undefined || req.query.u == '') // redirect to current user.
@@ -284,22 +288,135 @@ exports.show_profile = function(req, res)
 	}
 }
 
+// Sam
+exports.show_settings = function(req, res)
+{
+	if (!global.session.logged_in)
+	{
+		res.redirect('/login');
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+	dao.query("SELECT show_email FROM user WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output1);
+
+	function output1(success, result, fields)
+	{
+		dao.die();
+
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
+		res.render('user/settings', { title: website_title, show_email: result[0].show_email, info: req.query.i});
+	}
+}
+
+
+// Sam
+exports.save_settings = function(req, res)
+{
+	if (!global.session.logged_in)
+	{
+		res.send({success: 0, fail: 0});
+		return;
+	}
+
+	if (req.body.pass_c == undefined || req.body.pass_1 == undefined || req.body.pass_1 != req.body.pass_2)
+	{
+		res.send({success: 0, fail: 1});
+		return;
+	}
+
+	req.body.show_email = parseInt(req.body.show_email);
+	if (isNaN(req.body.show_email)) // incorrect data received.
+	{
+		res.send({success: 0, fail: 20});
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+	if (req.body.pass_c != '' || req.body.pass_1 != '')
+		dao.query("SELECT pass, salt FROM passkeys p JOIN user u ON p.user_id = u.user_id WHERE u.user_id = '" + dao.safen(global.session.user.id) + "' AND active = 1 LIMIT 1", output1);
+	else
+		dao.query("UPDATE user SET show_email = " + req.body.show_email + " WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output3);
+
+	function output1(success, result, fields)
+	{
+		if (!success || result.length == 0)
+		{
+			dao.die();
+			res.send({success: 0, fail: 21});
+			return;
+		}
+
+		var row = result[0];
+
+		// Create a hashed pass to compare with the stored one.
+		var shasum = crypto.createHash('sha1');
+		shasum.update(req.body.pass_c + row.salt);
+		var new_pass = shasum.digest('hex');
+
+		if (new_pass == row.pass)
+		{
+			shasum = crypto.createHash('sha1');
+			shasum.update(req.body.pass_1 + row.salt);
+			new_pass = shasum.digest('hex');
+			dao.query("UPDATE passkeys SET pass = '" + new_pass + "' WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output2);
+		}
+		else
+		{
+			dao.die();
+			res.send({success: 0, fail: 3}); // bad old pass
+			return;
+		}
+	}
+
+	function output2(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.send({success: 0, fail: 22});
+			return;
+		}
+
+		dao.query("UPDATE user SET show_email = " + req.body.show_email + " WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output3);
+	}
+
+	function output3(success, result, fields)
+	{
+		dao.die();
+		if (!success)
+		{
+			res.send({success: 0, fail: 23});
+			return;
+		}
+
+		global.session.user.show_email = req.body.show_email;
+		res.send({success: 1});
+	}
+}
+
+// Sam
 exports.update_follow = function(req, res)
 {
 	if (req.body.user == undefined || req.body.user == '') // incorrect data received.
 	{
-		global.session.error_message.message = "User was undefined.";
-		res.redirect('/error');
+		res.send({});
 		return;
 	}
 
 	req.body.type = parseInt(req.body.type);
 	if (isNaN(req.body.type) || req.body.type > 3 || req.body.type < 0) // incorrect data received.
 	{
-		global.session.error_message.message = "Type was undefined.";
-		res.redirect('/error');
+		res.send({});
 		return;
 	}
+
+	console.log(req.body);
 
 	var dao = new obj_dao.DAO();
 
@@ -314,18 +431,12 @@ exports.update_follow = function(req, res)
 		if (!success)
 		{
 			dao.die();
-			res.redirect('/500error');
+			res.send({});
 			return;
 		}
 
 		if (result.length == 0)
 		{
-			if (req.body.type == 0)
-			{
-				res.redirect('/500error');
-				dao.die();
-				return;
-			}
 			// Create new entry
 			dao.query("INSERT INTO user_connections(user_id_1, user_id_2, date_added) VALUES ('" + dao.safen(global.session.user.id) + "', '" + dao.safen(req.body.user) + "', NOW())", complete1, 1);
 		}
@@ -364,7 +475,7 @@ exports.update_follow = function(req, res)
 		if (!success)
 		{
 			dao.die();
-			res.redirect('/500error');
+			res.send({});
 			return;
 		}
 
@@ -442,6 +553,7 @@ exports.update_follow = function(req, res)
 	}
 }
 
+// Sam
 exports.update_notifications = function(req, res)
 {
 	if (!global.session.logged_in)
@@ -463,26 +575,25 @@ exports.update_notifications = function(req, res)
 	}
 }
 
+// Sam
 exports.share_recipe = function(req, res)
 {
 	if (!global.session.logged_in)
 	{
-		res.redirect('/500error');
+		res.send({status: 0});
 		return;
 	}
 
 	if (req.body.recipe_id == undefined || req.body.recipe_id == '') // incorrect data received.
 	{
-		global.session.error_message.message = "Recipe was undefined.";
-		res.redirect('/error');
+		res.send({status: 0});
 		return;
 	}
 
 	req.body.recipe_id = parseInt(req.body.recipe_id);
 	if (isNaN(req.body.recipe_id)) // incorrect data received.
 	{
-		global.session.error_message.message = "Type was undefined.";
-		res.redirect('/error');
+		res.send({status: 0});
 		return;
 	}
 
@@ -495,7 +606,7 @@ exports.share_recipe = function(req, res)
 		if (!success)
 		{
 			dao.die();
-			res.redirect('/500error');
+			res.send({status: 0});
 			return;
 		}
 
@@ -506,6 +617,13 @@ exports.share_recipe = function(req, res)
 			inserts.push("INSERT INTO recipe_shared (owner_id, follower_id, recipe_id, date_added) VALUES('" + dao.safen(global.session.user.id) + "', '" + row.user_id_1 + "', " + req.body.recipe_id + ", NOW())");
 		}
 
+		if (inserts.length == 0)
+		{
+			dao.die();
+			res.send({status: 2});
+			return;
+		}
+
 		dao.transaction(inserts, output2);
 	}
 
@@ -514,11 +632,11 @@ exports.share_recipe = function(req, res)
 		if (!success)
 		{
 			dao.die();
-			res.redirect('/500error');
+			res.send({status: 0});
 			return;
 		}
 
 		dao.die();
-		res.send({});
+		res.send({status: 1});
 	}
 }

@@ -8,10 +8,15 @@ exports.email = function(to, subject, plain, body, callback)
 	if (plain)
 		content_type = 'text/plain';
 
-	var child = exec("echo -e 'FROM : " + from + "\nTo : " + to + "\nSubject : " + subject + "\nContent-Type : " + content_type + "\n" + body + "' | sendmail -t", output);
+	var child = exec("echo 'FROM : " + from + "\nTo: " + to + "\nSubject : " + subject + "\nContent-Type : " + content_type + "\n" + body + "\n\n.' > .temp_email.txt; cat .temp_email.txt | sendmail -t; rm .temp_email.txt;", output);
+	// var child = exec("../system/email.sh " + to + " " + subject + " " + content_type + " " + body, output);
+	// console.log("echo -e 'FROM : " + from + "\\nTO: " + to + "\\nSubject : " + subject + "\\nContent-Type : " + content_type + "\\n" + body + "\\n\\n.' | sendmail -t");
 
 	function output(error, stdout, stderr)
 	{
+		console.log(stdout);
+		console.error(stderr);
+
 		if (error !== null)
 		{
 			callback(false);

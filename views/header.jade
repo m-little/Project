@@ -15,11 +15,15 @@ div.header
 			| Hello #{global.session.user.id}
 		div.userinfo_button(onClick="show_drop_recipes()")
 			| Recipes
+		div.userinfo_button(onClick="show_drop_wikis()")
+			| Wiki
 	else
 		div.userinfo_button(onClick="show_drop_login();", id="header_button_login")
 			| Login
 		div.userinfo_button(onClick="window.location.href='/sign_up'")
 			| Sign Up!
+		div.userinfo_button(onClick="show_drop_wikis()")
+			| Wiki
 
 //- Start drop down boxes
 
@@ -48,10 +52,10 @@ div.header_dropdown(id="header_menu_login", style="position:fixed; top:-1000px; 
 			| Cancel
 
 div.header_dropdown(id="header_menu_settings", style="position:fixed; top:-1000px; right:10px; width:auto;")
-	div.header_dropdown_button
-		div.header_dropdown_button_icon
-			img(src="../images/icon_gear1.png", style="position:relative; left:-3px; top:-3px;")
-		- if (global.session.logged_in)			
+	- if (global.session.logged_in)
+		div.header_dropdown_button
+			div.header_dropdown_button_icon
+				img(src="../images/icon_gear1.png", style="position:relative; left:-3px; top:-3px;")
 			a(href="/user/profile?u=#{global.session.user.id}", style="text-decoration:none; color:#bababa;")
 				| My Account
 	div.header_dropdown_button(id="header_settings_logout", onClick="$('#logout_form').submit();", title="Click here to logout.")
@@ -63,6 +67,11 @@ div.header_dropdown(id="header_menu_settings", style="position:fixed; top:-1000p
 		| Log Out
 
 div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px; right:10px; width:auto;")
+	div.header_dropdown_button
+		div.header_dropdown_button_icon
+			img(src="../images/icon_home.png", style="position:relative; left:-2px; top:-2px; width:22px;")
+		a(href="/recipe/home", style="text-decoration:none; color:#bababa;")
+			| Recipe Home
 	div.header_dropdown_button
 		div.header_dropdown_button_icon
 			img(src="../images/icon_new1.png", style="position:relative; left:-2px; top:-2px; width:22px;")
@@ -83,6 +92,19 @@ div.header_dropdown(id="header_menu_recipes", style="position:fixed; top:-1000px
 			img(src="../images/icon_book1.png", style="position:relative; left:-2px; top:-1px; width:22px; height:20px;")
 		a(href="", style="text-decoration:none; color:#bababa;")
 			| Lookup Recipes
+
+div.header_dropdown(id="header_menu_wikis", style="position:fixed; top:-1000px; right:150px; width:auto;")
+	div.header_dropdown_button
+		div.header_dropdown_button_icon
+			img(src="../images/icon_home.png", style="position:relative; left:-3px; top:-3px;")
+		a(href="/wiki/home", style="text-decoration:none; color:#bababa;")
+			| Wiki Home
+	- if (global.session.logged_in)
+		div.header_dropdown_button
+			div.header_dropdown_button_icon
+				img(src="../images/icon_new1.png", style="position:relative; left:-3px; top:-3px;")
+			a(href="/wiki/create", style="text-decoration:none; color:#bababa;")
+				| Create New Wiki
 
 div.header_dropdown(id="header_menu_notifications", style="position:fixed; top:-1000px; left:2px; width:auto; font-size:14px; min-width:260px; z-index:9;")
 	- if (global.session.logged_in)

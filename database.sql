@@ -37,8 +37,8 @@ DROP TABLE IF EXISTS recipe;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user_connections;
 DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS wiki_content;
 DROP TABLE IF EXISTS wiki;
+DROP TABLE IF EXISTS wiki_content;
 DROP TABLE IF EXISTS wiki_category;
 DROP TABLE IF EXISTS picture;
 DROP TABLE IF EXISTS passkeys;
@@ -63,26 +63,10 @@ CONSTRAINT pk_picture PRIMARY KEY(picture_id)
 CREATE TABLE video
 (
 video_id SERIAL NOT NULL AUTO_INCREMENT,
-name VARCHAR(40) NOT NULL,
 caption VARCHAR(50),
 address VARCHAR(100),
 CONSTRAINT pk_video PRIMARY KEY(video_id)
 );
-
-CREATE TABLE wiki
-(
-wiki_id SERIAL,
-video_id BIGINT UNSIGNED,
-wiki_cat_id BIGINT UNSIGNED,
-wiki_title VARCHAR(40) NOT NULL,
-picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
-description TEXT NOT NULL,
-ingr_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
-FULLTEXT(wiki_title),
-CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
-CONSTRAINT fk_wiki_video FOREIGN KEY(video_id) REFERENCES video(video_id),
-CONSTRAINT fk_wiki_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
-) ENGINE=MyISAM;
 
 CREATE TABLE wiki_category
 (
@@ -92,16 +76,32 @@ use_count INT UNSIGNED NOT NULL DEFAULT 0,
 CONSTRAINT pk_wiki_cat PRIMARY KEY(wiki_cat_id)
 );
 
+CREATE TABLE wiki
+(
+wiki_id SERIAL,
+wiki_cat_id BIGINT UNSIGNED,
+wiki_title VARCHAR(40) NOT NULL,
+picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
+description TEXT NOT NULL,
+ingr_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
+FULLTEXT(wiki_title),
+CONSTRAINT pk_wiki PRIMARY KEY(wiki_id),
+CONSTRAINT fk_wiki_category FOREIGN KEY(wiki_cat_id) REFERENCES wiki_category(wiki_cat_id),
+CONSTRAINT fk_wiki_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
+) ENGINE=MyISAM;
+
 CREATE TABLE wiki_content
 (
 wiki_cont_id SERIAL,
 wiki_id BIGINT UNSIGNED NOT NULL,
 picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
+video_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 title VARCHAR(40),
 content TEXT NOT NULL,
 FULLTEXT(title, content),
 CONSTRAINT pk_wiki_cont PRIMARY KEY(wiki_cont_id),
 CONSTRAINT fk_wiki FOREIGN KEY(wiki_id) REFERENCES wiki(wiki_id),
+CONSTRAINT fk_wiki_video FOREIGN KEY(video_id) REFERENCES video(video_id),
 CONSTRAINT fk_cont_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
 ) ENGINE=MyISAM;
 
@@ -115,14 +115,15 @@ user_lname VARCHAR(40) NOT NULL,
 email VARCHAR(50) NOT NULL,
 date_added DATETIME NOT NULL,
 user_points INT UNSIGNED NOT NULL DEFAULT 0,
-active TINYINT(1) DEFAULT 1,
+active TINYINT(1) DEFAULT 0,
 show_email TINYINT(1) DEFAULT 0,
 validation_value VARCHAR(40) DEFAULT '',
 validation_date DATETIME NOT NULL DEFAULT 0,
+FULLTEXT(user_fname, user_lname, email),
 CONSTRAINT pk_user PRIMARY KEY(user_id),
 CONSTRAINT fk_user_passkeys FOREIGN KEY(user_id) REFERENCES passkeys(user_id),
 CONSTRAINT fk_user_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE user_connections
 (
@@ -136,7 +137,7 @@ date_added DATETIME NOT NULL,
 CONSTRAINT pk_user_connections PRIMARY KEY(connection_id),
 CONSTRAINT fk_user_1 FOREIGN KEY(user_id_1) REFERENCES user(user_id),
 CONSTRAINT fk_user_2 FOREIGN KEY(user_id_2) REFERENCES user(user_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE category
 (
@@ -160,10 +161,12 @@ directions TEXT NOT NULL,
 date_added DATETIME NOT NULL,
 date_edited DATETIME,
 active TINYINT(1) NOT NULL DEFAULT 1,
+description TEXT NOT NULL,
+FULLTEXT(recipe_name),
 CONSTRAINT pk_recipe PRIMARY KEY(recipe_id),
 CONSTRAINT fk_recipe_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_category FOREIGN KEY(category_id) REFERENCES category(category_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_picture
 (
@@ -173,7 +176,7 @@ picture_id BIGINT UNSIGNED NOT NULL DEFAULT 1,
 CONSTRAINT pk_recipe_picture PRIMARY KEY(recipe_picture_id),
 CONSTRAINT fk_recipe_picture_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id),
 CONSTRAINT fk_recipe_picture_picture FOREIGN KEY(picture_id) REFERENCES picture(picture_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_comment
 (
@@ -188,7 +191,7 @@ seen TINYINT(1) NOT NULL DEFAULT 0,
 CONSTRAINT pk_comment PRIMARY KEY(comment_id),
 CONSTRAINT fk_recipe_comment_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_comment_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_ranking
 (
@@ -201,7 +204,7 @@ date_edited DATETIME,
 CONSTRAINT pk_recipe_ranking PRIMARY KEY(rank_id),
 CONSTRAINT fk_recipe_ranking_user FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_ranking_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_shared
 (
@@ -214,7 +217,7 @@ date_added DATETIME NOT NULL,
 CONSTRAINT pk_recipe_shared PRIMARY KEY(shared_id),
 CONSTRAINT fk_recipe_shared_owner FOREIGN KEY(owner_id) REFERENCES user(user_id),
 CONSTRAINT fk_recipe_shared_follower FOREIGN KEY(follower_id) REFERENCES user(user_id)
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE unit
 (
@@ -228,12 +231,13 @@ CONSTRAINT pk_unit PRIMARY KEY(unit_id)
 CREATE TABLE ingredient
 (
 ingr_id SERIAL,
-ingr_name VARCHAR(60) BINARY NOT NULL,
+ingr_name VARCHAR(60) NOT NULL,
 use_count INT UNSIGNED NOT NULL DEFAULT 0,
 wiki_id BIGINT UNSIGNED,
+FULLTEXT(ingr_name),
 CONSTRAINT pk_ingredient PRIMARY KEY(ingr_id)
 -- CONSTRAINT fk_ingredient_wiki FOREIGN KEY(wiki_id) REFERENCES wiki(wiki_id),
-);
+) ENGINE=MyISAM;
 
 CREATE TABLE recipe_ingredient
 (
@@ -246,7 +250,7 @@ CONSTRAINT fk_rec_ingr_recipe FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id
 CONSTRAINT fk_rec_ingr_ingr FOREIGN KEY(ingr_id) REFERENCES ingredient(ingr_id),
 CONSTRAINT fk_rec_ingr_unit FOREIGN KEY(unit_id) REFERENCES unit(unit_id),
 CONSTRAINT pk_rec_ingr PRIMARY KEY(recipe_ingr_id)
-);
+) ENGINE=MyISAM;
 
 -- Triggers
 
@@ -347,8 +351,13 @@ CREATE TRIGGER tri_user_rank_counter6 AFTER UPDATE ON recipe
 
 CREATE TRIGGER tri_ingr_wiki1 BEFORE INSERT ON ingredient
 	FOR EACH ROW BEGIN
-		INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(1, NEW.ingr_name, 1, '');
-		SET NEW.wiki_id = LAST_INSERT_ID();
+		SET @temp = (SELECT wiki_id FROM wiki WHERE ingr_id = 0 AND wiki_title = NEW.ingr_name LIMIT 1);
+		IF (SELECT COUNT(wiki_id) FROM wiki WHERE ingr_id = 0 AND wiki_title = NEW.ingr_name LIMIT 1) = 0 THEN
+			INSERT INTO wiki (wiki_title, wiki_cat_id, description) VALUES(NEW.ingr_name, 1, '');
+			SET NEW.wiki_id = LAST_INSERT_ID();
+		ELSE
+			SET NEW.wiki_id = @temp;
+		END IF;
 	END;
 |
 
@@ -505,7 +514,7 @@ INSERT INTO category (category_name) VALUES('Vegetables'); -- 21
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Curtis', 11, 'Potato Salad', '4-6', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), '1. Do this\n2. Do that\n3. Maybe your done?', STR_TO_DATE('9,29,2012 19:00', '%m,%d,%Y %H:%i'));  -- 1
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Sam', 15, 'Grandmas Pumpkin Pie', '5-6', STR_TO_DATE('00:10', '%H:%i'), STR_TO_DATE('02:00', '%H:%i'), 'directions', STR_TO_DATE('9,30,2012 11:00', '%m,%d,%Y %H:%i'));  -- 2
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES('Julia', 15, 'Raspberry Cheesecake Bars', '3-5', STR_TO_DATE('00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('9,28,2012 19:00', '%m,%d,%Y %H:%i')); -- 3
-INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Mike', 15, 'Simple White Cake', '6-10', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,25,2012 19:00', '%m,%d,%Y %H:%i')); -- 4
+INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added, description) VALUES ( 'Mike', 15, 'Simple White Cake', '6-10', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,25,2012 19:00', '%m,%d,%Y %H:%i'), 'Cake that taste great and its simple to make.'); -- 4
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Curtis', 5, 'Oven-fried Pork Chops', '4', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:00', '%m,%d,%Y %H:%i')); -- 5
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added, public) VALUES ( 'Sam', 2, 'Ranch Burgers', '8', STR_TO_DATE( '00:30', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), 'directions', STR_TO_DATE('10,28,2012 19:05', '%m,%d,%Y %H:%i'), 0); -- 6
 INSERT INTO recipe (owner_id, category_id, recipe_name, serving_size, prep_time, ready_time, directions, date_added) VALUES ( 'Mario', 13, 'Mushroom Soup', '3-4', STR_TO_DATE( '00:20', '%H:%i'), STR_TO_DATE('00:35', '%H:%i'), '1. Chop the mushroom and put it into a pot with the water and set it to boil.\n2. Chop potatoes into the pot as well with anything else you usually put in a soup.', STR_TO_DATE('11,02,2012 12:35', '%m,%d,%Y %H:%i')); -- 6
@@ -534,6 +543,12 @@ INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam',
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Curtis', 5, 6, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 3, 8, STR_TO_DATE('10,28,2012 05:13:02', '%m,%d,%Y %H:%i:%s')); -- 6
 INSERT INTO recipe_ranking (owner_id, recipe_id, rank, date_added) VALUES('Sam', 7, 10, STR_TO_DATE('11,2,2012 15:13:02', '%m,%d,%Y %H:%i:%s')); -- 7
+
+-- Wiki categories
+INSERT INTO wiki_category (category_name) VALUES ("Ingredients"); -- 1
+INSERT INTO wiki_category (category_name) VALUES ("Other"); -- 2
+INSERT INTO wiki_category (category_name) VALUES ("Cooking Techniques"); -- 3
+INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 4
 
 INSERT INTO ingredient (ingr_name) VALUES('Potatoes'); --  1
 INSERT INTO ingredient (ingr_name) VALUES('Italian Salad Dressing');  -- 2
@@ -653,18 +668,12 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 
 
 -- Wiki data
-INSERT INTO video (name, caption, address) VALUES("Test Video", "Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video 1
-INSERT INTO video (name, caption, address) VALUES("Test Video", "How To Grill", "http://www.youtube.com/embed/h82C-FCq2dI"); -- Grilling 2
+INSERT INTO video (caption, address) VALUES("", ""); -- test video 1
+INSERT INTO video (caption, address) VALUES("How To Grill", "http://www.youtube.com/embed/h82C-FCq2dI"); -- Grilling 2
 
-
--- Wiki categories
-INSERT INTO wiki_category (category_name) VALUES ("Ingredients"); -- 1
-INSERT INTO wiki_category (category_name) VALUES ("Other"); -- 2
-INSERT INTO wiki_category (category_name) VALUES ("Cooking Techniques"); -- 3
-INSERT INTO wiki_category (category_name) VALUES ("Poultry"); -- 4
 
 -- Wiki pages ::::: We can't count these like in previous inserts, because ingredients make wikis, you don't know what ID you are up to.
-INSERT INTO wiki (video_id, wiki_title, wiki_cat_id, description) VALUES(2, "Grilling", 3, '');
+INSERT INTO wiki (wiki_title, wiki_cat_id, description) VALUES("Grilling", 3, 'All about the art of grilling.');
 
 -- Wiki content
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Salt" LIMIT 1), 19, "Salt", "Salt, also known as rock salt, is a crystalline mineral that is composed primarily of sodium chloride (NaCl), a chemical compound belonging to the larger class of ionic salts. It is absolutely essential for animal life, but can be harmful to animals and plants in excess.\n\nSalt is one of the oldest, most ubiquitous food seasonings and salting is an important method of food preservation. The taste of salt (saltiness) is one of the basic human tastes. Salt for human consumption is produced in different forms: unrefined salt (such as sea salt), refined salt (table salt), and iodized salt. It is a crystalline solid, white, pale pink or light gray in color, normally obtained from sea water or rock deposits. Edible rock salts may be slightly grayish in color because of mineral content.\n\nChloride and sodium ions, the two major components of salt, are needed by all known living creatures in small quantities. Salt is involved in regulating the water content (fluid balance) of the body. The sodium ion itself is used for electrical signaling in the nervous system.[1] Because of its importance to survival, salt has often been considered a valuable commodity during human history.\n\nHowever, as salt consumption has increased during modern times, scientists have become aware of the health risks associated with high salt intake, including high blood pressure in sensitive individuals. Therefore, some health authorities have recommended limitations of dietary sodium, although others state the risk is minimal for typical western diets.[2][3][4][5][6] The United States Department of Health and Human Services recommends that individuals consume no more than 1500–2300 mg of sodium (3750–5750 mg of salt) per day depending on age.[7]"); -- 1 
@@ -673,4 +682,4 @@ INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wi
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Butter" LIMIT 1), 27, "Butter", "Butter is a dairy product made by churning fresh or fermented cream or milk. It is generally used as a spread and a condiment, as well as in cooking, such as baking, sauce making, and pan frying. Butter consists of butterfat, milk proteins and water. Most frequently made from cows' milk, butter can also be manufactured from the milk of other mammals, including sheep, goats, buffalo, and yaks. Salt, flavorings and preservatives are sometimes added to butter. Rendering butter produces clarified butter or ghee, which is almost entirely butterfat.\nButter is a water-in-oil emulsion resulting from an inversion of the cream, an oil-in-water emulsion; the milk proteins are the emulsifiers. Butter remains a solid when refrigerated, but softens to a spreadable consistency at room temperature, and melts to a thin liquid consistency at 32–35 °C (90–95 °F). The density of butter is 911 g/L (56.9 lb/ft3).[1]\nIt generally has a pale yellow color, but varies from deep yellow to nearly white. Its unmodified color is dependent on the animals' feed and is commonly manipulated with food colorings in the commercial manufacturing process, most commonly annatto or carotene. The word butter derives (via Germanic languages) from the Latin butyrum,[2] which is the latinisation of the Greek (bouturon).[3][4] This may have been a construction meaning 'cow-cheese', from (bous), 'ox, cow'[5] + (turos), 'cheese',[6] but perhaps this is a false etymology of a Scythian word.[7]\n Nevertheless, the earliest attested form of the second stem, turos ('cheese'), is the Mycenaean Greek tu-ro, written in Linear B syllabic script.[8] The root word persists in the name butyric acid, a compound found in rancid butter and dairy products such as Parmesan cheese. In general use, the term 'butter' refers to the spread dairy product when unqualified by other descriptors. The word commonly is used to describe puréed vegetable or seed & nut products such as peanut butter and almond butter. It is often applied to spread fruit products such as apple butter. Fats such as cocoa butter and shea butter that remain solid at room temperature are also known as 'butters'.\n In addition to the act of applying butter being called 'to butter', non-dairy items that have a dairy butter consistency may use 'butter' to call that consistency to mind, including food items such as maple butter and witch\'s butter and nonfood items such as baby bottom butter, hyena butter, and rock butter."); -- 4
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Flour" LIMIT 1), 26, "Flour", "Flour is a powder which is made by grinding cereal grains, other seeds or roots (like Cassava). It is the main ingredient of bread, which is a staple food for many cultures, making the availability of adequate supplies of flour a major economic and political issue at various times throughout history. Wheat flour is one of the most important foods in European, North American, Middle Eastern, Indian and North African cultures, and is the defining ingredient in most of their styles of breads and pastries.\n Maize flour has been important in Mesoamerican cuisine since ancient times, and remains a staple in much of Latin American cuisine.[citation needed] Rye flour is an important constituent of bread in much of central/northern Europe. It was discovered around 6000 BC that wheat seeds could be crushed between simple millstones to make flour.[2] The Romans were the first to grind seeds on cone mills. In 1879, at the beginning of the Industrial Era, the first steam mill was erected in London.\n[3] In the 1930s, some flour began to be enriched with iron, niacin, thiamine and riboflavin. In the 1940s, mills started to enrich flour and folic acid was added to the list in the 1990s. Degermed and heat-processed flour An important problem of the industrial revolution was the preservation of flour. Transportation distances and a relatively slow distribution system collided with natural shelf life. The reason for the limited shelf life is the fatty acids of the germ, which react from the moment they are exposed to oxygen.\n This occurs when grain is milled; the fatty acids oxidize and flour starts to become rancid. Depending on climate and grain quality, this process takes six to nine months. In the late 19th century, this process was too short for an industrial production and distribution cycle. As vitamins, micro nutrients and amino acids were completely or relatively unknown in the late 19th century, removing the germ was a brilliant solution. Without the germ, flour cannot become rancid. Degermed flour became standard. Degermation started in densely populated areas and took approximately one generation to reach the countryside.\n Heat-processed flour is flour where the germ is first separated from the endosperm and bran, then processed with steam, dry heat or microwave and blended into flour again.[4] The FDA has been advised by several cookie dough manufacturers that they have implemented the use of heat-treated flour for their ready-to-bake cookie dough products' to reduce the risk of E. coli contamination.[5]"); -- 5
 INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Chicken" LIMIT 1), 28, "Chicken", "The chicken (Gallus gallus domesticus is a domesticated fowl, a subspecies of the Red Junglefowl. As one of the most common and widespread domestic animals, and with a population of more than 24 billion in 2003,[1] there are more chickens in the world than any other species of bird. Humans keep chickens primarily as a source of food, consuming both their meat and their eggs. The chicken's cultural and culinary dominance could be considered amazing to some in view of its believed domestic origin and purpose and it has inspired contributions to culture, art, cuisine, science and religion [2] from antiquity to the present.\n\n The traditional poultry farming view of the domestication of the chicken is stated in Encyclopædia Britannica (2007): 'Humans first domesticated chickens of Indian origin for the purpose of cockfighting in Asia, Africa, and Europe. Very little formal attention was given to egg or meat production...\n\n[3] Recent genetic studies have pointed to multiple maternal origins in Southeast, East, and South Asia, but with the clade found in the Americas, Europe, the Middle East and Africa originating in the Indian subcontinent. From India the domesticated fowl made its way to the Persianized kingdom of Lydia in western Asia Minor, and domestic fowl were imported to Greece by the fifth century BC.\n\n[4] Fowl had been known in Egypt since the 18th Dynasty, with the 'bird that gives birth every day' having come to Egypt from the land between Syria and Shinar, Babylonia, according to the annals of Tutmose III.[5][6]"); -- 6
-INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Grilling" LIMIT 1), 43, "Grilling", "Grilling is a form of cooking that involves dry heat applied to the surface of food, commonly from above or below. Grilling usually involves a significant amount of direct, radiant heat, and tends to be used for cooking meat quickly and meat that has already been sliced (or other pieces). Food to be grilled is cooked on a grill (an open wire grid such as a gridiron with a heat source above or below), a grill pan (similar to a frying pan, but with raised ridges to mimic the wires of an open grill), or griddle (a flat plate heated from below).[1] Heat transfer to the food when using a grill is primarily via thermal radiation. Heat transfer when using a grill pan or griddle is by direct conduction. In the United States and Canada, when the heat source for grilling comes from above, grilling is termed broiling.[2] In this case, the pan that holds the food is called a broiler pan, and heat transfer is by thermal convection. Grilling, like most forms of cooking is more art than science. You can follow a few basic rules but after that it is your skill and style that will make you a great griller or a not so great griller. These tips will help you with many of the problems most people have.");  -- 7
+INSERT INTO wiki_content (wiki_id, video_id, picture_id, title, content) VALUES((SELECT wiki_id FROM wiki WHERE wiki_title = "Grilling" LIMIT 1), 2, 43, "Grilling", "Grilling is a form of cooking that involves dry heat applied to the surface of food, commonly from above or below. Grilling usually involves a significant amount of direct, radiant heat, and tends to be used for cooking meat quickly and meat that has already been sliced (or other pieces). Food to be grilled is cooked on a grill (an open wire grid such as a gridiron with a heat source above or below), a grill pan (similar to a frying pan, but with raised ridges to mimic the wires of an open grill), or griddle (a flat plate heated from below).[1] Heat transfer to the food when using a grill is primarily via thermal radiation. Heat transfer when using a grill pan or griddle is by direct conduction. In the United States and Canada, when the heat source for grilling comes from above, grilling is termed broiling.[2] In this case, the pan that holds the food is called a broiler pan, and heat transfer is by thermal convection. Grilling, like most forms of cooking is more art than science. You can follow a few basic rules but after that it is your skill and style that will make you a great griller or a not so great griller. These tips will help you with many of the problems most people have.");  -- 7

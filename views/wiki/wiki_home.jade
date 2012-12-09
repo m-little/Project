@@ -4,9 +4,11 @@ html.all(style="background-image:url('../images/bg1.png');")
 	
 	include ../header
 
+
 	div.all(style="max-width:1000px; margin:auto;")
 		- for (var i in topFive)
 			//| #{topFive[i].title}
+
 
 		div("id="search_box", style="padding-top: 18px; margin:auto; width:400px; height: 80px; background-color: white; border-radius:.8em; opacity: .6;")
 			<form action = "/query" method = "get" id = "search_box">

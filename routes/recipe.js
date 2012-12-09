@@ -4,9 +4,59 @@ var obj_ingredient = require('../objects/ingredient');
 var obj_comment = require('../objects/comment');
 var obj_picture = require('../objects/picture');
 var obj_user = require('../objects/user');
+var obj_preview = require('../objects/preview');
+
+
+exports.home_view = function(req, res) {
+	var dao = new obj_dao.DAO();
+
+	//dao.query("select r.recipe_id, r.recipe_name, r.description from recipe r where r.public = 1 ORDER BY recipe_id DESC LIMIT 5;", output1);
+	dao.query("select r.recipe_id, r.recipe_name, r.description, p.picture_id, p.caption, p.location from recipe r JOIN recipe_picture rp, picture p where r.public = 1 AND rp.recipe_id = r.recipe_id AND p.picture_id=rp.picture_id ORDER BY recipe_id DESC LIMIT 5 ;", output1);
+
+	
+	function output1(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+
+		var preview_array = new Array();
+
+
+		// get the first row (should be the only row) from the results returned by the database
+		for(var i in result)
+		{
+			
+			var row = result[i];
+			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
+			var new_prev = new obj_preview.preview(row.recipe_id,row.recipe_name, row.description);
+			new_prev.set_picture(new_picture);
+			preview_array.push(new_prev);
+		}
+		
+		//console.log(preview_array);
+		dao.die();
+		finished(preview_array);
+	}
+
+	function finished(new_recipe_home) 
+	{
+		console.log(new_recipe_home);
+		res.render('recipe/recipe_home', { title: website_title, topFive: new_recipe_home});
+
+	}
+
+}
 
 exports.display_create = function(req, res)
 {
+	if(!global.session.logged_in) {
+		res.redirect('/login');
+	}
+
 	var dao = new obj_dao.DAO();
 
 	dao.query("SELECT category_name FROM category ORDER BY category_name = '' DESC, use_count DESC", output);
@@ -548,7 +598,7 @@ exports.submit_recipe = function(req, res)
 		}
 		else {
 			//insert recipe into recipe table
-			dao.query("SELECT category_id FROM category WHERE LOWER(category_name) = LOWER('" + recipe_obj.category + "')", output);
+			dao.query("SELECT category_id FROM category WHERE LOWER(category_name) = LOWER('" + dao.safen(recipe_obj.category) + "')", output);
 		}
 	}
 
@@ -572,7 +622,7 @@ exports.submit_recipe = function(req, res)
 			return;
 		}
 
-		dao.query("SELECT recipe_id FROM recipe WHERE LOWER(recipe_name) = LOWER('" + recipe_obj.recipe_name + "')", set_recipe_id);
+		dao.query("SELECT recipe_id FROM recipe WHERE LOWER(recipe_name) = LOWER('" + dao.safen(recipe_obj.recipe_name) + "')", set_recipe_id);
     }
 
     function set_recipe_id(success, result, fields) {
@@ -595,7 +645,7 @@ exports.submit_recipe = function(req, res)
 
 		    function closure(i, ingredient, unit) {
 
-		    	dao.query("SELECT ingr_name FROM ingredient WHERE LOWER(ingr_name) = LOWER('" + ingredient + "')", output3);	    	
+		    	dao.query("SELECT ingr_name FROM ingredient WHERE LOWER(ingr_name) = LOWER('" + dao.safen(ingredient) + "')", output3);	    	
 
 			   function output3(success, result, fields) {
 					if(!success) {
@@ -605,7 +655,7 @@ exports.submit_recipe = function(req, res)
 					}
 
 					if(result.length == 0) {
-						dao.query("INSERT INTO ingredient(ingr_name) VALUES('" + ingredient + "')", output4);
+						dao.query("INSERT INTO ingredient(ingr_name) VALUES('" + dao.safen(ingredient) + "')", output4);
 					}
 					else {
 						get_ingredient_id();
@@ -623,7 +673,7 @@ exports.submit_recipe = function(req, res)
 			    }
 
 			    function get_ingredient_id() {
-			    	dao.query("SELECT ingr_id FROM ingredient WHERE LOWER(ingr_name) = LOWER('" + ingredient + "')", output5);
+			    	dao.query("SELECT ingr_id FROM ingredient WHERE LOWER(ingr_name) = LOWER('" + dao.safen(ingredient) + "')", output5);
 			    }
 
 			    function output5(success, result, fields) {
@@ -638,7 +688,7 @@ exports.submit_recipe = function(req, res)
 			    }   
 
 			    function add_recipe_ingredient(ingr_id) {
-			    	dao.query("INSERT INTO recipe_ingredient(recipe_id, ingr_id, unit_id, unit_amount) VALUES(" + recipe_id + ", " + ingr_id + ", " + unit + ", " + recipe_obj.unit_amount[i] + ")", output6);
+			    	dao.query("INSERT INTO recipe_ingredient(recipe_id, ingr_id, unit_id, unit_amount) VALUES(" + dao.safen(recipe_id) + ", " + dao.safen(ingr_id) + ", " + dao.safen(unit) + ", " + dao.safen(recipe_obj.unit_amount[i]) + ")", output6);
 			    }
 
 			    function output6(success, result, fields) {
@@ -671,7 +721,7 @@ exports.load_pictures = function(req, res)
 	console.log(req.files);
 
 	//get and set the recipe id
-	dao.query("SELECT recipe_id FROM recipe WHERE LOWER(recipe_name) = LOWER('" + req.body.recipe_name + "')", set_recipe_id);
+	dao.query("SELECT recipe_id FROM recipe WHERE LOWER(recipe_name) = LOWER('" + dao.safen(req.body.recipe_name) + "')", set_recipe_id);
 
 	function set_recipe_id(success, result, fields) {
 		if (!success)
@@ -692,7 +742,7 @@ exports.load_pictures = function(req, res)
 			else {
 				var fs = require('fs');
 				fs.readFile(req.files.recipe_pictures.path, function (err, data) {
-					var newPath = "public/images/user_images/" + req.files.recipe_pictures.name;
+					var newPath = "public/images/user_images/" + dao.safen(req.files.recipe_pictures.name);
 					fs.writeFile(newPath, data, function (err) {
 						if(err) {
 							console.log(err);
@@ -704,7 +754,7 @@ exports.load_pictures = function(req, res)
 							var picture_caption = set_picture_caption();
 
 							//After the picture is stored in the user_images file, get recipe id.  
-							dao.query("INSERT INTO picture(caption, location) VALUES('" + picture_caption + "', '" + req.files.recipe_pictures.name + "')", output);
+							dao.query("INSERT INTO picture(caption, location) VALUES('" + dao.safen(picture_caption) + "', '" + dao.safen(req.files.recipe_pictures.name) + "')", output);
 						}
 					});
 				});
@@ -717,7 +767,7 @@ exports.load_pictures = function(req, res)
 					return;
 				}
 				else {		
-					dao.query("SELECT picture_id FROM picture WHERE location = '" + req.files.recipe_pictures.name + "'", output2);			
+					dao.query("SELECT picture_id FROM picture WHERE location = '" + dao.safen(req.files.recipe_pictures.name) + "'", output2);			
 				}
 		    }
 
@@ -735,7 +785,7 @@ exports.load_pictures = function(req, res)
 		    }
 
 		    function insert_into_recipe_picture(picture_id) {
-				dao.query("INSERT INTO recipe_picture(recipe_id, picture_id) VALUES(" + recipe_id + ", " + picture_id + ")", output3);
+				dao.query("INSERT INTO recipe_picture(recipe_id, picture_id) VALUES(" + dao.safen(recipe_id) + ", " + dao.safen(picture_id) + ")", output3);
 		    }
 
 		    function output3(success, result, fields) {
@@ -766,3 +816,385 @@ exports.load_pictures = function(req, res)
 	}
 }
 
+exports.display_edit = function(req, res)
+{
+	req.query.r_id = parseInt(req.query.r_id);
+	if (isNaN(req.query.r_id))
+	{
+		global.session.error_message.message = "The recipe could not be found at the location given.";
+		res.redirect('/error');
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+
+	var categories_list = new Array();
+	var category_ids_list = new Array();
+	var units_list = new Array();
+	var unit_ids_list = new Array();
+
+	dao.query("SELECT category_id, category_name FROM category ORDER BY category_name = '' DESC, use_count DESC", output);
+
+	function output(success, result, fields)
+	{
+		for (var i in result) 
+		{
+			var row = result[i];
+			if (row.category_name == '') {
+				categories_list.push("Select One");
+				category_ids_list.push(0);
+			}
+			else {
+				categories_list.push(row.category_name);
+				category_ids_list.push(row.category_id);
+			}
+		}
+
+		dao.query("SELECT unit_name, unit_id FROM unit", output2);
+	}
+
+	function output2(success, result, fields) 
+	{
+		for (var i in result)
+		{
+			var row = result[i];
+			if(row.unit_name == '')
+			{
+				units_list.push("Select One");
+				units_list.push("None");
+				unit_ids_list.push(0);
+				unit_ids_list.push(1);
+			}
+			else
+			{
+				units_list.push(row.unit_name);
+				unit_ids_list.push(row.unit_id);
+			}
+		}
+
+		dao.query("SELECT recipe_name, owner_id, c.category_name, r.public, r.serving_size, r.prep_time, r.ready_time, directions, DATE_FORMAT(date_added, '%c/%e/%Y %H:%i:%S') as date_added, DATE_FORMAT(date_edited, '%c/%e/%Y %H:%i:%S') as date_edited FROM recipe r JOIN category c ON r.category_id = c.category_id WHERE recipe_id = " + req.query.r_id, output3);
+	}
+
+	// first return for basic recipe info
+	function output3(success, result, fields)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
+		if (result.length == 0) // no recipe found
+		{
+			global.session.error_message.code = "recipe_none";
+			global.session.error_message.message = "That recipe does not seem to exist.";
+			res.redirect('/error');
+			return;
+		}
+
+		var row = result[0];
+		if (global.session.logged_in) {
+			if (row.owner_id != global.session.user.id) {
+				res.redirect('/login');
+			}
+		}
+		else {
+			res.redirect('/login');
+		}
+		
+		var new_recipe = new obj_recipe.Recipe(req.query.r_id, row.owner_id, row.public, row.recipe_name, row.category_name, row.serving_size, row.prep_time, row.ready_time, row.directions, row.date_added, row.date_edited);
+		
+		dao.query("SELECT p.picture_id, p.caption, p.location FROM recipe_picture rp JOIN picture p ON rp.picture_id = p.picture_id WHERE rp.recipe_id = " + req.query.r_id, output4, new_recipe);
+	}
+
+	// next: pictures
+	function output4(success, result, fields, new_recipe)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
+		var pictures = [];
+		for (var i in result) 
+		{
+			var row = result[i];
+			pictures.push(new obj_picture.Picture(row.picture_id, row.caption, row.location))
+		}
+		new_recipe.set_pictures(pictures);
+
+		dao.query("SELECT i.ingr_id, w.wiki_id, p.picture_id, p.caption, p.location, i.ingr_name, i.use_count, u.unit_name, u.abrev, r.unit_amount FROM ingredient i JOIN recipe_ingredient r ON i.ingr_id = r.ingr_id JOIN unit u ON r.unit_id = u.unit_id JOIN wiki w ON i.wiki_id = w.wiki_id JOIN picture p ON w.picture_id = p.picture_id WHERE r.recipe_id = " + req.query.r_id, output5, new_recipe);
+	}
+
+	// next: ingredients
+	function output5(success, result, fields, new_recipe)
+	{
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
+		var ingredients = [];
+		for (var i in result) 
+		{
+			var row = result[i];
+			ingredients.push(new obj_ingredient.Ingredient(row.ingr_id, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.ingr_name, row.unit_name, row.abrev, row.unit_amount, row.use_count))
+		}
+
+		new_recipe.set_ingredients(ingredients);
+		dao.die();
+		finished(new_recipe);
+	}
+
+	function finished(new_recipe)
+	{
+		res.render('recipe/recipe_edit', { title: website_title, recipe: new_recipe, categories: categories_list, category_ids: category_ids_list, units: units_list, unit_ids: unit_ids_list});
+	}
+}	
+
+exports.submit_edit = function(req, res)
+{
+	var recipe_obj = new Object();
+	var recipe = new Object();
+
+	var x = "";
+	var caption_count = 0;
+	var new_ingr_count = 0;
+	var unit_count = 0;
+	var amount_count = 0;
+	var deleted_count = 0;
+	var category_id = 0;
+
+	recipe_obj = (JSON.parse(req.body.recipe));
+	recipe = (JSON.parse(req.body.recipe));
+
+	var dao = new obj_dao.DAO();
+	if(recipe_obj.category == "No changes made") {
+		edit_check(1, x, x);
+	}
+	else {
+		dao.query("SELECT category_id FROM category WHERE LOWER(category_name) = LOWER('" + dao.safen(recipe_obj.category) + "')", output);
+	}
+
+	function output(success, result, fields) {
+		if (!success)
+		{
+			dao.die();
+			res.redirect('/500error');
+			return;
+		}
+		else {		
+			var row = result[0];
+			category_id = row.category_id;
+			edit_check(1, x, x);
+		}
+    }
+
+	function edit_check(success, result, fields) {
+		if(!success)
+		{
+			dao.die()
+			res.redirect('/500error');
+			return;
+		}
+
+		if(recipe_obj.deleted != "No changes made") {
+			if(deleted_count >= recipe.deleted_ingredients.length - 1) {
+				recipe_obj.deleted = "No changes made";
+			}
+			deleted_count++;
+			dao.query("DELETE FROM recipe_ingredient WHERE recipe_id = " + recipe.recipe_id + " AND ingr_id = " + dao.safen(recipe.deleted_ingredients[deleted_count - 1]) + "", edit_check);
+		}
+
+		//Check to see if item need updating
+		else if(recipe_obj.category != "No changes made") {
+			recipe_obj.category = "No changes made";
+			dao.query("UPDATE recipe SET category_id = " + dao.safen(category_id) + " WHERE recipe_id = " + recipe.recipe_id + "", edit_check);
+		}
+
+		else if(recipe_obj.recipe_name != "No changes made") {
+			recipe_obj.recipe_name = "No changes made";
+			dao.query("UPDATE recipe SET recipe_name = '" + dao.safen(recipe.recipe_name) + "' WHERE recipe_id = " + recipe.recipe_id + "", edit_check);
+		}
+
+		else if(recipe_obj.privacy != "No changes made") {
+			recipe_obj.privacy = "No changes made";
+			dao.query("UPDATE recipe SET public = " + dao.safen(recipe.privacy) + " WHERE recipe_id = " + recipe.recipe_id + "", edit_check);
+		}
+
+		else if(recipe_obj.caption_check != "No changes made") {
+			if(caption_count >= recipe.picture_location.length - 1) {
+				recipe_obj.caption_check = "No changes made";
+			}
+			caption_count++;
+			dao.query("UPDATE picture SET caption = '" + dao.safen(recipe.picture_caption[caption_count - 1]) + "' WHERE location = '" + dao.safen(recipe.picture_location[caption_count - 1]) + "'", edit_check);
+		}
+
+		else if(recipe_obj.ingr_unit != "No changes made") {
+			if(unit_count >= recipe.unit_id.length - 1) {
+				recipe_obj.ingr_unit = "No changes made";
+			}
+			unit_count++;
+			dao.query("UPDATE recipe_ingredient SET unit_id = " + dao.safen(recipe.unit_id[unit_count - 1]) + " WHERE recipe_id = " + recipe.recipe_id + " AND ingr_id = " + dao.safen(recipe.unit_ingr_id[unit_count - 1]) + "", edit_check);
+		}
+
+		else if(recipe_obj.ingr_amount != "No changes made") {
+			if(amount_count >= recipe.amount.length - 1) {
+				recipe_obj.ingr_amount = "No changes made";
+			}
+			amount_count++;
+			dao.query("UPDATE recipe_ingredient SET unit_amount = " + dao.safen(recipe.amount[amount_count - 1]) + " WHERE recipe_id = " + recipe.recipe_id + " AND ingr_id = " + dao.safen(recipe.amount_ingr_id[amount_count - 1]) + "", edit_check);
+		}
+
+		else if(recipe_obj.new_ingredient != "No changes made") {
+			if(new_ingr_count >= recipe.new_ingredient_name.length - 1) {
+				recipe_obj.new_ingredient = "No changes made";
+			}
+
+			new_ingr_count++;
+			dao.query("SELECT ingr_name FROM ingredient WHERE LOWER(ingr_name) = LOWER('" + dao.safen(recipe.new_ingredient_name[new_ingr_count - 1]) + "')", output);	    	
+
+			function output(success, result, fields) {
+				if(!success) {
+					dao.die();
+					res.redirect('/500error');
+				return;
+			}
+
+				if(result.length == 0) {
+					dao.query("INSERT INTO ingredient(ingr_name) VALUES('" + dao.safen(recipe.new_ingredient_name[new_ingr_count - 1]) + "')", output2);
+				}
+				else {
+					get_ingredient_id();
+				}
+			}
+
+			function output2(success, result, fields) {
+				if(!success) {
+					dao.die();
+					res.redirect('/500error');
+					return;
+				}
+
+				get_ingredient_id();
+			}
+
+			function get_ingredient_id() {
+				dao.query("SELECT ingr_id FROM ingredient WHERE LOWER(ingr_name) = LOWER('" + dao.safen(recipe.new_ingredient_name[new_ingr_count - 1]) + "')", output3);
+			}
+
+			function output3(success, result, fields) {
+				if(!success) {
+					dao.die();
+					res.redirect('/500error');
+					return;
+				}
+
+				var row = result[0];
+				dao.query("INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(" + recipe.recipe_id + ", " + row.ingr_id + ", " + dao.safen(recipe.new_ingredient_unit[new_ingr_count - 1]) + ", " + dao.safen(recipe.new_ingredient_amount[new_ingr_count - 1]) + ")", edit_check);
+			}  
+		}
+
+		else if(recipe_obj.prep_time != "No changes made") {
+			recipe_obj.prep_time = "No changes made";
+			dao.query("UPDATE recipe SET prep_time = '" + dao.safen(recipe.prep_time) + "' WHERE recipe_id = " + recipe_obj.recipe_id + "", edit_check);
+		}
+
+		else if(recipe_obj.ready_time != "No changes made") {
+			recipe_obj.ready_time = "No changes made";
+			dao.query("UPDATE recipe SET ready_time = '" + dao.safen(recipe.ready_time) + "' WHERE recipe_id = " + recipe_obj.recipe_id + "", edit_check);
+		}
+
+		else if(recipe_obj.serving_size != "No changes made") {
+			recipe_obj.serving_size = "No changes made";
+			dao.query("UPDATE recipe SET serving_size = '" + dao.safen(recipe.serving_size) + "' WHERE recipe_id = " + recipe_obj.recipe_id + "", edit_check);
+		}
+
+		else if(recipe_obj.directions != "No changes made") {
+			recipe_obj.directions = "No changes made";
+			dao.query("UPDATE recipe SET directions = '" + dao.safen(recipe.directions) + "' WHERE recipe_id = " + recipe_obj.recipe_id + "", edit_check);
+		}
+
+		else {
+			end();
+		}
+	}
+
+	function end() {
+		dao.die();
+		res.end();	
+	}
+}	
+
+exports.update_delete = function(req, res)
+{
+	var recipe_id = req.body.recipe_id
+	var dao = new obj_dao.DAO();
+
+	// delete recipe ingredients
+	dao.query("UPDATE recipe SET active = 0 WHERE recipe_id = " + dao.safen(recipe_id) + "", output);
+
+	function output(success, result, fields) {
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}	
+
+		end();
+	}
+
+	function end() {
+		dao.die();
+		res.end();	
+	}
+}
+
+exports.delete_picture = function(req, res)
+{
+	var recipe_obj = new Object();
+	recipe_obj = (JSON.parse(req.body.recipe));
+
+	var dao = new obj_dao.DAO();
+	if(!(recipe_obj.picture_locations.length === undefined)) {
+		for(var i = 0; i < recipe_obj.picture_locations.length; i++) {
+
+			function delete_pic(i, picture_location) {
+				dao.query("SELECT picture_id FROM picture WHERE location = '" + dao.safen(picture_location) + "'", output);
+
+				// delete picture ingredients
+				function output(success, result, fields) {
+					if (!success)
+					{
+						res.redirect('/500error');
+						return;
+					}	
+
+					var row = result[0];
+					dao.query("DELETE FROM recipe_picture WHERE picture_id = " + dao.safen(row.picture_id) + " AND recipe_id = " + dao.safen(recipe_obj.recipe_id) + "", output2);
+				}
+
+				function output2(success, result, fields) {
+					if (!success)
+					{
+						res.redirect('/500error');
+						return;
+					}	
+
+					if(i == recipe_obj.picture_locations.length - 1) {
+						end();
+					}
+				}
+			}
+
+			delete_pic(i, recipe_obj.picture_locations[i]);
+		}
+	}
+
+	function end() {
+		dao.die();
+		res.end();	
+	}
+}
