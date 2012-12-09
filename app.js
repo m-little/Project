@@ -90,6 +90,8 @@ app.post('/user/new', user.create);
 app.post('/user/lookup', user.lookup);
 app.get('/user/validate', user.validate);
 app.get('/user/profile', user.show_profile);
+app.get('/user/settings', user.show_settings);
+app.post('/user/save_settings', user.save_settings);
 app.post('/user/update_follow', user.update_follow);
 app.post('/user/update_notifications', user.update_notifications);
 app.post('/user/share_recipe', user.share_recipe);

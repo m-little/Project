@@ -289,6 +289,118 @@ exports.show_profile = function(req, res)
 }
 
 // Sam
+exports.show_settings = function(req, res)
+{
+	if (!global.session.logged_in)
+	{
+		res.redirect('/login');
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+	dao.query("SELECT show_email FROM user WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output1);
+
+	function output1(success, result, fields)
+	{
+		dao.die();
+
+		if (!success)
+		{
+			res.redirect('/500error');
+			return;
+		}
+
+		res.render('user/settings', { title: website_title, show_email: result[0].show_email, info: req.query.i});
+	}
+}
+
+
+// Sam
+exports.save_settings = function(req, res)
+{
+	if (!global.session.logged_in)
+	{
+		res.send({success: 0, fail: 0});
+		return;
+	}
+
+	if (req.body.pass_c == undefined || req.body.pass_1 == undefined || req.body.pass_1 != req.body.pass_2)
+	{
+		res.send({success: 0, fail: 1});
+		return;
+	}
+
+	req.body.show_email = parseInt(req.body.show_email);
+	if (isNaN(req.body.show_email)) // incorrect data received.
+	{
+		res.send({success: 0, fail: 20});
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+	if (req.body.pass_c != '' || req.body.pass_1 != '')
+		dao.query("SELECT pass, salt FROM passkeys p JOIN user u ON p.user_id = u.user_id WHERE u.user_id = '" + dao.safen(global.session.user.id) + "' AND active = 1 LIMIT 1", output1);
+	else
+		dao.query("UPDATE user SET show_email = " + req.body.show_email + " WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output3);
+
+	function output1(success, result, fields)
+	{
+		if (!success || result.length == 0)
+		{
+			dao.die();
+			res.send({success: 0, fail: 21});
+			return;
+		}
+
+		var row = result[0];
+
+		// Create a hashed pass to compare with the stored one.
+		var shasum = crypto.createHash('sha1');
+		shasum.update(req.body.pass_c + row.salt);
+		var new_pass = shasum.digest('hex');
+
+		if (new_pass == row.pass)
+		{
+			shasum = crypto.createHash('sha1');
+			shasum.update(req.body.pass_1 + row.salt);
+			new_pass = shasum.digest('hex');
+			dao.query("UPDATE passkeys SET pass = '" + new_pass + "' WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output2);
+		}
+		else
+		{
+			dao.die();
+			res.send({success: 0, fail: 3}); // bad old pass
+			return;
+		}
+	}
+
+	function output2(success, result, fields)
+	{
+		if (!success)
+		{
+			dao.die();
+			res.send({success: 0, fail: 22});
+			return;
+		}
+
+		dao.query("UPDATE user SET show_email = " + req.body.show_email + " WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output3);
+	}
+
+	function output3(success, result, fields)
+	{
+		dao.die();
+		if (!success)
+		{
+			res.send({success: 0, fail: 23});
+			return;
+		}
+
+		global.session.user.show_email = req.body.show_email;
+		res.send({success: 1});
+	}
+}
+
+// Sam
 exports.update_follow = function(req, res)
 {
 	if (req.body.user == undefined || req.body.user == '') // incorrect data received.

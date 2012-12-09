@@ -22,10 +22,14 @@ div.footer
 						a.footer(href="/wiki/create")
 							| New Wiki Page
 					td
-						a.footer(href="/user/profile")
-							| Your Profile
+						- if (global.session.logged_in)
+							a.footer(href="/user/profile")
+								| Your Profile
+						- else
+							a.footer(href="/login")
+								| Your Profile
 					td
-						a.footer(href="/user/profile")
+						a.footer(href="/user/settings")
 							| Settings
 					td
 						a.footer(href="/notreal")

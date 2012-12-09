@@ -56,7 +56,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 						div(style="height:10px;")
 						- if (global.session.logged_in && global.session.user.id == user.id)
-							button.button1b
+							button.button1b(onClick="window.location.href='/user/settings'")
 								| Settings
 							button.button1b(onClick="window.location.href='/recipe/my'")
 								| My Recipes

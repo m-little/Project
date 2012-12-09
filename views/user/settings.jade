@@ -1,0 +1,132 @@
+doctype 5
+html.all(style="background-image:url('../images/bg1.png');")
+
+	include ../header
+
+	div.all(style="max-width:1000px; margin:auto;")
+
+		div(style="padding:10px; border:1px solid #c2c2c2; background-color:white;")
+			button.button1b(style="float:right;", onclick="window.location.href='/user/profile'")
+				| Profile
+
+			div(style="font-size:36px; border-bottom:1px solid #c2c2c2; padding-bottom:6px; margin-bottom:10px;")
+				| Settings
+
+			div()
+				div(style="font-size:24px; margin:10px; margin-top:20px;")
+					| Security
+
+				div(style="border:1px solid #c2c2c2; border-radius:.3em; padding:10px; font-size:14px; margin-bottom:6px;")
+					| Change your password:
+
+					div(id="mismatch_passwords", style="color:white; float:right; margin-right:150px; padding:2px; padding-left:6px; padding-right:6px; background-color:#db4c4c; border:1px solid red; border-radius:.6em; position:relative; top:-6px; visibility:hidden;")
+						| Your passwords do not match!
+
+					div(style="height:28px; margin-top:6px;")
+
+
+						input.input_text(id="password2", type="password", style="float:right; font-size:14px; margin-left:10px; width:140px;")
+
+						div(style="float:right; margin-top:6px; margin-left:10px;")
+							| Confirm New Password:
+
+						input.input_text(id="password1", type="password", style="float:right; font-size:14px; margin-left:10px; width:140px;")
+
+						div(style="float:right; margin-top:6px; margin-left:10px;")
+							| New Password:
+
+						input.input_text(id="passwordo", type="password", style="float:right; font-size:14px; margin-left:10px; width:140px;")
+
+						div(style="float:right; margin-top:6px; margin-left:10px;")
+							| Current Password:
+
+				div(style="border:1px solid #c2c2c2; border-radius:.3em; padding:10px; font-size:14px; margin-bottom:6px;")
+					| Do you want to display your email on your profile page?
+
+					div(style="float:right; margin-right:10px;")
+						input(id="show_email_yes", type="radio", name="show_email", style="cursor:pointer;")
+						span(onclick="document.getElementById('show_email_no').checked = false; document.getElementById('show_email_yes').checked = true;", style="cursor:pointer;")
+							| Yes
+
+						input(id="show_email_no", type="radio", name="show_email", style="margin-left:20px; cursor:pointer;")
+						span(onclick="document.getElementById('show_email_yes').checked = false; document.getElementById('show_email_no').checked = true;", style="cursor:pointer;")
+							| No
+
+			div(style="margin-top:20px;")
+				button.button1b(style="float:right;", onclick="save_all();")
+					| Save Settings
+				button.button1r
+					| Deactivate Account
+
+
+	script(src="/jquery.js")
+	script
+		var user_id_pass = false;
+		var user_pass_pass = false;
+		var user_email_pass = false;
+		$(document).ready(function()
+		{
+			$("#mismatch_passwords").hide();
+			$("#mismatch_passwords").css('visibility', 'visible');
+			if (#{show_email})
+				$("#show_email_yes").attr('checked', 'checked');
+			else
+				$("#show_email_no").attr('checked', 'checked');
+			//
+			$("#password1").keyup(function()
+			{
+				if ($("#password2").val() != '' && $("#password1").val() != $("#password2").val())
+				{
+					show_mismatch_passwords();
+				}
+				else
+				{
+					hide_mismatch_passwords();
+				}
+			});
+			$("#password2").keyup(function()
+			{
+				if ($("#password1").val() != '' && $("#password2").val() != $("#password1").val())
+				{
+					show_mismatch_passwords();
+				}
+				else
+				{
+					hide_mismatch_passwords();
+				}
+			});
+		});
+		//
+		function show_mismatch_passwords()
+		{
+			$("#mismatch_passwords").show();
+			user_pass_pass = false;
+			// check_passes();
+		}
+		function hide_mismatch_passwords()
+		{
+			$("#mismatch_passwords").hide();
+			user_pass_pass = true;
+			// check_passes();
+		}
+		function save_all()
+		{
+			var show_email = 0;
+			if ($("#show_email_yes:checked").val() == 'on')
+				show_email = 1;
+			//
+			$.ajax({
+				type: 'POST',
+				url: '/user/save_settings',
+				data: {pass_c: $("#passwordo").val(), pass_1: $("#password1").val(), pass_2: $("#password2").val(), show_email: show_email}, 
+				dataType: 'json',
+				success: function(data){
+					if (data.success)
+					{
+						window.location.href='/user/settings?i=1';
+					}
+				}
+			});
+		}
+
+	include ../footer
