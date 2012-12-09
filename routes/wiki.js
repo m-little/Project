@@ -11,7 +11,7 @@ exports.home_view = function(req, res)
 	// initalize data base access object
 	var dao = new obj_dao.DAO();
 
-	dao.query("SELECT w.wiki_id, w.wiki_title, p.picture_id, w.description, p.location, p.caption FROM wiki w JOIN picture p  WHERE w.picture_id = p.picture_id ORDER BY wiki_id DESC LIMIT 5", output1);
+	dao.query("SELECT w.wiki_id, w.wiki_title, p.picture_id, w.description, p.location, p.caption FROM wiki w JOIN picture p  ON p.picture_id = w.picture_id AND p.picture_id != 1   ORDER BY wiki_id DESC LIMIT 5", output1);
 
 	function output1(success, result, fields)
 	{
