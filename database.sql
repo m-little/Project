@@ -667,7 +667,7 @@ INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(
 
 
 -- Wiki data
-INSERT INTO video (caption, address) VALUES("Test Caption", "http://www.youtube.com/embed/ghb6eDopW8I"); -- test video 1
+INSERT INTO video (caption, address) VALUES("", ""); -- test video 1
 INSERT INTO video (caption, address) VALUES("How To Grill", "http://www.youtube.com/embed/h82C-FCq2dI"); -- Grilling 2
 
 

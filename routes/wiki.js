@@ -107,7 +107,7 @@ exports.display_view = function(req, res)
 		var new_wiki = new obj_wiki.Wiki(req.query.w_id, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.description, row.category_name);
 		
 		// second query gets the wiki pages content (i.e. sections of the wiki page and pictures belonging to that section) and runst the function output2 on completion
-		dao.query("SELECT content, title, p.picture_id, p.location, p.caption, v.video_id, v.address, v.caption, wc.wiki_cont_id FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id JOIN video v ON v.video_id = wc.video_id WHERE wc.wiki_id =" + req.query.w_id, output2, new_wiki);
+		dao.query("SELECT content, title, p.picture_id, p.location, p.caption, v.video_id, v.address, v.caption, wc.wiki_cont_id FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id JOIN video v ON v.video_id = wc.video_id WHERE wc.wiki_id =" + req.query.w_id + " ORDER BY wc.wiki_cont_id", output2, new_wiki);
 	}
 
 	// this function builds the wiki_content objects and stores them in an array that is then put in the 'wiki' object
@@ -192,7 +192,6 @@ exports.display_edit = function(req, res)
 		return;
 	}
 
-	console.log(req.query.w_id);
 	req.query.w_id = parseInt(req.query.w_id);
 	if (isNaN(req.query.w_id))
 	{
@@ -245,9 +244,9 @@ exports.display_edit = function(req, res)
 
 		var row = result[0];
 
-		wiki = new obj_wiki.Wiki(row.wiki_id, 1, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.description, row.category_name);
+		wiki = new obj_wiki.Wiki(row.wiki_id, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.description, row.category_name);
 
-		dao.query("SELECT wc.wiki_cont_id, wc.picture_id, location, caption, wc.title, wc.content FROM wiki_content wc JOIN wiki w ON wc.wiki_id = w.wiki_id JOIN picture p ON p.picture_id = wc.picture_id WHERE w.wiki_id = " + req.query.w_id, output3);
+		dao.query("SELECT wc.wiki_cont_id, wc.picture_id, p.location, p.caption as pic_caption, wc.video_id, v.address, v.caption as vid_caption, wc.title, wc.content FROM wiki_content wc JOIN wiki w ON wc.wiki_id = w.wiki_id JOIN picture p ON p.picture_id = wc.picture_id JOIN video v ON v.video_id = wc.video_id WHERE w.wiki_id = " + req.query.w_id + " ORDER BY wc.wiki_cont_id", output3);
 	}
 
 	function output3(success, result, fields)
@@ -264,7 +263,7 @@ exports.display_edit = function(req, res)
 		for (var i in result)
 		{
 			var row = result[i];
-			contents.push(new obj_content.Wiki_Content(row.wiki_cont_id, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.title, row.content));
+			contents.push(new obj_content.Wiki_Content(row.wiki_cont_id, new obj_picture.Picture(row.picture_id, row.pic_caption, row.location), new obj_video.Video(row.video_id, row.vid_caption, row.address), row.title, row.content));
 		}
 
 		wiki.set_content(contents);
@@ -273,7 +272,6 @@ exports.display_edit = function(req, res)
 		res.render('wiki/wiki_edit', { title: website_title, categories: categories, wiki: wiki});
 	}
 }
-
 
 // Sam
 exports.load_pictures = function(req, res)
@@ -328,7 +326,11 @@ exports.load_pictures = function(req, res)
 // Sam
 exports.new = function(req, res)
 {
-	console.log(req.body);
+	if (!global.session.logged_in)
+	{
+		res.send({});
+		return;
+	}
 
 	if (req.body.name == undefined || req.body.name == "")
 	{
@@ -362,7 +364,6 @@ exports.new = function(req, res)
 		}
 
 
-
 		var statements = ["INSERT INTO wiki (wiki_title, wiki_cat_id, description, picture_id) VALUES ('" + dao.safen(req.body.name) + "', " + result[0].wiki_cat_id + ", '" + dao.safen(req.body.description) + "', " + req.body.pic_id + ");", "SET @wiki_id = LAST_INSERT_ID();"];
 
 		for (var i in req.body.contents)
@@ -371,7 +372,22 @@ exports.new = function(req, res)
 			if (content.pic_id == undefined || content.pic_id == '')
 				content.pic_id = 1;
 			if (content.title != "")
-				statements.push("INSERT INTO wiki_content (wiki_id, picture_id, title, content) VALUES (@wiki_id, '" + dao.safen(content.pic_id) + "', '" + dao.safen(content.title) + "', '" + dao.safen(content.body) + "');");
+			{
+				if (content.video != "")
+				{
+					var vid = content.video.match(/[^=]+$/);
+					if (vid != null)
+					{
+						statements.push("INSERT INTO video (caption, address) VALUES('', 'http://www.youtube.com/embed/" + dao.safen(vid[0]) + "');");
+						statements.push("SET @vid_id = LAST_INSERT_ID();");
+					}
+					else
+						statements.push("SET @vid_id = 1;");
+				}
+				else
+					statements.push("SET @vid_id = 1;");
+				statements.push("INSERT INTO wiki_content (wiki_id, picture_id, video_id, title, content) VALUES (@wiki_id, '" + dao.safen(content.pic_id) + "', @vid_id, '" + dao.safen(content.title) + "', '" + dao.safen(content.body) + "');");
+			}
 		}
 
 		dao.transaction(statements, output2);
@@ -388,5 +404,148 @@ exports.new = function(req, res)
 			res.send({success: true, id: results.results[0].insertId});
 			return;
 		}
+	}
+}
+
+// Sam
+exports.edit = function(req, res)
+{
+	console.log(req.body);
+	if (!global.session.logged_in)
+	{
+		res.send({});
+		return;
+	}
+
+	req.body.id = parseInt(req.body.id);
+	if (isNaN(req.body.id))
+	{
+		res.send({});
+		return;
+	}
+
+	var dao = new obj_dao.DAO();
+	var cat_id = 0;
+
+	dao.query("SELECT wiki_cat_id FROM wiki_category WHERE category_name = '" + dao.safen(req.body.category) + "'", output1);
+
+	function output1(success, result, fields)
+	{
+		if (!success || result.length == 0)
+		{
+			dao.die();
+			res.send({});
+			return;
+		}
+
+		cat_id = result[0].wiki_cat_id;
+
+		dao.query("SELECT wc.wiki_cont_id, wc.picture_id, p.location, p.caption as pic_caption, wc.video_id, v.address, v.caption as vid_caption, wc.title, wc.content FROM wiki_content wc JOIN wiki w ON wc.wiki_id = w.wiki_id JOIN picture p ON p.picture_id = wc.picture_id JOIN video v ON v.video_id = wc.video_id WHERE w.wiki_id = " + req.body.id, output2);
+	}
+
+	function output2(success, result, fields)
+	{
+		if (!success || result.length == 0)
+		{
+			dao.die();
+			res.send({});
+			return;
+		}
+
+		var statements = [];
+		for (var i in result)
+		{
+			var row = result[i];
+
+			var found_in_new = find_content_in_new(row.wiki_cont_id);
+			if (found_in_new == undefined) // old should be deleted
+				statements.push("DELETE FROM wiki_content WHERE wiki_cont_id = " + row.wiki_cont_id + ";");
+		}
+
+		for (var j in req.body.contents)
+		{
+			var content = req.body.contents[j];
+			content.id = parseInt(content.id);
+			if (isNaN(content.id))
+			{
+				res.send({});
+				return;
+			}
+
+			var found_in_old = find_content_in_old(content.id, result)
+
+			if (found_in_old == undefined) // new should be created
+			{
+				if (content.video != "")
+				{
+					var vid = content.video.match(/[^=]+$/);
+					if (vid != null)
+					{
+						statements.push("INSERT INTO video (caption, address) VALUES('', 'http://www.youtube.com/embed/" + dao.safen(vid[0]) + "');");
+						statements.push("SET @vid_id = LAST_INSERT_ID();");
+					}
+					else
+						statements.push("SET @vid_id = 1;");
+				}
+				else
+					statements.push("SET @vid_id = 1;");
+				statements.push("INSERT INTO wiki_content (wiki_id, picture_id, video_id, title, content) VALUES (" + req.body.id + ", '" + dao.safen(content.pic_id) + "', @vid_id, '" + dao.safen(content.title) + "', '" + dao.safen(content.body) + "');");
+			}
+			else // new should be updated
+			{
+				if (content.video != "")
+				{
+					var vid = content.video.match(/[^=]+$/);
+					if (vid != null)
+					{
+						// statements.push("IF (SELECT COUNT(video_id) FROM video WHERE address = 'http://www.youtube.com/embed/" + dao.safen(vid[0]) + "') = 0 THEN INSERT INTO video (caption, address) VALUES('', 'http://www.youtube.com/embed/" + dao.safen(vid[0]) + "'); SET @vid_id = LAST_INSERT_ID(); ELSE SET @vid_id = (SELECT video_id FROM video WHERE address = 'http://www.youtube.com/embed/" + dao.safen(vid[0]) + "'); END IF;");
+						statements.push("INSERT INTO video (caption, address) VALUES('', 'http://www.youtube.com/embed/" + dao.safen(vid[0]) + "');");
+						statements.push("SET @vid_id = LAST_INSERT_ID();");
+					}
+					else
+						statements.push("SET @vid_id = 1;");
+				}
+				else
+					statements.push("SET @vid_id = 1;");
+				statements.push("UPDATE wiki_content SET picture_id = '" + dao.safen(content.pic_id) + "', video_id = @vid_id, title = '" + dao.safen(content.title) + "', content = '" + dao.safen(content.body) + "' WHERE wiki_cont_id = " + content.id + ";");
+			}
+		}
+
+		statements.push("UPDATE wiki SET wiki_cat_id = " + cat_id + ", description = '" + dao.safen(req.body.description) + "', picture_id = '" + dao.safen(req.body.pic_id) + "' WHERE wiki_id = " + req.body.id + ";");
+		dao.transaction(statements, output3);
+	}
+
+	function output3(success, result, fields)
+	{
+		dao.die();
+		if (!success)
+		{
+			res.send({});
+			return;
+		}
+
+		res.send({success: true});
+		return;
+	}
+
+	function find_content_in_new(id)
+	{
+		for (var i in req.body.contents)
+		{
+			req.body.contents[i].id = parseInt(req.body.contents[i].id);
+			if (req.body.contents[i].id == id)
+				return req.body.contents[i];
+		}
+		return undefined;
+	}
+
+	function find_content_in_old(id, results)
+	{
+		for (var i in results)
+		{
+			if (results[i].wiki_cont_id == id)
+				return results[i];
+		}
+		return undefined;
 	}
 }

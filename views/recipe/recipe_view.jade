@@ -62,6 +62,10 @@ html.all()
 				- var text = (global.session.user_recipe_rank == -1 ? "" : " Your rank: " + (global.session.user_recipe_rank / 2) + " stars.");
 				div.star_outline(id="recipe_rank", title="#{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks).#{text}", onClick="show_rank();")
 
+			- if (global.session.logged_in && recipe.owner == global.session.user.id)
+				button.button1b(style="position:absolute; left:6px; bottom:6px;", onclick="window.location.href='/recipe/edit?r_id=#{recipe.id}';")
+					| Edit
+
 			div(id="recipe_rank_text", style="float:right; position:relative; top:6px; right:10px; font-size:12px; color:gray;")
 				| #{Math.round(recipe.rank / 2 * 100) / 100}/5 stars (#{recipe.rank_count} ranks)
 			div(style="float:right; clear:right; position:relative; top:8px; right:10px; font-size:12px; color:gray;")

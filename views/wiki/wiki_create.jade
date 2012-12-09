@@ -48,7 +48,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 								button.button1b(style="margin-left:20px;", id="image_upload")
 									| Upload
 
-				//- Uploaded recipe
+				//- Uploaded wiki pic
 				tr
 					td
 					td
@@ -135,6 +135,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 			});
 			//
 			$("#div_picture_remove").click(function() {
+				uploaded_wiki_pic_id = -1;
 				$("#div_picture_uploaded").slideUp();
 				$("#div_picture_remove").fadeOut();
 				$("#div_picture_upload").show();
@@ -146,18 +147,22 @@ html.all(style="background-image:url('/images/bg1.png');")
 			//
 			$("#add_content").click(function() {
 				var new_content = $("<div></div>").attr({id: "content_box_parent" + content_boxes, style: "border:1px solid #c2c2c2; background-color:white; padding:10px; margin-bottom:10px;"});
-				$("<div>Content Title:</div>").attr({style: "color:gray; float:left; vertical-align:middle; margin-top:4px;"}).appendTo(new_content);
+				$("<div>* Content Title:</div>").attr({style: "color:gray; float:left; vertical-align:middle; margin-top:4px;"}).appendTo(new_content);
 				var title = $("<input></input>").attr({id: "content_box_title" + content_boxes, class: "input_text", style: "float:left; margin-bottom:8px; margin-left:10px;"}).appendTo(new_content);
 				var remove = $("<div></div>").attr({id: "content_box_remove" + content_boxes, style: "background-image:url('/images/delete.png'); background-size:100% 100%; width:24px; height:24px; position:relative; right:-10px; top:-10px; margin-left:auto; float:right; cursor:pointer;", onclick: "$('#content_box_parent"+ content_boxes +"').slideUp(function(){$('#content_box_parent"+ content_boxes +"').remove();});"}).appendTo(new_content);
 				var div = $("<div></div>").attr({id: "content_photo_dive" + content_boxes}).appendTo(new_content);
 				var photo_div = $("<div>Content Photo:</div>").attr({style: "float:left; color:gray; font-size:14px; margin-left:20px;"}).appendTo(div);
-				var photo_input = $("<input></input>").attr({id: "content_pic" + content_boxes, type: 'file', style: "margin-left:10px; width:220px;"}).appendTo(photo_div);
+				var photo_input = $("<input></input>").attr({id: "content_pic" + content_boxes, type: 'file', style: "margin-left:10px; width:200px;"}).appendTo(photo_div);
 				var caption_div = $("<div>Photo Caption:</div>").attr({style: "float:left; color:gray; font-size:14px; margin-left:20px;"}).appendTo(div);
 				var caption_input = $("<input></input>").attr({id: "content_caption" + content_boxes, class: 'input_text', style: "margin-left:6px; font-size:14px; padding:2px; margin-top:1px; width:100px;"}).appendTo(caption_div);
 				var photo_upload = $("<button>Upload</button>").attr({id: "content_pic_upload" + content_boxes, class: 'button1b', style: "margin-left:10px; font-size:14px; margin-top:1px;", onclick: "upload_content_pic(" + content_boxes + ");"}).appendTo(caption_div);
 				$("<input></input>").attr({type: 'hidden', id: 'content_pic_id' + content_boxes, value: '1'}).appendTo(photo_div);
 				var input_div = $("<div></div>").attr({style: "min-height:20px; margin-right:20px;"}).appendTo(new_content);
-				var input_box = $("<textarea></textarea>").attr({id: "content_box_text" + content_boxes, class: "text_box", style: "width:100%;"}).appendTo(input_div);
+				var input_box = $("<textarea></textarea>").attr({id: "content_box_text" + content_boxes, class: "text_box", style: "width:100%; max-width:100%;"}).appendTo(input_div);
+				var vid_div = $("<div></div>").attr({style: "overflow:auto;"}).appendTo(new_content);
+				$("<input></input>").attr({id: "video_input" + content_boxes, class: "input_text", style: "float:right; margin-left:10px; width:300px;", title: "Video link must be a YouTube video."}).appendTo(vid_div);
+				$("<div>YouTube Video:</div>").attr({style: "float:right; color:gray; margin-top:4px;"}).appendTo(vid_div);
+				//
 				new_content.hide();
 				new_content.appendTo("#div_all_contents");
 				new_content.slideDown();
@@ -175,7 +180,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 				var num = this.id.match(/[0-9]+/);
 				if (num == null) return;
 				if ($("#content_box_title" + num).val() != '')
-					contents.push({title: $("#content_box_title" + num).val(), body: $("#content_box_text" + num).val(), pic_id: $("#content_pic_id" + num).val()});
+					contents.push({title: $("#content_box_title" + num).val(), body: $("#content_box_text" + num).val(), pic_id: $("#content_pic_id" + num).val(), video: $("#video_input" + num).val()});
 			});
 			//
 			$.ajax({
@@ -215,7 +220,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 						{
 							$("#content_pic_id" + num).val(data.added_id);
 							$("#content_photo_dive" + num).hide();
-							var photo = $("<img></img>").attr({id: "content_new_pic" + num, src: '/images/user_images/' + data.picture.location, title: data.picture.caption, style: "max-width:128px; max-height:64px; float:right;"}).insertAfter($("#content_box_remove" + num));
+							var photo = $("<img></img>").attr({id: "content_new_pic" + num, src: '/images/user_images/' + data.picture.location, title: data.picture.caption, style: "max-width:128px; max-height:64px; float:right; margin-bottom:10px;"}).insertAfter($("#content_box_remove" + num));
 							var button = $("<button>Remove</button>").attr({id: "content_new_remove" + num,class: 'button1r', style: "float:right; margin-right:10px;", onclick: "remove_content_pic(" + num + ");"}).insertAfter(photo);
 							photo.slideDown();
 							button.slideDown();
@@ -226,6 +231,7 @@ html.all(style="background-image:url('/images/bg1.png');")
 		}
 		function remove_content_pic(num)
 		{
+			$("#content_pic_id" + num).val(1);
 			$("#content_pic" + num).replaceWith($("#content_pic" + num).clone(true));
 			$("#content_new_pic" + num).slideUp(function(){$("#content_new_pic" + num).remove();});
 			$("#content_new_remove" + num).slideUp(function(){$("#content_new_remove" + num).remove();});

@@ -113,6 +113,7 @@ app.get('/wiki/view', wiki.display_view);
 app.get('/wiki/home', wiki.home_view);
 app.get('/wiki/create', wiki.display_create);
 app.get('/wiki/edit', wiki.display_edit);
+app.post('/wiki/edit', wiki.edit);
 app.post('/wiki/pictures', wiki.load_pictures);
 app.post('/wiki/new', wiki.new);
 
