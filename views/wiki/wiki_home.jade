@@ -10,7 +10,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			//| #{topFive[i].title}
 
 
-		div("id="search_box", style="padding-top: 18px; margin:auto; width:400px; height: 80px; background-color: white; border-radius:.8em; opacity: .6;")
+		div(id="search_box", style="padding-top: 18px; margin:auto; width:400px; height: 80px; background-color: white; border-radius:.8em; opacity: .6;")
 			<form action = "/query" method = "get" id = "search_box">
 			<div class = "wrapper", style="margin-left:auto; margin-right: auto; width: 79%; padding-top:15px;">
 			<input type = "text" class = "input_text" id = "search" name = "q" placeholder = "search" style = "width: 253px;" />
@@ -33,6 +33,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 		var frame = 0;
 		$(document).ready(function(){
+			next_slide();
 			setInterval(next_slide,3000);
 			//$("#test").css("background-image", "url('/images/user_images/" + topfive_wikis[1].picture.location + "')");
 
