@@ -3,31 +3,42 @@ html.all(style="background-image:url('../images/bg1.png');")
 	
 	
 	include ../header
-	- for (var i in topFive)
-		//| #{topFive[i].title}
-	
-	div(id="slide-show", style="height:200px; width:200px;margin-left:558px;padding-top:10px;")
-		div(id="slide-show-pic", style="")
-			img(id = "slide-image",src ='/images/Search-icon.png', style="height:300px; width:300px; padding-top: 40px;")
 
-	div("id="search_box", style="position:absolute; left: 50%; top: 50%; margin-left:-185px; margin-top: 70px; padding-top: 18px; width:400px; height: 80px; background-color: white; border-radius:.8em; opacity: .6;")
-		<form action = "/query" method = "get" id = "search_box">
-		<div class = "wrapper", style="margin-left:auto; margin-right: auto; width: 79%; padding-top:15px;">
-		<input type = "text" class = "input_text" id = "search" name = "q" placeholder = "search" style = "width: 253px;" />
-		<input type="hidden" name="t" value="w" />
-		<button type = "submit" class = "search_btn" value = "Submit">
-		<img src = '/images/Search-icon.png' title = "search" style="max-height:18px; max-width:18px;" />
-		</button>
-		</div>
-		</form>
-	div.
 
+	div.all(style="max-width:1000px; margin:auto;")
+		
+
+
+		div(id="search_box", style="padding-top: 18px; margin:auto; width:400px; height: 80px; background-color: white; border-radius:.8em; opacity: .6;")
+			<form action = "/query" method = "get" id = "search_box">
+			<div class = "wrapper", style="margin-left:auto; margin-right: auto; width: 79%; padding-top:15px;">
+			<input type = "text" class = "input_text" id = "search" name = "q" placeholder = "search" style = "width: 253px;" />
+			<button type = "submit" class = "search_btn" value = "Submit">
+			<img src = '/images/Search-icon.png' title = "search" style="max-height:18px; max-width:18px;" />
+			</button>
+			</div>
+			</form>
+		div.
+		
+		div(id="slide-show", style="width:300px; margin:auto;")
+			
+			div(id="border", style="margin-left:-44px;background-color: white; border-radius:.8em; opacity: .6; width:393px; margin-top:10px;")
+				div(id="title", style="margin-left: 117px; margin-right: 10px;") 
+					-for (var i in topFive)
+					| #{topFive[i].title}
+				a(id="link_to_wiki", href="/wiki/view?w_id=", style="color:black; text-decoration:none;")
+					img(id = "slide-image",src ='/images/.png', style="display:block; height:300px; width:300px; padding: 24px; margin-left:auto; margin-right:auto;")
+			
+
+				
 	
 	script(src="/jquery.js")
 	script
-		var topfive_wikis = [{name: "#{topFive[0].title}", picture: {location: "#{topFive[0].picture.location}", caption: "#{topFive[0].picture.caption0}"}},{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"}},{name: "#{topFive[2].title}", picture: {location: "#{topFive[2].picture.location}", caption: "#{topFive[2].picture.caption1}"}},{name: "#{topFive[3].title}", picture: {location: "#{topFive[3].picture.location}", caption: "#{topFive[3].picture.caption3}"}},{name: "#{topFive[4].title}", picture: {location: "#{topFive[4].picture.location}", caption: "#{topFive[4].picture.caption4}"}}];
+		var topfive_wikis =[{name: "#{topFive[0].title}", picture: {location: "#{topFive[0].picture.location}", caption: "#{topFive[0].picture.caption1}"},id: "#{topFive[0].id}"},{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"},id: "#{topFive[1].id}"},{name: "#{topFive[1].title}", picture: {location: "#{topFive[1].picture.location}", caption: "#{topFive[1].picture.caption1}"}, id: "#{topFive[1].id}"},{name: "#{topFive[2].title}", picture: {location: "#{topFive[2].picture.location}", caption: "#{topFive[2].picture.caption1}"} , id:"#{topFive[2].id}"},{name: "#{topFive[3].title}", picture: {location: "#{topFive[3].picture.location}", caption: "#{topFive[3].picture.caption3}"}, id: "#{topFive[3].id}"},{name: "#{topFive[4].title}", picture: {location: "#{topFive[4].picture.location}", caption: "#{topFive[4].picture.caption4}"}, id: "#{topFive[4].id}"}];
+
 		var frame = 0;
 		$(document).ready(function(){
+			next_slide();
 			setInterval(next_slide,3000);
 			//$("#test").css("background-image", "url('/images/user_images/" + topfive_wikis[1].picture.location + "')");
 
@@ -35,8 +46,13 @@ html.all(style="background-image:url('../images/bg1.png');")
 		});
 
 		function next_slide(){
+			$("#link_to_wiki").attr('href', '/wiki/view?w_id=' + topfive_wikis[frame].id);
+
+			//$("#title").attr.("" + topfive_wikis[frame].title);
+
 			$("#slide-image").attr("src", "/images/user_images/" + topfive_wikis[frame].picture.location);
 						frame += 1;
+			
 			if(frame >= topfive_wikis.length)
 				{
 					frame = 0;

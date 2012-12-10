@@ -5,7 +5,7 @@ DATE_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "
 DATE_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 CHEF_TITLES = ["Dish Washer", "Kitchen Assistant", "Chef de Partie", "Executive Chef", "Head Chef"];
 
-website_title = 'Website Name';
+website_title = 'Rezept';
 
 // Turn on debug mode if you want to view:
 //      - amount of database connections left open
