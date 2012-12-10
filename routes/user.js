@@ -3,6 +3,7 @@ var obj_system = require('../objects/system');
 var obj_dao = require('../objects/database');
 var obj_user = require('../objects/user');
 var obj_notify = require('../objects/notifications');
+var obj_picture = require('../objects/picture');
 
 // Sam
 exports.lookup = function(req, res)
@@ -337,11 +338,18 @@ exports.save_settings = function(req, res)
 		return;
 	}
 
+	req.body.picture = parseInt(req.body.picture);
+	if (isNaN(req.body.picture)) // incorrect data received.
+	{
+		res.send({success: 0, fail: 20});
+		return;
+	}
+
 	var dao = new obj_dao.DAO();
 	if (req.body.pass_c != '' || req.body.pass_1 != '')
 		dao.query("SELECT pass, salt FROM passkeys p JOIN user u ON p.user_id = u.user_id WHERE u.user_id = '" + dao.safen(global.session.user.id) + "' AND active = 1 LIMIT 1", output1);
 	else
-		dao.query("UPDATE user SET show_email = " + req.body.show_email + " WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output3);
+		dao.query("UPDATE user SET show_email = " + req.body.show_email + ", picture_id = " + req.body.picture + " WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output3);
 
 	function output1(success, result, fields)
 	{
@@ -383,19 +391,34 @@ exports.save_settings = function(req, res)
 			return;
 		}
 
-		dao.query("UPDATE user SET show_email = " + req.body.show_email + " WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output3);
+		dao.query("UPDATE user SET show_email = " + req.body.show_email + ", picture_id = " + req.body.picture + " WHERE user_id = '" + dao.safen(global.session.user.id) + "'", output3);
 	}
 
 	function output3(success, result, fields)
 	{
-		dao.die();
 		if (!success)
 		{
+			dao.die();
 			res.send({success: 0, fail: 23});
 			return;
 		}
 
+		// Get updates to picture
+		dao.query("SELECT location, caption FROM picture WHERE picture_id = " + req.body.picture, output4);
+	}
+
+	function output4(success, result, fields)
+	{
+		dao.die();
+		if (!success || result.length == 0)
+		{
+			res.send({success: 0, fail: 24});
+			return;
+		}
+
+		global.session.user.picture = new obj_picture.Picture(req.body.picture, result[0].caption, result[0].location);
 		global.session.user.show_email = req.body.show_email;
+
 		res.send({success: 1});
 	}
 }

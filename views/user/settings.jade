@@ -5,6 +5,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 	div.all(style="max-width:1000px; margin:auto;")
 
+		div(id="info", style="position:absolute; top:78px; left:50%; margin-left:-300px; text-align:center; width:600px;")
+			- if (info == 1)
+				| Settings Saved
+
 		div(style="padding:10px; border:1px solid #c2c2c2; background-color:white;")
 			button.button1b(style="float:right;", onclick="window.location.href='/user/profile'")
 				| Profile
@@ -12,7 +16,23 @@ html.all(style="background-image:url('../images/bg1.png');")
 			div(style="font-size:36px; border-bottom:1px solid #c2c2c2; padding-bottom:6px; margin-bottom:10px;")
 				| Settings
 
-			div()
+			div
+				div(style="font-size:24px; margin:10px; margin-top:20px;")
+					| Profile Picture
+
+				div(style="border:1px solid #c2c2c2; border-radius:.3em; padding:10px; font-size:14px; margin-bottom:6px; vertical-align:top; overflow:auto;")
+					| Change your picture:
+
+					img(id="image", src="/images/user_images/#{global.session.user.picture.location}", title="#{global.session.user.picture.caption}", style="float:right; max-width:128px; max-height:128px;")
+
+					div(style="float:right;")
+						button.button1b(style="margin-left:10px; margin-right:18px;", id="image_upload", onclick="upload_picture();")
+							| Upload
+					div(style="float:right;")
+						| Picture Caption:
+						input.input_text(type="text", id="picture_caption", name="picture_caption", style="margin-left:5px; width:150px; margin-right:0px;")
+					input(type="file", id="picture", name="picture", style="margin-left:10px; width:200px; float:right;")
+
 				div(style="font-size:24px; margin:10px; margin-top:20px;")
 					| Security
 
@@ -23,7 +43,6 @@ html.all(style="background-image:url('../images/bg1.png');")
 						| Your passwords do not match!
 
 					div(style="height:28px; margin-top:6px;")
-
 
 						input.input_text(id="password2", type="password", style="float:right; font-size:14px; margin-left:10px; width:140px;")
 
@@ -64,8 +83,10 @@ html.all(style="background-image:url('../images/bg1.png');")
 		var user_id_pass = false;
 		var user_pass_pass = false;
 		var user_email_pass = false;
+		var picture_id = #{global.session.user.picture.id};
 		$(document).ready(function()
 		{
+			setInterval(function() {$("#info").hide();}, 5000)
 			$("#mismatch_passwords").hide();
 			$("#mismatch_passwords").css('visibility', 'visible');
 			if (#{show_email})
@@ -118,7 +139,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 			$.ajax({
 				type: 'POST',
 				url: '/user/save_settings',
-				data: {pass_c: $("#passwordo").val(), pass_1: $("#password1").val(), pass_2: $("#password2").val(), show_email: show_email}, 
+				data: {pass_c: $("#passwordo").val(), pass_1: $("#password1").val(), pass_2: $("#password2").val(), show_email: show_email, picture: picture_id}, 
 				dataType: 'json',
 				success: function(data){
 					if (data.success)
@@ -127,6 +148,33 @@ html.all(style="background-image:url('../images/bg1.png');")
 					}
 				}
 			});
+		}
+		function upload_picture()
+		{
+			var input = $("#picture");
+			var file;
+			if ($("#picture")[0].files[0] != undefined)
+			{
+				file = $("#picture")[0].files[0];
+				if (window.FileReader)
+				{
+					var formdata = new FormData();
+					formdata.append("image", file);
+					formdata.append("caption", $("#picture_caption").val());
+					$.ajax({
+						url: "/wiki/pictures",  
+						type: "POST",  
+						data: formdata,  
+						processData: false,  
+						contentType: false,  
+						success: function (data)
+						{
+							picture_id = data.added_id;
+							$("#image").attr({src: '/images/user_images/' + data.picture.location, title: data.picture.caption});
+						}  
+					});
+				}
+			}
 		}
 
 	include ../footer
