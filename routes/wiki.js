@@ -79,7 +79,7 @@ exports.display_view = function(req, res)
 	var dao = new obj_dao.DAO();	
 	
 	// first query gets information that belongs to the wiki from the database and runs the function output1 on completion
-	dao.query("SELECT wiki_title, w.description, p.picture_id, p.location, p.caption FROM wiki w JOIN picture p ON p.picture_id = w.picture_id JOIN wiki_category wc ON w.wiki_cat_id = wc.wiki_cat_id WHERE wiki_id = " + req.query.w_id, output1);
+	dao.query("SELECT wiki_title, w.description, p.picture_id, p.location, p.caption FROM wiki w JOIN picture p ON p.picture_id = w.picture_id JOIN wiki_category wc ON w.wiki_cat_id = wc.wiki_cat_id WHERE wiki_id = " + dao.safen(req.query.w_id) + ';', output1);
 	
 	function output1(success, result, fields)
 	{
@@ -107,7 +107,7 @@ exports.display_view = function(req, res)
 		var new_wiki = new obj_wiki.Wiki(req.query.w_id, row.wiki_title, new obj_picture.Picture(row.picture_id, row.caption, row.location), row.description, row.category_name);
 		
 		// second query gets the wiki pages content (i.e. sections of the wiki page and pictures belonging to that section) and runst the function output2 on completion
-		dao.query("SELECT content, title, p.picture_id, p.location, p.caption, v.video_id, v.address, v.caption, wc.wiki_cont_id FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id JOIN video v ON v.video_id = wc.video_id WHERE wc.wiki_id =" + req.query.w_id + " ORDER BY wc.wiki_cont_id", output2, new_wiki);
+		dao.query("SELECT content, title, p.picture_id, p.location, p.caption, v.video_id, v.address, v.caption, wc.wiki_cont_id FROM wiki_content wc JOIN picture p ON wc.picture_id = p.picture_id JOIN video v ON v.video_id = wc.video_id WHERE wc.wiki_id =" + dao.safen(req.query.w_id) + " ORDER BY wc.wiki_cont_id;", output2, new_wiki);
 	}
 
 	// this function builds the wiki_content objects and stores them in an array that is then put in the 'wiki' object
