@@ -4,27 +4,56 @@ html.all(style="background-image:url('../images/bg1.png');")
 	include ../header
 
 	div.all(style="max-width:1000px; margin:auto;")
-		- if (results.length == 0)
+		- if (results.recipes.length == 0 && results.wiki.length == 0 && results.users.length == 0)
 			div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:#EEEEFF; overflow:auto;")
 				p Sorry no pages were found.  Please try your search again.
 		- else
-			- for(var i in results)
+			- for(var i in results.recipes)
 				div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:#EEEEFF; overflow:auto;")
 				
 					div(style="font-size:20px; background-color:#EEEEFF; width:auto; padding:2px;")
-						- if (type == 'w')
-							<a href="wiki/view?w_id=#{results[i].id}"> #{results[i].title} </a>
-						- else if (type == 'r')
-							<a href="recipe/view?r_id=#{results[i].id}"> #{results[i].title} </a>
-						- else if (type == 'u')
-							<a href="user/profile?u=#{results[i].id}"> #{results[i].title} </a>
+						<a href="recipe/view?r_id=#{results.recipes[i].id}"> #{results.recipes[i].title} </a>
+						
 
-					- if(results[i].picture.id != 1)
+					- if(results.recipes[i].picture.id != 1)
 						div(style="float:right; position:relative; top: -4px; height: 138px; width: 138px; margin-bottom:-14px; margin-left:8px;")
-							img(src= "/images/user_images/#{results[i].picture.location}", style= "max-width:100%;")
+							img(src= "/images/user_images/#{results.recipes[i].picture.location}", style= "max-width:100%;")
 
 					div(style="padding-left:10px;")
-						- for content in results[i].description.split('\n')
+						- for content in results.recipes[i].description.split('\n')
+							div(style="margin-top:6px; min-height:19px;")
+								p!= content
+
+		
+			- for(var i in results.wiki)
+				div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:#EEEEFF; overflow:auto;")
+				
+					div(style="font-size:20px; background-color:#EEEEFF; width:auto; padding:2px;")
+						<a href="wiki/view?w_id=#{results.wiki[i].id}"> #{results.wiki[i].title} </a>
+						
+
+					- if(results.wiki[i].picture.id != 1)
+						div(style="float:right; position:relative; top: -4px; height: 138px; width: 138px; margin-bottom:-14px; margin-left:8px;")
+							img(src= "/images/user_images/#{results.wiki[i].picture.location}", style= "max-width:100%;")
+
+					div(style="padding-left:10px;")
+						- for content in results.wiki[i].description.split('\n')
+							div(style="margin-top:6px; min-height:19px;")
+								p!= content
+		
+			- for(var i in results.users)
+				div(style="overflow:hidden; font-size:16px; height:auto; padding:10px; border:1px solid #c2c2c2; margin-bottom:10px; background-color:#EEEEFF; overflow:auto;")
+				
+					div(style="font-size:20px; background-color:#EEEEFF; width:auto; padding:2px;")
+						<a href="users/profile?u=#{results.users[i].id}"> #{results.users[i].title} </a>
+						
+
+					- if(results.users[i].picture.id != 1)
+						div(style="float:right; position:relative; top: -4px; height: 138px; width: 138px; margin-bottom:-14px; margin-left:8px;")
+							img(src= "/images/user_images/#{results.users[i].picture.location}", style= "max-width:100%;")
+
+					div(style="padding-left:10px;")
+						- for content in results.users[i].description.split('\n')
 							div(style="margin-top:6px; min-height:19px;")
 								p!= content
 
