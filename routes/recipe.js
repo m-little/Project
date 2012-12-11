@@ -6,7 +6,7 @@ var obj_picture = require('../objects/picture');
 var obj_user = require('../objects/user');
 var obj_preview = require('../objects/preview');
 
-
+// Mike
 exports.home_view = function(req, res) {
 	var dao = new obj_dao.DAO();
 

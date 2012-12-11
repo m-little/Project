@@ -2,7 +2,7 @@ var obj_picture = require('../objects/picture');
 var obj_preview = require('../objects/preview');
 var obj_dao = require('../objects/database');
 
-
+// Mike
 exports.search_results = function(req, res)
 {
 	// initalize data base access object

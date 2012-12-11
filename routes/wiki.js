@@ -37,20 +37,18 @@ exports.home_view = function(req, res)
 
 		}
 		
-		//console.log(preview_array);
 		dao.die();
 		finished(preview_array);
 	}
 
 	function finished(new_wiki_home) 
 	{
-		console.log(new_wiki_home);
 		res.render('wiki/wiki_home', { title: website_title, topFive: new_wiki_home});
-
 	}
 
 }
 
+// Mike
 exports.display_view = function(req, res)
 {
 	// if w_id isnt pressent redirect to the home page
@@ -112,7 +110,6 @@ exports.display_view = function(req, res)
 			res.redirect('/500error');
 			return;
 		}
-		//console.log(result);
 
 		var content_array = new Array();
 
@@ -124,12 +121,11 @@ exports.display_view = function(req, res)
 			var new_picture = new obj_picture.Picture(row.picture_id, row.caption, row.location);
 			var new_content = new obj_content.Wiki_Content(row.wiki_cont_id, new_picture, new_video, row.title, row.content);
 
-			//console.log(new_content);
 			content_array.push(new_content);
 		}
 
 		new_wiki.set_content(content_array);
-		//console.log(new_wiki);
+
 		dao.die();
 		finished(new_wiki);
 	}
