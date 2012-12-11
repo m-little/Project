@@ -22,13 +22,6 @@ exports.home_view = function(req, res)
 			return;
 		}
 
-		// if there are no results redirect to the home page
-		//if (result.length == 0) 
-		//{
-		//	res.redirect('/');
-		//	return;
-		//}
-
 		var preview_array = new Array();
 
 
