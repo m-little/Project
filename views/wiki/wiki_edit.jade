@@ -236,7 +236,10 @@ html.all(style="background-image:url('/images/bg1.png');")
 					if (data.success === true)
 						window.location.href='/wiki/view?w_id=#{wiki.id}';
 					else
+					{
+						alert(data.fail);
 						window.location.href='/500error';
+					}
 				}  
 			});
 		});
