@@ -115,7 +115,7 @@ user_lname VARCHAR(40) NOT NULL,
 email VARCHAR(50) NOT NULL,
 date_added DATETIME NOT NULL,
 user_points INT UNSIGNED NOT NULL DEFAULT 0,
-active TINYINT(1) DEFAULT 0,
+active TINYINT(1) DEFAULT 1,
 show_email TINYINT(1) DEFAULT 0,
 validation_value VARCHAR(40) DEFAULT '',
 validation_date DATETIME NOT NULL DEFAULT 0,
@@ -613,7 +613,7 @@ UPDATE wiki SET picture_id = 31 WHERE ingr_id = 34;
 UPDATE wiki SET picture_id = 40 WHERE ingr_id = 38;
 UPDATE wiki SET picture_id = 42 WHERE ingr_id = 39;
 UPDATE wiki SET picture_id = 28 WHERE ingr_id = 40;
-UPDATE wiki SET picture_id = 13 WHERE ingr_id = 41;
+UPDATE wiki SET picture_id = 15 WHERE ingr_id = 41;
 UPDATE wiki SET picture_id = 26 WHERE ingr_id = 42;
 
 INSERT INTO recipe_ingredient (recipe_id, ingr_id, unit_id, unit_amount) VALUES(1, 1, 1, 3); -- Potato Salad, 3 pounds potatoes scrubbed and quartered

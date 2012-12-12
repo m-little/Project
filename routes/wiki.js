@@ -402,21 +402,21 @@ exports.edit = function(req, res)
 	console.log(req.body);
 	if (!global.session.logged_in)
 	{
-		res.send({});
+		res.send({fail:0});
 		return;
 	}
 
 	req.body.id = parseInt(req.body.id);
 	if (isNaN(req.body.id))
 	{
-		res.send({});
+		res.send({fail:1});
 		return;
 	}
 
 	req.body.pic_id = parseInt(req.body.pic_id);
 	if (isNaN(req.body.pic_id))
 	{
-		res.send({});
+		res.send({fail:2});
 		return;
 	}
 
@@ -435,7 +435,7 @@ exports.edit = function(req, res)
 		if (!success || result.length == 0)
 		{
 			dao.die();
-			res.send({});
+			res.send({fail:3});
 			return;
 		}
 
@@ -446,10 +446,10 @@ exports.edit = function(req, res)
 
 	function output2(success, result, fields)
 	{
-		if (!success || result.length == 0)
+		if (!success)
 		{
 			dao.die();
-			res.send({});
+			res.send({fail:4});
 			return;
 		}
 
@@ -469,7 +469,7 @@ exports.edit = function(req, res)
 			content.id = parseInt(content.id);
 			if (isNaN(content.id))
 			{
-				res.send({});
+				res.send({fail:5});
 				return;
 			}
 
@@ -521,7 +521,7 @@ exports.edit = function(req, res)
 		dao.die();
 		if (!success)
 		{
-			res.send({});
+			res.send({fail:6});
 			return;
 		}
 
