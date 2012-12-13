@@ -72,7 +72,7 @@ exports.Recipe = function Recipe(id_, owner_, public_, name_, cate_, serv_, prep
 	{
 		var locations = [];
 		for (var i = 0; i < this.pictures.length; i++)
-			locations.push("{location: '" + this.pictures[i].location + "', caption: '" + this.pictures[i].caption + "'}");
+			locations.push("{location: '" + this.pictures[i].location + "', caption: '" + this.pictures[i].caption.replace("'", "\\'") + "'}");
 		return locations;
 	}
 
