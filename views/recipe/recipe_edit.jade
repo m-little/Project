@@ -169,9 +169,11 @@ html.all(style="background-image:url('/images/bg1.png');")
 			//- Edit and Delete Button 
 			div(style="clear:left; height:20px; width:935px; padding:10px")
 				div(style="float:right")
-					input(type="button", class="recipe_delete", value="Delete", style="height:30px; width:80px")
+					input(type="button", class="recipe_delete", value="Delete", style="height:30px; width:90px")
 				div(style="float:right")
-					input(type="button", class="recipe_edit", value="Save", style="height:30px; width:80px; margin-right:10px")
+					input(type="button", class="recipe_edit", value="Save", style="height:30px; width:90px; margin-right:10px")
+				div(style="float:right")
+					input(type="button", class="view_recipe_page", value="View Recipe", style="height:30px; width:90px; margin-right:10px")
 
 	div(style="height:90px")
 
@@ -342,6 +344,12 @@ html.all(style="background-image:url('/images/bg1.png');")
 				$(this).parent().parent().parent().hide();
 				var recipe_obj = new Object();
 				edited_pictures.push($(this).parent().parent().find('.recipe_photo').attr("value"));
+			});
+			//-------------------------------------------------------------------------------------------------------
+			//- Goto recipe view
+			$('.view_recipe_page').click(function() {
+				var recipe_id = "#{recipe.id}";	
+				window.location.replace("/recipe/view?r_id=" + recipe_id);
 			});
 			//-------------------------------------------------------------------------------------------------------
 			//- Delete recipe
