@@ -7,11 +7,11 @@ div.header
 	div.title_button(style="", onClick="window.location.href='/'")
 		| #{title}
 
-	div(style="float:left; position:fixed; left:160px; top:9px;")
+	div(style="float:left; position:fixed; left:90px; top:9px;")
 		//input.input_text(style="background-color:#616158; float:left; color:#bababa; margin-bottom:5px; height:14px;", value="Search", id="header_search_bar", onClick="clear_search_bar();")
 		<form action = "/query" method = "get" id = "search_box">
 		<input type = "text" class = "input_text" id = "search" name = "q" placeholder = "search" style = "background-color:#616158; float:left; color:#bababa; margin-bottom:5px; height:14px;" />
-		<button type = "submit" class = "search_btn" value = "Submit" style="background-color:#616158; 	border-radius:6px; max-height:24px; max-width:24px;">
+		<button type = "submit" class = "search_btn" value = "Submit" style="background-color:transparent; 	border:none; max-height:24px; max-width:24px; cursor:pointer;">
 		<img src = '/images/Search-icon.png' title = "search" style="max-height:18px; max-width:18px;" />
 		</button>
 		</form>

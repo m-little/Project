@@ -7,9 +7,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 	div.all(style="max-width:1000px; margin:auto;")
 		
-
-
-		div(id="search_box", style="padding-top: 18px; margin:auto; width:400px; height: 80px; background-color: white; border-radius:.8em; opacity: .6;")
+		div(id="search_box", style="padding-top: 18px; margin:auto; width:400px; height: 80px; background-color: white; border-radius:.8em;")
 			<form action = "/query" method = "get" id = "search_box">
 			<div class = "wrapper", style="margin-left:auto; margin-right: auto; width: 79%; padding-top:15px;">
 			<input type = "text" class = "input_text" id = "search" name = "q" placeholder = "search" style = "width: 253px;" />
@@ -22,10 +20,9 @@ html.all(style="background-image:url('../images/bg1.png');")
 		
 		div(id="slide-show", style="width:300px; margin:auto;")
 			
-			div(id="border", style="margin-left:-44px;background-color: white; border-radius:.8em; opacity: .6; width:393px; margin-top:10px;")
-				div(id="title", style="margin-left: 117px; margin-right: 10px;") 
-					-for (var i in topFive)
-					| #{topFive[i].title}
+			div(id="border", style="margin-left:-44px;background-color: white; border-radius:.8em; width:393px; margin-top:10px;")
+				div(id="title", style="text-align:center;") 
+
 				a(id="link_to_wiki", href="/wiki/view?w_id=", style="color:black; text-decoration:none;")
 					img(id = "slide-image",src ='/images/.png', style="display:block; height:300px; width:300px; padding: 24px; margin-left:auto; margin-right:auto;")
 			
@@ -46,6 +43,7 @@ html.all(style="background-image:url('../images/bg1.png');")
 
 		function next_slide(){
 			$("#link_to_wiki").attr('href', '/wiki/view?w_id=' + topfive_wikis[frame].id);
+			$("#title").text(topfive_wikis[frame].name);
 
 			//$("#title").attr.("" + topfive_wikis[frame].title);
 
