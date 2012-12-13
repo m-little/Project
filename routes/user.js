@@ -196,15 +196,15 @@ exports.show_profile = function(req, res)
 
 	var user = undefined;
 	var dao = new obj_dao.DAO();
-	if (global.session.logged_in && global.session.user.id == req.query.u)
-	{
-		user = global.session.user;
-		load_recipes();
-	}
-	else
-	{
+	// if (global.session.logged_in && global.session.user.id == req.query.u)
+	// {
+	// 	user = global.session.user;
+	// 	load_recipes();
+	// }
+	// else
+	// {
 		dao.query("SELECT user_id, user_group, user_fname, user_lname, show_email, email, user_points, date_added FROM user WHERE user_id = '" + dao.safen(req.query.u) + "'", output1);
-	}
+	// }
 
 	function output1(success, result, fields)
 	{
